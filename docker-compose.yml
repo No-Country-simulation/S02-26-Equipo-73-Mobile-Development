@@ -10,7 +10,7 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/18/data
     networks:
       - equi-net
 
@@ -26,13 +26,11 @@ services:
       - "8081:8081"
     depends_on:
       - db
-      - minio
     networks:
-      - equi-net
-  
-      
+      - equi-net   
+
 volumes:
-  postgres_data:
+  pgdata:
 
 networks:
   equi-net:
