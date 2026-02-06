@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  db:
+    image: pgvector/pgvector:0.8.1-pg18-trixie
+    container_name: postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - equi-net
+
+  api:
+    build:
+      context: ./FacadeApi
+      dockerfile: FacadeApi/Dockerfile
+    container_name: api-core
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      - db
+      - minio
+    networks:
+      - equi-net
+  
+      
+volumes:
+  postgres_data:
+
+networks:
+  equi-net:

@@ -3,16 +3,28 @@
   "WorkspaceRootPath": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{58EC2AAF-AC49-4E90-AA71-4EED834AE119}|FacadeApi\\FacadeApi.csproj|f:\\programacion\\no country\\s02-26\\facadeapi\\facadeapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{58EC2AAF-AC49-4E90-AA71-4EED834AE119}|FacadeApi\\FacadeApi.csproj|solutionrelative:facadeapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|f:\\programacion\\no country\\s02-26\\facadeapi\\facadeapi\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|solutionrelative:facadeapi\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{58EC2AAF-AC49-4E90-AA71-4EED834AE119}|FacadeApi\\FacadeApi.csproj|f:\\programacion\\no country\\s02-26\\facadeapi\\facadeapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{58EC2AAF-AC49-4E90-AA71-4EED834AE119}|FacadeApi\\FacadeApi.csproj|solutionrelative:facadeapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|f:\\programacion\\no country\\s02-26\\facadeapi\\facadeapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|solutionrelative:facadeapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{58EC2AAF-AC49-4E90-AA71-4EED834AE119}|FacadeApi\\FacadeApi.csproj|f:\\programacion\\no country\\s02-26\\facadeapi\\facadeapi\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{58EC2AAF-AC49-4E90-AA71-4EED834AE119}|FacadeApi\\FacadeApi.csproj|solutionrelative:facadeapi\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|f:\\programacion\\no country\\s02-26\\facadeapi\\facadeapi\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|solutionrelative:facadeapi\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|f:\\programacion\\no country\\s02-26\\facadeapi\\facadeapi\\facadeapi.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
+      "RelativeMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|solutionrelative:facadeapi\\facadeapi.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|f:\\programacion\\no country\\s02-26\\facadeapi\\facadeapi\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|solutionrelative:facadeapi\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|f:\\programacion\\no country\\s02-26\\facadeapi\\facadeapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{B380035B-941F-29F2-B51D-5BE1579B6F25}|FacadeApi\\FacadeApi.csproj|solutionrelative:facadeapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -45,27 +57,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Program.cs",
-              "DocumentMoniker": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\Program.cs",
-              "RelativeDocumentMoniker": "FacadeApi\\Program.cs",
-              "ToolTip": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\Program.cs",
-              "RelativeToolTip": "FacadeApi\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-06T16:47:23.731Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\appsettings.json",
-              "RelativeDocumentMoniker": "FacadeApi\\appsettings.json",
-              "ToolTip": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\appsettings.json",
-              "RelativeToolTip": "FacadeApi\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-02-06T16:47:21.218Z",
+              "Title": "Dockerfile",
+              "DocumentMoniker": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\Dockerfile",
+              "RelativeDocumentMoniker": "FacadeApi\\Dockerfile",
+              "ToolTip": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\Dockerfile",
+              "RelativeToolTip": "FacadeApi\\Dockerfile",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-02-06T22:51:10.015Z",
               "EditorCaption": ""
             },
             {
@@ -76,10 +75,62 @@
               "RelativeDocumentMoniker": "FacadeApi\\Controllers\\WeatherForecastController.cs",
               "ToolTip": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\Controllers\\WeatherForecastController.cs",
               "RelativeToolTip": "FacadeApi\\Controllers\\WeatherForecastController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-06T16:47:10.472Z",
+              "WhenOpened": "2026-02-06T16:51:44.353Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "FacadeApi.http",
+              "DocumentMoniker": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\FacadeApi.http",
+              "RelativeDocumentMoniker": "FacadeApi\\FacadeApi.http",
+              "ToolTip": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\FacadeApi.http",
+              "RelativeToolTip": "FacadeApi\\FacadeApi.http",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
+              "WhenOpened": "2026-02-06T16:51:18.2Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "FacadeApi\\Properties\\launchSettings.json",
+              "ToolTip": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\Properties\\launchSettings.json",
+              "RelativeToolTip": "FacadeApi\\Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-06T16:50:31.776Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\Program.cs",
+              "RelativeDocumentMoniker": "FacadeApi\\Program.cs",
+              "ToolTip": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\Program.cs",
+              "RelativeToolTip": "FacadeApi\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-06T16:47:23.731Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\appsettings.json",
+              "RelativeDocumentMoniker": "FacadeApi\\appsettings.json",
+              "ToolTip": "F:\\Programacion\\No Country\\S02-26\\FacadeApi\\FacadeApi\\appsettings.json",
+              "RelativeToolTip": "FacadeApi\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-02-06T16:47:21.218Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             }
           ]
         }
