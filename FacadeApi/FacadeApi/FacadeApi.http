@@ -1,0 +1,6 @@
+@FacadeApi_HostAddress = http://localhost:5143
+
+GET {{FacadeApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
