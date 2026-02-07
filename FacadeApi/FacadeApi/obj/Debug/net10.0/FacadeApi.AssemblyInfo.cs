@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FacadeApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+793d3359fd931f53a61c7d23c6574a5166a481b1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2c44be1f035cea43d95d6123e1186a559a2598cd")]
 [assembly: System.Reflection.AssemblyProductAttribute("FacadeApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FacadeApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

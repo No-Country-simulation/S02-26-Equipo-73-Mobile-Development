@@ -55,6 +55,5 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-/api-admin-mercado-gestion/WebApplication1/appsettings.Development.json
-/api-admin/WebApplication1/appsettings.development.json
 /FacadeApi/FacadeApi/appsettings.Development.json
+.vs/
