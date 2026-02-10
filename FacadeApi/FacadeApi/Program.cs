@@ -1,3 +1,4 @@
+using Application.Interfaces;
 using Infrastructure.Context;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,21 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"Error applying migrations: {ex.Message}");
         throw;
     }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
+    try
+    {
+        await seeder.SeedAsync();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error seeding data: {ex.Message}");
+        throw;
+    }
+ 
 }
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
