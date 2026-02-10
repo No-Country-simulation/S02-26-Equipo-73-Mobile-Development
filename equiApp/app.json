@@ -20,7 +20,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.exequiel65.equiApp"
+      "package": "com.s022673.equiApp"
     },
     "web": {
       "output": "static",
