@@ -1,4 +1,5 @@
 using Application.Interfaces;
+using FacadeApi.Middleware;
 using Infrastructure.Context;
 using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -61,6 +62,8 @@ using (var scope = app.Services.CreateScope())
  
 }
 // Configure the HTTP request pipeline.
+app.UseMiddleware<ErrorHandlingMiddleware>();
+
 //if (app.Environment.IsDevelopment())
 //{
     app.MapOpenApi();

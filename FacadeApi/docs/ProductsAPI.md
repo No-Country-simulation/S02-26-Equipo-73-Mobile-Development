@@ -68,16 +68,21 @@ GET /api/products?brandId=1&minPrice=50&maxPrice=200&sortBy=Price&sortDescending
 #### Response:
 ```json
 {
-  "id": 1,
-  "name": "Product Name",
-  "description": "Product Description",
-  "price": 99.99,
-  "isActive": true,
-  "brandId": 1,
-  "brandName": "Ariat",
-  "categoryId": 1,
-  "categoryName": "Boots",
-  "variants": [...]
+  "success": true,
+  "message": "Product retrieved successfully",
+  "data": {
+    "id": 1,
+    "name": "Product Name",
+    "description": "Product Description",
+    "price": 99.99,
+    "isActive": true,
+    "brandId": 1,
+    "brandName": "Ariat",
+    "categoryId": 1,
+    "categoryName": "Boots",
+    "variants": [...]
+  },
+  "errors": null
 }
 ```
 
@@ -140,9 +145,14 @@ GET /api/products?brandId=1&minPrice=50&maxPrice=200&sortBy=Price&sortDescending
 #### Response:
 ```json
 {
-  "id": 1,
-  "name": "Updated Product",
-  ...
+  "success": true,
+  "message": "Product updated successfully",
+  "data": {
+    "id": 1,
+    "name": "Updated Product",
+    ...
+  },
+  "errors": null
 }
 ```
 
