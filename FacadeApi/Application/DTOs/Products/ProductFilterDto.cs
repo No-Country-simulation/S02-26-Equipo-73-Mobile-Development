@@ -15,7 +15,7 @@ namespace Application.DTOs.Products
         
         public int? BrandSizeId { get; set; }
         
-        public string SortBy { get; set; } // name, price, brand
+        public ProductSortBy? SortBy { get; set; }
         public bool SortDescending { get; set; }
         
         [Range(1, int.MaxValue, ErrorMessage = "PageNumber must be at least 1")]

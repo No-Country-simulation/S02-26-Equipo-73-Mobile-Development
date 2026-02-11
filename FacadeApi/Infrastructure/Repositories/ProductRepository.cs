@@ -56,15 +56,15 @@ namespace Infrastructure.Repositories
             var totalCount = await query.CountAsync();
 
             // Aplicar ordenamiento
-            query = filter.SortBy?.ToLower() switch
+            query = filter.SortBy switch
             {
-                "name" => filter.SortDescending 
+                ProductSortBy.Name => filter.SortDescending 
                     ? query.OrderByDescending(p => p.Name) 
                     : query.OrderBy(p => p.Name),
-                "price" => filter.SortDescending 
+                ProductSortBy.Price => filter.SortDescending 
                     ? query.OrderByDescending(p => p.Price) 
                     : query.OrderBy(p => p.Price),
-                "brand" => filter.SortDescending 
+                ProductSortBy.Brand => filter.SortDescending 
                     ? query.OrderByDescending(p => p.Brand.Name) 
                     : query.OrderBy(p => p.Brand.Name),
                 _ => query.OrderBy(p => p.Id)

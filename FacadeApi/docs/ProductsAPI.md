@@ -14,14 +14,14 @@ CRUD completo para productos siguiendo Clean Architecture con filtros avanzados,
 - `minPrice` (decimal, opcional): Precio mínimo
 - `maxPrice` (decimal, opcional): Precio máximo
 - `brandSizeId` (int, opcional): Filtrar por talla específica
-- `sortBy` (string, opcional): Campo para ordenar (`name`, `price`, `brand`)
+- `sortBy` (enum, opcional): Campo para ordenar. Valores: `Id`, `Name`, `Price`, `Brand`
 - `sortDescending` (bool, opcional): Orden descendente (default: false)
 - `pageNumber` (int, opcional): Número de página (default: 1)
 - `pageSize` (int, opcional): Tamaño de página (default: 10, max: 100)
 
 #### Ejemplo:
 ```
-GET /api/products?brandId=1&minPrice=50&maxPrice=200&sortBy=price&sortDescending=false&pageNumber=1&pageSize=10
+GET /api/products?brandId=1&minPrice=50&maxPrice=200&sortBy=Price&sortDescending=false&pageNumber=1&pageSize=10
 ```
 
 #### Response:
@@ -208,7 +208,7 @@ Los servicios se registran automáticamente en `ServiceCollectionExtensions.cs`:
 
 ? **CRUD completo** (Create, Read, Update, Delete)
 ? **Filtros avanzados**: Marca, categoría, precio, talla
-? **Ordenamiento**: Por nombre, precio o marca (ascendente/descendente)
+? **Ordenamiento con Enum**: Por Id, Name, Price o Brand (ascendente/descendente)
 ? **Paginación**: Control completo de páginas y tamaño
 ? **Validaciones**: En DTOs con Data Annotations
 ? **Clean Architecture**: Separación clara de capas
@@ -217,6 +217,7 @@ Los servicios se registran automáticamente en `ServiceCollectionExtensions.cs`:
 ? **DTOs**: Separación de entidades de dominio y respuestas API
 ? **Includes optimizados**: Eager loading de relaciones
 ? **Paged Results**: Metadata de paginación incluida
+? **OpenAPI/Swagger**: Enums visibles en la documentación automática
 
 ---
 
@@ -224,17 +225,22 @@ Los servicios se registran automáticamente en `ServiceCollectionExtensions.cs`:
 
 ### Obtener productos de marca Ariat ordenados por precio:
 ```
-GET /api/products?brandId=1&sortBy=price&pageSize=20
+GET /api/products?brandId=1&sortBy=Price&pageSize=20
 ```
 
-### Obtener productos entre $50 y $200:
+### Obtener productos entre $50 y $200 ordenados por nombre descendente:
 ```
-GET /api/products?minPrice=50&maxPrice=200
+GET /api/products?minPrice=50&maxPrice=200&sortBy=Name&sortDescending=true
 ```
 
 ### Obtener productos de categoría Boots con talla específica:
 ```
 GET /api/products?categoryId=1&brandSizeId=5
+```
+
+### Obtener productos ordenados por marca:
+```
+GET /api/products?sortBy=Brand
 ```
 
 ### Crear un nuevo producto:
