@@ -1,7 +1,7 @@
 # Products API Documentation
 
 ## Overview
-CRUD completo para productos siguiendo Clean Architecture con filtros avanzados, paginaciÛn y ordenamiento.
+CRUD completo para productos siguiendo Clean Architecture con filtros avanzados, paginaci√≥n y ordenamiento.
 
 ## Endpoints
 
@@ -10,14 +10,14 @@ CRUD completo para productos siguiendo Clean Architecture con filtros avanzados,
 
 #### Query Parameters:
 - `brandId` (int, opcional): Filtrar por marca
-- `categoryId` (int, opcional): Filtrar por categorÌa
-- `minPrice` (decimal, opcional): Precio mÌnimo
-- `maxPrice` (decimal, opcional): Precio m·ximo
-- `brandSizeId` (int, opcional): Filtrar por talla especÌfica
+- `categoryId` (int, opcional): Filtrar por categor√≠a
+- `minPrice` (decimal, opcional): Precio m√≠nimo
+- `maxPrice` (decimal, opcional): Precio m√°ximo
+- `brandSizeId` (int, opcional): Filtrar por talla espec√≠fica
 - `sortBy` (enum, opcional): Campo para ordenar. Valores: `Id`, `Name`, `Price`, `Brand`
 - `sortDescending` (bool, opcional): Orden descendente (default: false)
-- `pageNumber` (int, opcional): N˙mero de p·gina (default: 1)
-- `pageSize` (int, opcional): TamaÒo de p·gina (default: 10, max: 100)
+- `pageNumber` (int, opcional): N√∫mero de p√°gina (default: 1)
+- `pageSize` (int, opcional): Tama√±o de p√°gina (default: 10, max: 100)
 
 #### Ejemplo:
 ```
@@ -152,7 +152,7 @@ GET /api/products?brandId=1&minPrice=50&maxPrice=200&sortBy=Price&sortDescending
 **DELETE** `/api/products/{id}`
 
 #### Response:
-- **204 No Content** - Si se eliminÛ correctamente
+- **204 No Content** - Si se elimin√≥ correctamente
 - **404 Not Found** - Si el producto no existe
 
 ---
@@ -163,61 +163,61 @@ GET /api/products?brandId=1&minPrice=50&maxPrice=200&sortBy=Price&sortDescending
 
 ```
 FacadeApi/
-  ??? Controllers/
-      ??? ProductsController.cs        # API endpoints
+  - Controllers/
+    - ProductsController.cs        # API endpoints
 
 Application/
-  ??? DTOs/
-  ?   ??? Products/
-  ?   ?   ??? ProductDto.cs
-  ?   ?   ??? CreateProductDto.cs
-  ?   ?   ??? UpdateProductDto.cs
-  ?   ?   ??? ProductFilterDto.cs
-  ?   ?   ??? ProductVariantDto.cs
-  ?   ??? Common/
-  ?       ??? PagedResult.cs
-  ??? Interfaces/
-  ?   ??? Repositories/
-  ?       ??? IProductRepository.cs
-  ??? Services/
-      ??? Products/
-          ??? IProductService.cs
-          ??? ProductService.cs
+  - DTOs/
+    - Products/
+      - ProductDto.cs
+      - CreateProductDto.cs
+      - UpdateProductDto.cs
+      - ProductFilterDto.cs
+      - ProductVariantDto.cs
+    - Common/
+      - PagedResult.cs
+  - Interfaces/
+    - Repositories/
+      - IProductRepository.cs
+  - Services/
+    - Products/
+      - IProductService.cs
+      - ProductService.cs
 
 Infrastructure/
-  ??? Repositories/
-  ?   ??? ProductRepository.cs         # Data access
-  ??? Extensions/
-      ??? ServiceCollectionExtensions.cs  # DI registration
+  - Repositories/
+    - ProductRepository.cs         # Data access
+  - Extensions/
+    - ServiceCollectionExtensions.cs  # DI registration
 
 Domain/
-  ??? Entities/
-      ??? Products/
-          ??? Product.cs
-          ??? ProductVariant.cs
+  - Entities/
+    - Products/
+      - Product.cs
+      - ProductVariant.cs
 ```
 
 ### Dependency Injection:
-Los servicios se registran autom·ticamente en `ServiceCollectionExtensions.cs`:
-- `IProductRepository` ? `ProductRepository`
-- `IProductService` ? `ProductService`
+Los servicios se registran autom√°ticamente en `ServiceCollectionExtensions.cs`:
+- `IProductRepository` ‚Üí `ProductRepository`
+- `IProductService` ‚Üí `ProductService`
 
 ---
 
-## CaracterÌsticas Implementadas
+## Caracter√≠sticas implementadas
 
-? **CRUD completo** (Create, Read, Update, Delete)
-? **Filtros avanzados**: Marca, categorÌa, precio, talla
-? **Ordenamiento con Enum**: Por Id, Name, Price o Brand (ascendente/descendente)
-? **PaginaciÛn**: Control completo de p·ginas y tamaÒo
-? **Validaciones**: En DTOs con Data Annotations
-? **Clean Architecture**: SeparaciÛn clara de capas
-? **Repository Pattern**: AbstracciÛn de acceso a datos
-? **Service Layer**: LÛgica de negocio centralizada
-? **DTOs**: SeparaciÛn de entidades de dominio y respuestas API
-? **Includes optimizados**: Eager loading de relaciones
-? **Paged Results**: Metadata de paginaciÛn incluida
-? **OpenAPI/Swagger**: Enums visibles en la documentaciÛn autom·tica
+- **CRUD completo** (Create, Read, Update, Delete)
+- **Filtros avanzados**: Marca, categor√≠a, precio, talla
+- **Ordenamiento con Enum**: Por Id, Name, Price o Brand (ascendente/descendente)
+- **Paginaci√≥n**: Control completo de p√°ginas y tama√±o
+- **Validaciones**: En DTOs con Data Annotations
+- **Clean Architecture**: Separaci√≥n clara de capas
+- **Repository Pattern**: Abstracci√≥n de acceso a datos
+- **Service Layer**: L√≥gica de negocio centralizada
+- **DTOs**: Separaci√≥n de entidades de dominio y respuestas API
+- **Includes optimizados**: Eager loading de relaciones
+- **Paged Results**: Metadata de paginaci√≥n incluida
+- **OpenAPI/Swagger**: Enums visibles en la documentaci√≥n autom√°tica
 
 ---
 
@@ -233,7 +233,7 @@ GET /api/products?brandId=1&sortBy=Price&pageSize=20
 GET /api/products?minPrice=50&maxPrice=200&sortBy=Name&sortDescending=true
 ```
 
-### Obtener productos de categorÌa Boots con talla especÌfica:
+### Obtener productos de categor√≠a Boots con talla espec√≠fica:
 ```
 GET /api/products?categoryId=1&brandSizeId=5
 ```

@@ -1,14 +1,14 @@
 # ProductSortBy Enum
 
-## DescripciÛn
+## Descripci√≥n
 Enum utilizado para especificar el campo por el cual ordenar los productos en la API.
 
 ## Valores
 
-| Valor | DescripciÛn |
+| Valor | Descripci√≥n |
 |-------|-------------|
 | `Id` | Ordena por el ID del producto (default) |
-| `Name` | Ordena por el nombre del producto alfabÈticamente |
+| `Name` | Ordena por el nombre del producto alfab√©ticamente |
 | `Price` | Ordena por el precio del producto |
 | `Brand` | Ordena por el nombre de la marca |
 
@@ -34,17 +34,17 @@ GET /api/products
 
 ## Swagger/OpenAPI
 
-En la documentaciÛn de Swagger/OpenAPI, este enum aparece como un **dropdown** con las opciones disponibles:
+En la documentaci√≥n de Swagger/OpenAPI, este enum aparece como un **dropdown** con las opciones disponibles:
 - Id
 - Name
 - Price
 - Brand
 
-Esto facilita el uso de la API ya que los desarrolladores pueden ver directamente las opciones v·lidas sin necesidad de consultar documentaciÛn adicional.
+Esto facilita el uso de la API ya que los desarrolladores pueden ver directamente las opciones v√°lidas sin necesidad de consultar documentaci√≥n adicional.
 
-## ImplementaciÛn TÈcnica
+## Implementaci√≥n t√©cnica
 
-### DefiniciÛn del Enum:
+### Definici√≥n del Enum:
 ```csharp
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum ProductSortBy
@@ -56,7 +56,7 @@ public enum ProductSortBy
 }
 ```
 
-### ConfiguraciÛn Global:
+### Configuraci√≥n Global:
 En `Program.cs`:
 ```csharp
 builder.Services.AddControllers()
@@ -94,11 +94,11 @@ query = filter.SortBy switch
 
 ## Ventajas
 
-? **Type-safe**: Previene errores de tipeo en strings  
-? **IntelliSense**: Autocompletado en el IDE  
-? **DocumentaciÛn autom·tica**: Visible en Swagger/OpenAPI  
-? **Case-insensitive**: El JsonConverter maneja may˙sculas/min˙sculas  
-? **Extensible**: F·cil agregar nuevos campos de ordenamiento  
+- **Type-safe**: Previene errores de tipeo en strings  
+- **IntelliSense**: Autocompletado en el IDE  
+- **Documentaci√≥n autom√°tica**: Visible en Swagger/OpenAPI  
+- **Case-insensitive**: El JsonConverter maneja may√∫sculas/min√∫sculas  
+- **Extensible**: F√°cil agregar nuevos campos de ordenamiento  
 
 ## Agregar nuevos campos de ordenamiento
 
@@ -123,4 +123,4 @@ ProductSortBy.Category => filter.SortDescending
     : query.OrderBy(p => p.Category.Name),
 ```
 
-3. El cambio se reflejar· autom·ticamente en Swagger/OpenAPI
+3. El cambio se reflejar√° autom√°ticamente en Swagger/OpenAPI

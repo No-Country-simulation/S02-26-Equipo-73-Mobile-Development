@@ -1,7 +1,6 @@
 using Application.DTOs.Common;
 using Application.DTOs.Products;
 using Application.Interfaces.Repositories;
-using Domain.Entities;
 using Domain.Entities.Products;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
