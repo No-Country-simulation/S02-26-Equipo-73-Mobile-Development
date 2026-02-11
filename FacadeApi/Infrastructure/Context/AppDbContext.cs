@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Entities.Measurement;
+using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Context
