@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Entities.Measurement;
+using Domain.Entities.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Context
@@ -10,6 +11,7 @@ namespace Infrastructure.Context
         {
         }
         public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<ProductVariant> ProductVariants { get; set; }
         public virtual DbSet<MeasurementUnit> MeasurementUnits { get; set; }
         public virtual DbSet<MeasurementType> MeasurementTypes { get; set; }
         public virtual DbSet<SizeSystem> SizeSystems { get; set; }
@@ -21,11 +23,70 @@ namespace Infrastructure.Context
         {
             base.OnModelCreating(builder);
 
+            // =============================
+            // Product
+            // =============================
             builder.Entity<Product>(entity =>
             {
+                entity.ToTable("Products");
+
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Price).HasPrecision(18,2);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.Price)
+                    .HasPrecision(18, 2);
+
+                entity.HasOne(e => e.Brand)
+                    .WithMany()
+                    .HasForeignKey(e => e.BrandId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Category)
+                    .WithMany()
+                    .HasForeignKey(e => e.CategoryId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(e => e.Name);
+                entity.HasIndex(e => e.BrandId);
+                entity.HasIndex(e => e.CategoryId);
+                entity.HasIndex(e => e.IsActive);
+            });
+
+            // =============================
+            // ProductVariant
+            // =============================
+            builder.Entity<ProductVariant>(entity =>
+            {
+                entity.ToTable("ProductVariants");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Price)
+                    .HasPrecision(18, 2);
+
+                entity.HasOne(e => e.Product)
+                    .WithMany(p => p.Variants)
+                    .HasForeignKey(e => e.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.BrandSize)
+                    .WithMany()
+                    .HasForeignKey(e => e.BrandSizeId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(e => e.ProductId);
+                entity.HasIndex(e => e.BrandSizeId);
+                entity.HasIndex(e => e.IsActive);
+                
+                // Evita duplicados: mismo producto con misma talla
+                entity.HasIndex(e => new { e.ProductId, e.BrandSizeId })
+                    .IsUnique();
             });
 
             builder.Entity<MeasurementUnit>(entity =>
