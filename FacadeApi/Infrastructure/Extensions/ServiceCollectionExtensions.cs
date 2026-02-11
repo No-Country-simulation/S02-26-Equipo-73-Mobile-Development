@@ -2,6 +2,7 @@
 using Application.Interfaces.Repositories;
 using Application.Services.Products;
 using Infrastructure.Context;
+using Infrastructure.Mapper;
 using Infrastructure.Persistence.Seed;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ namespace Infrastructure.Extensions
             services.AddRepositories();
             services.AddApplicationServices();
             services.SeedDataAsync();
+            services.AddAutoMapperExtension();
             return services;
         }
         public static IServiceCollection AddDataContext(this IServiceCollection services, IConfiguration _config)
@@ -49,5 +51,12 @@ namespace Infrastructure.Extensions
             services.AddScoped<IDataSeeder, InitialDataSeeder>();
             return services;
         }
+
+        public static IServiceCollection AddAutoMapperExtension(this IServiceCollection services)
+        {
+            services.AddAutoMapper(cfg => { }, typeof(AutoMap));
+            return services;
+        }
+
     }
 }
