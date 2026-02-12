@@ -1,5 +1,32 @@
-import { Stack } from "expo-router";
+import { Stack } from 'expo-router';
+import { AppProvider } from '@/src/providers/AppProvider';
+import 'react-native-reanimated';
+import 'react-native-gesture-handler';
 
 export default function RootLayout() {
-  return <Stack />;
+  return (
+    <AppProvider>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen 
+          name="auth" 
+          options={{
+            presentation: 'modal',
+          }}
+        />
+        <Stack.Screen 
+          name="product/[id]" 
+          options={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
+      </Stack>
+    </AppProvider>
+  );
 }
