@@ -23,7 +23,7 @@ function ProfileContent() {
           style: 'destructive',
           onPress: async () => {
             await logout();
-            router.replace('/auth/login');
+            // ProtectedRoute redirigirá automáticamente al login
           },
         },
       ]

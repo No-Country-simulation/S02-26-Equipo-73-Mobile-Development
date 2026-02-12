@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Redirect } from 'expo-router';
 import { useAuth } from '@/src/hooks/useAuth';
 
 /**
  * Pantalla inicial de la app
- * Redirige al usuario según su estado de autenticación
+ * Redirige a las tabs principales (navegación libre)
+ * Las rutas específicas decidirán si requieren autenticación
  */
 export default function Index() {
-  const { isAuthenticated, isInitialized } = useAuth();
+  const { isInitialized } = useAuth();
 
   // Mostrar loading mientras se inicializa
   if (!isInitialized) {
@@ -19,12 +20,9 @@ export default function Index() {
     );
   }
 
-  // Redirigir según autenticación
-  if (isAuthenticated) {
-    return <Redirect href="/(tabs)" />;
-  }
-
-  return <Redirect href="/auth/login" />;
+  // Siempre redirigir a tabs (navegación libre)
+  // Las rutas protegidas pedirán login cuando sea necesario
+  return <Redirect href="/(tabs)" />;
 }
 
 const styles = StyleSheet.create({

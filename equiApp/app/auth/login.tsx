@@ -12,9 +12,10 @@ import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/src/hooks/useAuth';
+import { PublicRoute } from '@/src/components/auth';
 import { loginSchema, type LoginFormData } from '@/src/schemas/auth.schema';
 
-export default function LoginScreen() {
+function LoginScreenContent() {
   const router = useRouter();
   const { login, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
@@ -213,3 +214,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
+export default function LoginScreen() {
+  return (
+    <PublicRoute>
+      <LoginScreenContent />
+    </PublicRoute>
+  );
+}
