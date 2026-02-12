@@ -1,26 +1,67 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiClient, handleApiError, type ApiResponse } from '@/src/config/api';
+import { apiClient, handleApiError } from '@/src/config/api';
 import { queryKeys } from '@/src/config/query-client';
 
 /**
- * Tipos de ejemplo para productos
+ * Tipos de la API de productos
  */
+
+export interface ProductMedia {
+  id: number;
+  url: string;
+  mediaType: 'image' | 'video';
+  order: number;
+  isPrimary: boolean;
+}
+
+export interface ProductVariant {
+  id: number;
+  name: string;
+  sku?: string;
+  price?: number;
+  stock?: number;
+}
+
 export interface Product {
-  id: string;
+  id: number;
   name: string;
   description: string;
   price: number;
-  image?: string;
-  category?: string;
+  isActive: boolean;
+  brandId: number;
+  brandName: string;
+  categoryId: number;
+  categoryName: string;
+  media: ProductMedia[];
+  variants: ProductVariant[];
 }
 
+export type SortBy = 'Price' | 'Id' | 'Name';
+
 export interface ProductFilters {
-  category?: string;
-  search?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  page?: number;
-  limit?: number;
+  MinPrice?: number;
+  MaxPrice?: number;
+  SortBy?: SortBy;
+  SortDescending?: boolean;
+  PageNumber?: number;
+  PageSize?: number;
+}
+
+export interface PaginatedProducts {
+  items: Product[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+}
+
+export interface ProductsResponse {
+  success: boolean;
+  message: string;
+  data: PaginatedProducts;
+  errors: any;
 }
 
 /**
@@ -28,44 +69,33 @@ export interface ProductFilters {
  */
 export const productService = {
   /**
-   * Obtener lista de productos
+   * Obtener lista de productos con paginación
    */
-  getProducts: async (filters?: ProductFilters): Promise<Product[]> => {
-    const response = await apiClient.get<ApiResponse<Product[]>>('/products', {
-      params: filters,
+  getProducts: async (filters?: ProductFilters): Promise<PaginatedProducts> => {
+    const response = await apiClient.get<ProductsResponse>('/Products', {
+      params: {
+        MinPrice: filters?.MinPrice ?? 0,
+        MaxPrice: filters?.MaxPrice,
+        SortBy: filters?.SortBy ?? 'Id',
+        SortDescending: filters?.SortDescending ?? false,
+        PageNumber: filters?.PageNumber ?? 1,
+        PageSize: filters?.PageSize ?? 20,
+      },
     });
-    return response.data.data || [];
+    return response.data.data;
   },
 
   /**
    * Obtener un producto por ID
    */
-  getProduct: async (id: string): Promise<Product> => {
-    const response = await apiClient.get<ApiResponse<Product>>(`/products/${id}`);
-    return response.data.data!;
-  },
-
-  /**
-   * Crear un producto (solo admin/seller)
-   */
-  createProduct: async (data: Omit<Product, 'id'>): Promise<Product> => {
-    const response = await apiClient.post<ApiResponse<Product>>('/products', data);
-    return response.data.data!;
-  },
-
-  /**
-   * Actualizar un producto
-   */
-  updateProduct: async (id: string, data: Partial<Product>): Promise<Product> => {
-    const response = await apiClient.put<ApiResponse<Product>>(`/products/${id}`, data);
-    return response.data.data!;
-  },
-
-  /**
-   * Eliminar un producto
-   */
-  deleteProduct: async (id: string): Promise<void> => {
-    await apiClient.delete(`/products/${id}`);
+  getProduct: async (id: number): Promise<Product> => {
+    const response = await apiClient.get<{
+      success: boolean;
+      message: string;
+      data: Product;
+      errors: any;
+    }>(`/Products/${id}`);
+    return response.data.data;
   },
 };
 
@@ -83,68 +113,10 @@ export const useProducts = (filters?: ProductFilters) => {
 /**
  * Hook para obtener un producto específico
  */
-export const useProduct = (id: string) => {
+export const useProduct = (id: number) => {
   return useQuery({
-    queryKey: queryKeys.products.detail(id),
+    queryKey: queryKeys.products.detail(String(id)),
     queryFn: () => productService.getProduct(id),
     enabled: !!id,
-  });
-};
-
-/**
- * Hook para crear un producto
- */
-export const useCreateProduct = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: productService.createProduct,
-    onSuccess: () => {
-      // Invalidar y refetch la lista de productos
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
-    },
-    onError: (error) => {
-      const apiError = handleApiError(error);
-      console.error('Error creando producto:', apiError.message);
-    },
-  });
-};
-
-/**
- * Hook para actualizar un producto
- */
-export const useUpdateProduct = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Product> }) =>
-      productService.updateProduct(id, data),
-    onSuccess: (_, variables) => {
-      // Invalidar queries relacionadas
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.detail(variables.id) });
-    },
-    onError: (error) => {
-      const apiError = handleApiError(error);
-      console.error('Error actualizando producto:', apiError.message);
-    },
-  });
-};
-
-/**
- * Hook para eliminar un producto
- */
-export const useDeleteProduct = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: productService.deleteProduct,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.all });
-    },
-    onError: (error) => {
-      const apiError = handleApiError(error);
-      console.error('Error eliminando producto:', apiError.message);
-    },
   });
 };

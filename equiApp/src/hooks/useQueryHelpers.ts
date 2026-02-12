@@ -27,18 +27,18 @@ export const useMutationWithFeedback = <TData = unknown, TVariables = void>({
 }: UseMutationWithFeedbackOptions<TData, TVariables>) => {
   return useMutation<TData, ApiError, TVariables>({
     mutationFn,
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data, variables, context, meta) => {
       if (showSuccessAlert) {
         Alert.alert('Éxito', successMessage);
       }
-      onSuccess?.(data, variables, context);
+      onSuccess?.(data, variables, context, meta);
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables, context, meta) => {
       const apiError = handleApiError(error);
       if (showErrorAlert) {
         Alert.alert('Error', apiError.message || errorMessage);
       }
-      onError?.(apiError, variables, context);
+      onError?.(apiError, variables, context, meta);
     },
     ...options,
   });
