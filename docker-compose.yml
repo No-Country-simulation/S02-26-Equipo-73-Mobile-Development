@@ -27,10 +27,13 @@ services:
     depends_on:
       - db
     networks:
-      - equi-net   
+      - equi-net
+      - commerce-net   
 
 volumes:
   pgdata:
 
 networks:
   equi-net:
+  commerce-net:
+    external: true

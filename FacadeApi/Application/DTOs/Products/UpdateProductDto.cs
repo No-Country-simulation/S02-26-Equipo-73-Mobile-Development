@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.DTOs.Products
 {
+    /// <summary>
+    /// DTO for updating a product (PUT)
+    /// </summary>
     public class UpdateProductDto
     {
         [Required(ErrorMessage = "Name is required")]
@@ -25,5 +28,13 @@ namespace Application.DTOs.Products
         public int CategoryId { get; set; }
 
         public bool IsActive { get; set; }
+
+        /// <summary>
+        /// Product images/media
+        /// - Base64 string = new image (will be uploaded)
+        /// - URL = existing image (won't be updated)
+        /// - Images not in the list will be deleted
+        /// </summary>
+        public List<MediaProductInputDto> Media { get; set; } = new();
     }
 }

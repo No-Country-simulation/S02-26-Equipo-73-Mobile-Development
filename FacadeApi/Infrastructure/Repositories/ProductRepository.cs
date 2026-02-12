@@ -25,6 +25,7 @@ namespace Infrastructure.Repositories
             var query = _context.Products
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
+                .Include(p => p.MediaProducts)
                 .Include(p => p.Variants)
                     .ThenInclude(v => v.BrandSize)
                 .AsQueryable();
@@ -94,6 +95,7 @@ namespace Infrastructure.Repositories
             var product = await _context.Products
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
+                .Include(p => p.MediaProducts.OrderBy(m => m.Order))
                 .Include(p => p.Variants)
                     .ThenInclude(v => v.BrandSize)
                 .FirstOrDefaultAsync(p => p.Id == id);
@@ -142,6 +144,62 @@ namespace Infrastructure.Repositories
         public async Task<bool> ExistsAsync(int id)
         {
             return await _context.Products.AnyAsync(p => p.Id == id);
+        }
+
+        public async Task UpdateMediaAsync(int productId, List<MediaProductInputDto> media)
+        {
+            // Get existing media
+            var existingMedia = await _context.MediaProducts
+                .Where(m => m.ProductId == productId)
+                .ToListAsync();
+
+            // Get media IDs that should remain
+            var mediaIdsToKeep = media
+                .Where(m => m.Id.HasValue)
+                .Select(m => m.Id.Value)
+                .ToList();
+
+            // Delete media that are not in the new list
+            var mediaToDelete = existingMedia
+                .Where(m => !mediaIdsToKeep.Contains(m.Id))
+                .ToList();
+
+            if (mediaToDelete.Any())
+            {
+                _context.MediaProducts.RemoveRange(mediaToDelete);
+            }
+
+            // Update or add media
+            foreach (var mediaInput in media)
+            {
+                if (mediaInput.Id.HasValue)
+                {
+                    // Update existing
+                    var existingItem = existingMedia.FirstOrDefault(m => m.Id == mediaInput.Id.Value);
+                    if (existingItem != null)
+                    {
+                        existingItem.Url = mediaInput.Value;
+                        existingItem.MediaType = mediaInput.MediaType;
+                        existingItem.Order = mediaInput.Order;
+                        existingItem.IsPrimary = mediaInput.IsPrimary;
+                    }
+                }
+                else
+                {
+                    // Add new
+                    var newMedia = new Domain.Entities.Products.MediaProduct
+                    {
+                        ProductId = productId,
+                        Url = mediaInput.Value,
+                        MediaType = mediaInput.MediaType,
+                        Order = mediaInput.Order,
+                        IsPrimary = mediaInput.IsPrimary
+                    };
+                    _context.MediaProducts.Add(newMedia);
+                }
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

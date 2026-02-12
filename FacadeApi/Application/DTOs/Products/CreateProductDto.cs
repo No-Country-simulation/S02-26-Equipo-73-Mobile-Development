@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.DTOs.Products
 {
+    /// <summary>
+    /// DTO for creating a new product (POST)
+    /// </summary>
     public class CreateProductDto
     {
         [Required(ErrorMessage = "Name is required")]
@@ -23,5 +26,10 @@ namespace Application.DTOs.Products
         [Required(ErrorMessage = "CategoryId is required")]
         [Range(1, int.MaxValue, ErrorMessage = "CategoryId must be greater than 0")]
         public int CategoryId { get; set; }
+
+        /// <summary>
+        /// Product images/media (accepts base64 strings for new images)
+        /// </summary>
+        public List<MediaProductInputDto> Media { get; set; } = new();
     }
 }
