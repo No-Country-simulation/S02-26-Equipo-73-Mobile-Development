@@ -12,5 +12,6 @@
         public int CategoryId { get; set; }
         public virtual ProductCategory Category { get; set; }
         public virtual ICollection<ProductVariant> Variants { get; set; }
+        public virtual ICollection<MediaProduct> MediaProducts { get; set; }
     }
 }

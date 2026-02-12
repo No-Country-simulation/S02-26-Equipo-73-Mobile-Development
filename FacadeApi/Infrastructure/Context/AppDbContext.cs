@@ -11,6 +11,7 @@ namespace Infrastructure.Context
         {
         }
         public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<MediaProduct> MediaProducts { get; set; }  
         public virtual DbSet<ProductVariant> ProductVariants { get; set; }
         public virtual DbSet<MeasurementUnit> MeasurementUnits { get; set; }
         public virtual DbSet<MeasurementType> MeasurementTypes { get; set; }
@@ -238,6 +239,40 @@ namespace Infrastructure.Context
 
                 // Índice CLAVE para recomendaciones rápidas
                 entity.HasIndex(x => new { x.MeasurementTypeId, x.UnitId });
+            });
+
+            // =============================
+            // MediaProduct
+            // =============================
+            builder.Entity<MediaProduct>(entity =>
+            {
+                entity.ToTable("MediaProducts");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Url)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.MediaType)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasDefaultValue("image");
+
+                entity.Property(e => e.Order)
+                    .HasDefaultValue(0);
+
+                entity.Property(e => e.IsPrimary)
+                    .HasDefaultValue(false);
+
+                entity.HasOne(e => e.Product)
+                    .WithMany(p => p.MediaProducts)
+                    .HasForeignKey(e => e.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.ProductId);
+                entity.HasIndex(e => new { e.ProductId, e.IsPrimary });
+                entity.HasIndex(e => new { e.ProductId, e.Order });
             });
         }
     }

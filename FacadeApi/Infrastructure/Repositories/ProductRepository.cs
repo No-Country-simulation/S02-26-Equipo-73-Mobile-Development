@@ -1,6 +1,8 @@
 using Application.DTOs.Common;
 using Application.DTOs.Products;
 using Application.Interfaces.Repositories;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain.Entities.Products;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +12,12 @@ namespace Infrastructure.Repositories
     public class ProductRepository : IProductRepository
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public ProductRepository(AppDbContext context)
+        public ProductRepository(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<PagedResult<ProductDto>> GetAllAsync(ProductFilterDto filter)
@@ -21,6 +25,7 @@ namespace Infrastructure.Repositories
             var query = _context.Products
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
+                .Include(p => p.MediaProducts)
                 .Include(p => p.Variants)
                     .ThenInclude(v => v.BrandSize)
                 .AsQueryable();
@@ -73,28 +78,7 @@ namespace Infrastructure.Repositories
             var products = await query
                 .Skip((filter.PageNumber - 1) * filter.PageSize)
                 .Take(filter.PageSize)
-                .Select(p => new ProductDto
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Description = p.Description,
-                    Price = p.Price,
-                    IsActive = p.IsActive,
-                    BrandId = p.BrandId,
-                    BrandName = p.Brand.Name,
-                    CategoryId = p.CategoryId,
-                    CategoryName = p.Category.Name,
-                    Variants = p.Variants.Select(v => new ProductVariantDto
-                    {
-                        Id = v.Id,
-                        ProductId = v.ProductId,
-                        BrandSizeId = v.BrandSizeId,
-                        SizeLabel = v.BrandSize.Label,
-                        Price = v.Price,
-                        Stock = v.Stock,
-                        IsActive = v.IsActive
-                    }).ToList()
-                })
+                .ProjectTo<ProductDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
             return new PagedResult<ProductDto>
@@ -111,6 +95,7 @@ namespace Infrastructure.Repositories
             var product = await _context.Products
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
+                .Include(p => p.MediaProducts.OrderBy(m => m.Order))
                 .Include(p => p.Variants)
                     .ThenInclude(v => v.BrandSize)
                 .FirstOrDefaultAsync(p => p.Id == id);
@@ -118,41 +103,12 @@ namespace Infrastructure.Repositories
             if (product == null)
                 return null;
 
-            return new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                IsActive = product.IsActive,
-                BrandId = product.BrandId,
-                BrandName = product.Brand.Name,
-                CategoryId = product.CategoryId,
-                CategoryName = product.Category.Name,
-                Variants = product.Variants.Select(v => new ProductVariantDto
-                {
-                    Id = v.Id,
-                    ProductId = v.ProductId,
-                    BrandSizeId = v.BrandSizeId,
-                    SizeLabel = v.BrandSize.Label,
-                    Price = v.Price,
-                    Stock = v.Stock,
-                    IsActive = v.IsActive
-                }).ToList()
-            };
+            return _mapper.Map<ProductDto>(product);
         }
 
         public async Task<ProductDto> CreateAsync(CreateProductDto createDto)
         {
-            var product = new Product
-            {
-                Name = createDto.Name,
-                Description = createDto.Description,
-                Price = createDto.Price,
-                BrandId = createDto.BrandId,
-                CategoryId = createDto.CategoryId,
-                IsActive = true
-            };
+            var product = _mapper.Map<Product>(createDto);
 
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
@@ -166,12 +122,7 @@ namespace Infrastructure.Repositories
             if (product == null)
                 return null;
 
-            product.Name = updateDto.Name;
-            product.Description = updateDto.Description;
-            product.Price = updateDto.Price;
-            product.BrandId = updateDto.BrandId;
-            product.CategoryId = updateDto.CategoryId;
-            product.IsActive = updateDto.IsActive;
+            _mapper.Map(updateDto, product);
 
             await _context.SaveChangesAsync();
 
@@ -193,6 +144,62 @@ namespace Infrastructure.Repositories
         public async Task<bool> ExistsAsync(int id)
         {
             return await _context.Products.AnyAsync(p => p.Id == id);
+        }
+
+        public async Task UpdateMediaAsync(int productId, List<MediaProductInputDto> media)
+        {
+            // Get existing media
+            var existingMedia = await _context.MediaProducts
+                .Where(m => m.ProductId == productId)
+                .ToListAsync();
+
+            // Get media IDs that should remain
+            var mediaIdsToKeep = media
+                .Where(m => m.Id.HasValue)
+                .Select(m => m.Id.Value)
+                .ToList();
+
+            // Delete media that are not in the new list
+            var mediaToDelete = existingMedia
+                .Where(m => !mediaIdsToKeep.Contains(m.Id))
+                .ToList();
+
+            if (mediaToDelete.Any())
+            {
+                _context.MediaProducts.RemoveRange(mediaToDelete);
+            }
+
+            // Update or add media
+            foreach (var mediaInput in media)
+            {
+                if (mediaInput.Id.HasValue)
+                {
+                    // Update existing
+                    var existingItem = existingMedia.FirstOrDefault(m => m.Id == mediaInput.Id.Value);
+                    if (existingItem != null)
+                    {
+                        existingItem.Url = mediaInput.Value;
+                        existingItem.MediaType = mediaInput.MediaType;
+                        existingItem.Order = mediaInput.Order;
+                        existingItem.IsPrimary = mediaInput.IsPrimary;
+                    }
+                }
+                else
+                {
+                    // Add new
+                    var newMedia = new Domain.Entities.Products.MediaProduct
+                    {
+                        ProductId = productId,
+                        Url = mediaInput.Value,
+                        MediaType = mediaInput.MediaType,
+                        Order = mediaInput.Order,
+                        IsPrimary = mediaInput.IsPrimary
+                    };
+                    _context.MediaProducts.Add(newMedia);
+                }
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }
