@@ -3,11 +3,14 @@ import { useUserStore } from '@/src/stores/user.store';
 import type { LoginCredentials, RegisterData } from '@/src/types/auth.types';
 
 /**
- * Hook personalizado para manejar autenticación
+ * Hook personalizado para manejar autenticación con Supabase
+ * Todo el estado está centralizado en Zustand
  */
 export const useAuth = () => {
   const {
     user,
+    session,
+    profile,
     isAuthenticated,
     isLoading,
     isInitialized,
@@ -55,12 +58,14 @@ export const useAuth = () => {
    * Verificar si el usuario está autenticado
    */
   const isAuth = (): boolean => {
-    return isAuthenticated && !!user;
+    return isAuthenticated && !!user && !!session;
   };
 
   return {
     // Estado
     user,
+    session,
+    profile,
     isAuthenticated,
     isLoading,
     isInitialized,

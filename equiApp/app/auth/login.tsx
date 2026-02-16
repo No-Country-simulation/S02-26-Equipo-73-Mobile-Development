@@ -37,7 +37,8 @@ function LoginScreenContent() {
       await login(data);
       router.replace('/(tabs)');
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || 'Error al iniciar sesión');
+      const errorMessage = error.message || 'Error al iniciar sesión';
+      Alert.alert('Error', errorMessage);
     }
   };
 

@@ -38,9 +38,14 @@ function RegisterScreenContent() {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       await registerUser(data);
-      router.replace('/(tabs)');
+      Alert.alert(
+        'Registro Exitoso', 
+        'Revisa tu email para confirmar tu cuenta',
+        [{ text: 'OK', onPress: () => router.replace('/auth/login') }]
+      );
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || 'Error al registrarse');
+      const errorMessage = error.message || 'Error al registrarse';
+      Alert.alert('Error', errorMessage);
     }
   };
 
