@@ -154,6 +154,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
           data: {
             name: data.name || null,
           },
+          emailRedirectTo: 'equiapp://auth/callback',
         },
       });
       console.log('Registro:', authData, error);
