@@ -13,7 +13,10 @@
     "version:minor": "node ./scripts/bump-version.js minor",
     "version:major": "node ./scripts/bump-version.js major",
     "prebuild": "node ./scripts/bump-version.js minor",
-    "build": "npx expo prebuild && npx expo run:android --variant release"
+    "build": "npx expo prebuild && npx expo run:android --variant release",
+    "build:patch": "node ./scripts/bump-version.js patch && npx expo prebuild && npx expo run:android --variant release",
+    "build:minor": "node ./scripts/bump-version.js minor && npx expo prebuild && npx expo run:android --variant release",
+    "build:major": "node ./scripts/bump-version.js major && npx expo prebuild && npx expo run:android --variant release"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
