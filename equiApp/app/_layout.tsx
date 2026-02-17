@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import { AppProvider } from '@/src/providers/AppProvider';
 import 'react-native-reanimated';
 import 'react-native-gesture-handler';
+import { StatusBar } from 'expo-status-bar';
 
 export default function RootLayout() {
   return (
@@ -27,6 +28,7 @@ export default function RootLayout() {
           }}
         />
       </Stack>
+      <StatusBar style="auto" />
     </AppProvider>
   );
 }
