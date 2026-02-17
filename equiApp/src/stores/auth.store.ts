@@ -61,8 +61,10 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
           isAuthenticated: true,
         });
 
-        // Cargar perfil si existe tabla profiles
-        await get().fetchProfile(session.user.id);
+        // Cargar perfil en segundo plano (no bloquear el listener)
+        get().fetchProfile(session.user.id).catch(err => {
+          console.warn('Error loading profile:', err);
+        });
       } else {
         set({
           session: null,

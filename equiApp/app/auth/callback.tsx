@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Linking from 'expo-linking';
@@ -9,34 +9,41 @@ import { useAuthStore } from '@/src/stores/auth.store';
  * Callback para deep linking de Supabase
  * Maneja la confirmación de email al registrarse
  * 
- * URL: equiapp://auth/callback?access_token=xxx&refresh_token=yyy
+ * URL: equiapp://auth/callback#access_token=xxx&refresh_token=yyy
  */
 export default function AuthCallback() {
   const router = useRouter();
   const url = Linking.useLinkingURL();
-  
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('Verificando tu email...');
   const checkAuth = useAuthStore((state) => state.checkAuth);
 
-  useEffect(() => {
-    if (url) {
-      handleCallback(url);
-    }
-  }, [url]);
-
-  const handleCallback = async (linkUrl: string) => {
+  const handleCallback = useCallback(async (linkUrl: string) => {
     try {
-      // Parsear la URL con expo-linking
-      const { queryParams } = Linking.parse(linkUrl);
-      console.log('URL recibida en callback:', linkUrl);
-      const access_token = queryParams?.access_token as string | undefined;
-      const refresh_token = queryParams?.refresh_token as string | undefined;
-      const error = queryParams?.error as string | undefined;
-      const error_description = queryParams?.error_description as string | undefined;
-      console.log('Tokens recibidos:', { access_token, refresh_token, error, error_description });
+      console.log('Procesando callback con URL:', linkUrl);
 
-      // Si hay error en los parámetros
+      // Separar el fragmento después del #
+      const hash = linkUrl.split('#')[1];
+
+      if (!hash) {
+        throw new Error('No se encontraron tokens en el callback');
+      }
+
+      // Convertir a URLSearchParams
+      const params = new URLSearchParams(hash);
+
+      const access_token = params.get('access_token');
+      const refresh_token = params.get('refresh_token');
+      const error = params.get('error');
+      const error_description = params.get('error_description');
+
+      console.log('Tokens recibidos:', {
+        access_token,
+        refresh_token,
+        error,
+        error_description,
+      });
+
       if (error) {
         setStatus('error');
         setMessage(error_description || error);
@@ -44,35 +51,56 @@ export default function AuthCallback() {
         return;
       }
 
-      // Si tenemos tokens, establecer la sesión
       if (access_token && refresh_token) {
-        const { error: sessionError } = await supabase.auth.setSession({
+        console.log('→ Intentando establecer sesión...');
+        
+        // Establecer sesión con los tokens (no esperar el await, el listener lo maneja)
+        supabase.auth.setSession({
           access_token,
           refresh_token,
+        }).then(({ error: sessionError }) => {
+          console.log('→ SetSession completado:', sessionError ? 'ERROR' : 'OK');
+          if (sessionError) {
+            console.error('→ Error en setSession:', sessionError);
+          }
         });
 
-        if (sessionError) throw sessionError;
-
-        // Actualizar el store
+        // Esperar un momento para que el listener actualice el estado
+        console.log('→ Esperando actualización de estado...');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        console.log('→ Verificando estado de autenticación...');
         await checkAuth();
 
+        console.log('✓ Sesión establecida correctamente');
+        
+        // Actualizar el estado de la UI
         setStatus('success');
         setMessage('¡Email confirmado! Bienvenido');
 
-        // Redirigir a la app
+        // Navegar a la app
         setTimeout(() => {
+          console.log('→ Navegando a tabs');
           router.replace('/(tabs)');
-        }, 2000);
+        }, 1500);
       } else {
         throw new Error('No se recibieron tokens de autenticación');
       }
+
     } catch (error: any) {
-      console.error('Error en callback:', error);
+      console.error('❌ Error en callback:', error);
+      console.error('❌ Error stack:', error.stack);
       setStatus('error');
       setMessage(error.message || 'Error al confirmar el email');
       setTimeout(() => router.replace('/auth/login'), 3000);
     }
-  };
+  }, [router, checkAuth]);
+
+  useEffect(() => {
+    if (url) {
+      handleCallback(url);
+    }
+  }, [url, handleCallback]);
 
   return (
     <View style={styles.container}>
