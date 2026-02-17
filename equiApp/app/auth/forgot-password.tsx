@@ -34,7 +34,7 @@ export default function ForgotPasswordScreen() {
       setIsLoading(true);
       
       const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
-        redirectTo: 'equiapp://reset-password', // Configurar esto en tu app
+        redirectTo: 'equiapp://auth/callback',
       });
 
       if (error) throw error;

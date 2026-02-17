@@ -7,15 +7,16 @@ import { useAuthStore } from '@/src/stores/auth.store';
 
 /**
  * Callback para deep linking de Supabase
- * Maneja la confirmación de email al registrarse
+ * Maneja la confirmación de email y recuperación de contraseña
  * 
- * URL: equiapp://auth/callback#access_token=xxx&refresh_token=yyy
+ * URL registro: equiapp://auth/callback#access_token=xxx&refresh_token=yyy
+ * URL recovery: equiapp://auth/callback#access_token=xxx&type=recovery
  */
 export default function AuthCallback() {
   const router = useRouter();
   const url = Linking.useLinkingURL();
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [message, setMessage] = useState('Verificando tu email...');
+  const [message, setMessage] = useState('Verificando...');
   const checkAuth = useAuthStore((state) => state.checkAuth);
 
   const handleCallback = useCallback(async (linkUrl: string) => {
@@ -34,16 +35,28 @@ export default function AuthCallback() {
 
       const access_token = params.get('access_token');
       const refresh_token = params.get('refresh_token');
+      const type = params.get('type');
       const error = params.get('error');
       const error_description = params.get('error_description');
 
-      console.log('Tokens recibidos:', {
-        access_token,
-        refresh_token,
+      console.log('Params recibidos:', {
+        access_token: access_token ? 'presente' : 'ausente',
+        refresh_token: refresh_token ? 'presente' : 'ausente',
+        type,
         error,
-        error_description,
       });
 
+      // Si es recuperación de contraseña, redirigir a reset-password
+      if (type === 'recovery') {
+        console.log('→ Tipo: Recovery - Redirigiendo a reset-password');
+        setMessage('Redirigiendo a cambio de contraseña...');
+        setTimeout(() => {
+          router.replace(`/auth/reset-password`);
+        }, 500);
+        return;
+      }
+
+      // Manejar errores
       if (error) {
         setStatus('error');
         setMessage(error_description || error);
@@ -51,8 +64,10 @@ export default function AuthCallback() {
         return;
       }
 
+      // Confirmación de email (registro)
       if (access_token && refresh_token) {
-        console.log('→ Intentando establecer sesión...');
+        console.log('→ Tipo: Email confirmation - Estableciendo sesión...');
+        setMessage('Verificando tu email...');
         
         // Establecer sesión con los tokens (no esperar el await, el listener lo maneja)
         supabase.auth.setSession({
