@@ -15,6 +15,8 @@ namespace Infrastructure.Context
         public virtual DbSet<ProductVariant> ProductVariants { get; set; }
         public virtual DbSet<MeasurementUnit> MeasurementUnits { get; set; }
         public virtual DbSet<MeasurementType> MeasurementTypes { get; set; }
+        public virtual DbSet<MeasurementEntity> MeasurementEntities { get; set; }
+        public virtual DbSet<UserMeasurement> UserMeasurements { get; set; }
         public virtual DbSet<SizeSystem> SizeSystems { get; set; }
         public virtual DbSet<Brand> Brands { get; set; }
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
@@ -108,6 +110,34 @@ namespace Infrastructure.Context
                 entity.HasIndex(x => x.Symbol).IsUnique();
             });
 
+            // =============================
+            // MeasurementEntity
+            // =============================
+            builder.Entity<MeasurementEntity>(entity =>
+            {
+                entity.ToTable("MeasurementEntities");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(x => x.Description)
+                    .HasMaxLength(255);
+
+                entity.Property(x => x.CreatedAt)
+                    .HasDefaultValueSql("GETDATE()");
+
+                entity.Property(x => x.UpdatedAt)
+                    .HasDefaultValueSql("GETDATE()");
+
+                entity.HasIndex(x => x.Name).IsUnique();
+            });
+
+            // =============================
+            // MeasurementType
+            // =============================
             builder.Entity<MeasurementType>(entity =>
             {
                 entity.ToTable("MeasurementTypes");
@@ -118,11 +148,19 @@ namespace Infrastructure.Context
                     .IsRequired()
                     .HasMaxLength(150);
 
-                entity.Property(x => x.EntityType)
-                    .IsRequired()
-                    .HasMaxLength(50);
+                entity.Property(x => x.CreatedAt)
+                    .HasDefaultValueSql("GETDATE()");
+
+                entity.Property(x => x.UpdatedAt)
+                    .HasDefaultValueSql("GETDATE()");
+
+                entity.HasOne(x => x.EntityType)
+                    .WithMany(e => e.MeasurementTypes)
+                    .HasForeignKey(x => x.EntityTypeId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasIndex(x => x.Name);
+                entity.HasIndex(x => x.EntityTypeId);
             });
 
             // =============================
@@ -273,6 +311,40 @@ namespace Infrastructure.Context
                 entity.HasIndex(e => e.ProductId);
                 entity.HasIndex(e => new { e.ProductId, e.IsPrimary });
                 entity.HasIndex(e => new { e.ProductId, e.Order });
+            });
+
+            // =============================
+            // UserMeasurement
+            // =============================
+            builder.Entity<UserMeasurement>(entity =>
+            {
+                entity.ToTable("UserMeasurements");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Value)
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired();
+
+                entity.Property(x => x.CreatedAt)
+                    .HasDefaultValueSql("GETDATE()");
+
+                entity.Property(x => x.UpdatedAt)
+                    .HasDefaultValueSql("GETDATE()");
+
+                entity.HasOne(x => x.MeasurementType)
+                    .WithMany()
+                    .HasForeignKey(x => x.MeasurementTypeId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Unit)
+                    .WithMany()
+                    .HasForeignKey(x => x.UnitId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                // Índices para queries rápidas
+                entity.HasIndex(x => x.UserId);
+                entity.HasIndex(x => new { x.UserId, x.MeasurementTypeId });
             });
         }
     }

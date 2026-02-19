@@ -18,6 +18,7 @@ namespace Infrastructure.Persistence.Seed
 
         public async Task SeedAsync()
         {
+            await SeedMeasurementEntities();
             await SeedUnits();
             await SeedMeasurementTypes();
             await SeedSizeSystems();
@@ -27,6 +28,36 @@ namespace Infrastructure.Persistence.Seed
             await SeedBrandSizeMeasurements();
             await SeedProducts();
             await SeedProductVariants();
+        }
+
+        private async Task SeedMeasurementEntities()
+        {
+            var entities = new[]
+            {
+                new { Id = 1, Name = "Rider", Description = "Measurements related to the rider/person" },
+                new { Id = 2, Name = "Horse", Description = "Measurements related to horses" },
+                new { Id = 3, Name = "Product", Description = "Measurements related to equestrian products" }
+            };
+
+            foreach (var entityData in entities)
+            {
+                var existing = await _context.MeasurementEntities
+                    .FirstOrDefaultAsync(e => e.Id == entityData.Id);
+
+                if (existing == null)
+                {
+                    _context.MeasurementEntities.Add(new MeasurementEntity
+                    {
+                        Id = entityData.Id,
+                        Name = entityData.Name,
+                        Description = entityData.Description,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
+                    });
+                }
+            }
+
+            await _context.SaveChangesAsync();
         }
 
         private async Task SeedUnits()
@@ -68,10 +99,12 @@ namespace Infrastructure.Persistence.Seed
         {
             var types = new[]
             {
-                new { Id = 1, Name = "Foot Length", EntityType = "Rider" },
-                new { Id = 2, Name = "Calf Circumference", EntityType = "Rider" },
-                new { Id = 3, Name = "Ankle Circumference", EntityType = "Rider" },
-                new { Id = 4, Name = "Instep Height", EntityType = "Rider" }
+                new { Id = 1, Name = "Foot Length", EntityTypeId = 1 }, // Rider
+                new { Id = 2, Name = "Calf Circumference", EntityTypeId = 1 }, // Rider
+                new { Id = 3, Name = "Ankle Circumference", EntityTypeId = 1 }, // Rider
+                new { Id = 4, Name = "Instep Height", EntityTypeId = 1 }, // Rider
+                new { Id = 5, Name = "Boot Height", EntityTypeId = 3 }, // Product
+                new { Id = 6, Name = "Boot Shaft Circumference", EntityTypeId = 3 } // Product
             };
 
             foreach (var typeData in types)
@@ -85,13 +118,16 @@ namespace Infrastructure.Persistence.Seed
                     {
                         Id = typeData.Id,
                         Name = typeData.Name,
-                        EntityType = typeData.EntityType
+                        EntityTypeId = typeData.EntityTypeId,
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow
                     });
                 }
                 else
                 {
                     existing.Name = typeData.Name;
-                    existing.EntityType = typeData.EntityType;
+                    existing.EntityTypeId = typeData.EntityTypeId;
+                    existing.UpdatedAt = DateTime.UtcNow;
                 }
             }
 
