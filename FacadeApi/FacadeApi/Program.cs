@@ -5,6 +5,7 @@ using Infrastructure.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authorization;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,6 +69,8 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 //if (app.Environment.IsDevelopment())
 //{
     app.MapOpenApi();
+    app.MapScalarApiReference();
+
 //}
 
 app.UseHttpsRedirection();
