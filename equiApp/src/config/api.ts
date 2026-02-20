@@ -4,6 +4,20 @@ import { getToken, clearToken } from '@/src/utils/secure-storage';
 
 /**
  * Instancia principal de Axios configurada con la API_URL
+ * 
+ * FLUJO DE AUTENTICACIÓN:
+ * ========================
+ * 
+ * 1. Usuario inicia sesión o confirma email con Supabase
+ * 2. Se obtiene un token de Supabase (access_token)
+ * 3. Se llama a /api/auth/exchange enviando el token de Supabase por Bearer
+ * 4. La API valida el token de Supabase y devuelve información del usuario
+ *    (En el futuro devolverá un token JWT propio de la API)
+ * 5. El token de la API se guarda en secure-storage
+ * 6. Las peticiones subsecuentes utilizan el token de la API (no el de Supabase)
+ * 
+ * NOTA: El token de Supabase se mantiene en la sesión de Supabase para
+ * operaciones específicas de Supabase (storage, database, etc.)
  */
 export const apiClient = axios.create({
   baseURL: ENV.API_URL,

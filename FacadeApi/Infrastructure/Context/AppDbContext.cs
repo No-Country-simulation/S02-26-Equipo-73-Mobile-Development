@@ -126,12 +126,6 @@ namespace Infrastructure.Context
                 entity.Property(x => x.Description)
                     .HasMaxLength(255);
 
-                entity.Property(x => x.CreatedAt)
-                    .HasDefaultValueSql("GETDATE()");
-
-                entity.Property(x => x.UpdatedAt)
-                    .HasDefaultValueSql("GETDATE()");
-
                 entity.HasIndex(x => x.Name).IsUnique();
             });
 
@@ -147,12 +141,6 @@ namespace Infrastructure.Context
                 entity.Property(x => x.Name)
                     .IsRequired()
                     .HasMaxLength(150);
-
-                entity.Property(x => x.CreatedAt)
-                    .HasDefaultValueSql("GETDATE()");
-
-                entity.Property(x => x.UpdatedAt)
-                    .HasDefaultValueSql("GETDATE()");
 
                 entity.HasOne(x => x.EntityType)
                     .WithMany(e => e.MeasurementTypes)
@@ -325,12 +313,6 @@ namespace Infrastructure.Context
                 entity.Property(x => x.Value)
                     .HasColumnType("decimal(10,2)")
                     .IsRequired();
-
-                entity.Property(x => x.CreatedAt)
-                    .HasDefaultValueSql("GETDATE()");
-
-                entity.Property(x => x.UpdatedAt)
-                    .HasDefaultValueSql("GETDATE()");
 
                 entity.HasOne(x => x.MeasurementType)
                     .WithMany()

@@ -10,7 +10,6 @@ import { useAuth } from '@/src/hooks/useAuth';
 export default function HomeScreen() {
   const { isAuthenticated, user } = useAuth();
   const router = useRouter();
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>

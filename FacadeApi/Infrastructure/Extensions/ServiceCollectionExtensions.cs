@@ -7,10 +7,13 @@ using Infrastructure.Context;
 using Infrastructure.Mapper;
 using Infrastructure.Persistence.Seed;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Infrastructure.Extensions
 {
@@ -26,6 +29,7 @@ namespace Infrastructure.Extensions
             services.SeedDataAsync();
             services.AddAutoMapperExtension();
             services.AddAWSS3(_config);
+            services.AddAuthenticationSupase(_config);
             return services;
         }
         public static IServiceCollection AddDataContext(this IServiceCollection services, IConfiguration _config)
@@ -82,6 +86,35 @@ namespace Infrastructure.Extensions
 
             // Uncomment to enable IStorageService abstraction
             services.AddScoped<IStorageService, StorageService>();
+
+            return services;
+        }
+        public static IServiceCollection AddAuthenticationSupase(this IServiceCollection services, IConfiguration _config)
+        {
+            var projectId = _config["Supabase:ProjectId"];
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
+                {
+                    options.Authority = $"https://{projectId}.supabase.co/auth/v1";
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = false,
+                        ValidateLifetime = true
+                    };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            Console.WriteLine("❌ AUTH FAILED:");
+                            Console.WriteLine(context.Exception.ToString());
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+
 
             return services;
         }
