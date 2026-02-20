@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Application.Interfaces;
 using Application.Interfaces.Repositories;
+using Application.Services.Identity;
 using Application.Services.Products;
 using Infrastructure.AWS.S3;
 using Infrastructure.Context;
@@ -48,12 +49,14 @@ namespace Infrastructure.Extensions
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             return services;
         }
 
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IUserService, UserService>();
             return services;
         }
 

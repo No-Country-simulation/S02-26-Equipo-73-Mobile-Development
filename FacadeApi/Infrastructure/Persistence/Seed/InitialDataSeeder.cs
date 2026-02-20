@@ -18,6 +18,7 @@ namespace Infrastructure.Persistence.Seed
 
         public async Task SeedAsync()
         {
+            await RoleSeeder.SeedAsync(_context);
             await SeedMeasurementEntities();
             await SeedUnits();
             await SeedMeasurementTypes();

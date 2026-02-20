@@ -13,10 +13,12 @@ namespace FacadeApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IJwtTokenService _jwtTokenService;
+        private readonly IUserService _userService;
 
-        public AuthController(IJwtTokenService jwtTokenService)
+        public AuthController(IJwtTokenService jwtTokenService, IUserService userService)
         {
             _jwtTokenService = jwtTokenService;
+            _userService = userService;
         }
         /// <summary>
         /// Valida el token de Supabase y retorna un JWT propio de la API
@@ -57,11 +59,11 @@ namespace FacadeApi.Controllers
         [Authorize(AuthenticationSchemes = "SupabaseJwt")]
         [ProducesResponseType(typeof(ApiResponse<AuthExchangeResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
-        public IActionResult ExchangeToken()
+        public async Task<IActionResult> ExchangeToken()
         {
             // Si llegamos aquí, el token de Supabase es válido
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
-                         User.FindFirst("sub")?.Value;
+            var supabaseUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
+                                 User.FindFirst("sub")?.Value;
 
             var email = User.FindFirst(ClaimTypes.Email)?.Value ?? 
                         User.FindFirst("email")?.Value;
@@ -69,32 +71,45 @@ namespace FacadeApi.Controllers
             var name = User.FindFirst(ClaimTypes.Name)?.Value ?? 
                        User.FindFirst("name")?.Value;
 
-            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? 
-                       User.FindFirst("role")?.Value ?? "user";
+            // Obtener o crear usuario en la base de datos
+            var user = await _userService.GetOrCreateUserFromSupabaseAsync(supabaseUserId, email, name);
+
+            // Obtener roles del usuario
+            var userRoles = await _userService.GetUserRoleNamesAsync(user.Id);
+            var primaryRole = userRoles.FirstOrDefault() ?? "User";
 
             // Crear claims adicionales personalizados
             var additionalClaims = new Dictionary<string, string>
             {
-                { "role", role },
-                { "name", name ?? email ?? "Unknown" },
-                { "provider", "supabase" }
+                { "role", primaryRole },
+                { "roles", string.Join(",", userRoles) },
+                { "name", user.FullName ?? email ?? "Unknown" },
+                { "userId", user.Id.ToString() },
+                { "provider", "supabase" },
+                { "isActive", user.IsActive.ToString() }
             };
 
             // Generar JWT propio de la API
-            var accessToken = _jwtTokenService.GenerateToken(userId, email, additionalClaims);
+            var accessToken = _jwtTokenService.GenerateToken(supabaseUserId, email, additionalClaims);
             var refreshToken = _jwtTokenService.GenerateRefreshToken();
 
             var response = new AuthExchangeResponse
             {
                 IsAuthenticated = true,
-                UserId = userId,
+                UserId = supabaseUserId,
+                InternalUserId = user.Id,
                 Email = email,
-                Name = name,
-                Role = role,
+                Name = user.FullName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Phone = user.Phone,
+                ProfileImageUrl = user.ProfileImageUrl,
+                Role = primaryRole,
+                Roles = userRoles,
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
                 TokenType = "Bearer",
-                ExpiresIn = 86400, // 24 horas en segundos
+                ExpiresIn = 86400,
                 Claims = User.Claims.Select(c => new ClaimInfoDto
                 {
                     Type = c.Type,
