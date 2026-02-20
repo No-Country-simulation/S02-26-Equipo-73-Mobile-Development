@@ -92,8 +92,12 @@ namespace Infrastructure.Extensions
         public static IServiceCollection AddAuthenticationSupase(this IServiceCollection services, IConfiguration _config)
         {
             var projectId = _config["Supabase:ProjectId"];
-            services.AddAuthentication("Bearer")
-                .AddJwtBearer("Bearer", options =>
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = "ApiJwt";
+                opt.DefaultChallengeScheme = "ApiJwt";
+            })
+                .AddJwtBearer("SupabaseJwt", options =>
                 {
                     options.Authority = $"https://{projectId}.supabase.co/auth/v1";
 
@@ -112,6 +116,23 @@ namespace Infrastructure.Extensions
                             Console.WriteLine(context.Exception.ToString());
                             return Task.CompletedTask;
                         }
+                    };
+                })
+                .AddJwtBearer("ApiJwt", options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = "https://tu-api.com",
+
+                        ValidateAudience = true,
+                        ValidAudience = "tu-api-client",
+
+                        ValidateLifetime = true,
+
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes("TU_API_SECRET_KEY"))
                     };
                 });
 

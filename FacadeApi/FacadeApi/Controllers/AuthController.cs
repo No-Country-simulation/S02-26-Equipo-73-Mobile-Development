@@ -30,7 +30,7 @@ namespace FacadeApi.Controllers
         /// <response code="200">Token válido - Usuario autenticado</response>
         /// <response code="401">Token inválido o no proporcionado</response>
         [HttpPost("exchange")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "SupabaseJwt")]
         [ProducesResponseType(typeof(ApiResponse<AuthExchangeResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         public IActionResult ExchangeToken()
