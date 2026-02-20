@@ -1,4 +1,6 @@
 using Application.Common;
+using Application.DTOs.Auth;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -10,40 +12,77 @@ namespace FacadeApi.Controllers
     [Produces("application/json")]
     public class AuthController : ControllerBase
     {
+        private readonly IJwtTokenService _jwtTokenService;
+
+        public AuthController(IJwtTokenService jwtTokenService)
+        {
+            _jwtTokenService = jwtTokenService;
+        }
         /// <summary>
-        /// Valida el token de Supabase y retorna información del usuario autenticado
+        /// Valida el token de Supabase y retorna un JWT propio de la API
         /// </summary>
         /// <remarks>
-        /// Este endpoint valida el JWT de Supabase. Si el token es válido, retorna true y la información del usuario.
+        /// Este endpoint valida el JWT de Supabase y genera un JWT propio de la API.
+        /// 
+        /// **Flujo:**
+        /// 1. Valida el token de Supabase (esquema SupabaseJwt)
+        /// 2. Extrae información del usuario (userId, email, etc.)
+        /// 3. Genera un JWT propio de la API con claims personalizados
+        /// 4. Retorna el JWT de la API
         /// 
         /// **Cómo usar:**
         /// 1. Obtén el access_token de Supabase después del login
-        /// 2. Envía el token en el header: `Authorization: Bearer {tu_token}`
-        /// 3. Si el token es válido, recibirás información del usuario
+        /// 2. Envía el token de Supabase en el header: `Authorization: Bearer {supabase_token}`
+        /// 3. Recibirás un JWT propio de la API
+        /// 4. Usa el JWT de la API para futuras peticiones
         /// 
-        /// **Ejemplo de header:**
+        /// **Ejemplo:**
         /// ```
-        /// Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        /// Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... (token de Supabase)
+        /// ```
+        /// 
+        /// **Respuesta:**
+        /// ```json
+        /// {
+        ///   "accessToken": "tu_jwt_de_la_api...",
+        ///   "refreshToken": "refresh_token...",
+        ///   "expiresIn": 86400
+        /// }
         /// ```
         /// </remarks>
-        /// <returns>Confirmación de autenticación exitosa con datos del usuario</returns>
-        /// <response code="200">Token válido - Usuario autenticado</response>
-        /// <response code="401">Token inválido o no proporcionado</response>
+        /// <returns>JWT propio de la API con refresh token</returns>
+        /// <response code="200">Token intercambiado exitosamente</response>
+        /// <response code="401">Token de Supabase inválido</response>
         [HttpPost("exchange")]
         [Authorize(AuthenticationSchemes = "SupabaseJwt")]
         [ProducesResponseType(typeof(ApiResponse<AuthExchangeResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         public IActionResult ExchangeToken()
         {
-            // Si llegamos aquí, el token es válido (pasó la validación JWT en [Authorize])
+            // Si llegamos aquí, el token de Supabase es válido
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
                          User.FindFirst("sub")?.Value;
-            
+
             var email = User.FindFirst(ClaimTypes.Email)?.Value ?? 
                         User.FindFirst("email")?.Value;
-            
+
             var name = User.FindFirst(ClaimTypes.Name)?.Value ?? 
                        User.FindFirst("name")?.Value;
+
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? 
+                       User.FindFirst("role")?.Value ?? "user";
+
+            // Crear claims adicionales personalizados
+            var additionalClaims = new Dictionary<string, string>
+            {
+                { "role", role },
+                { "name", name ?? email ?? "Unknown" },
+                { "provider", "supabase" }
+            };
+
+            // Generar JWT propio de la API
+            var accessToken = _jwtTokenService.GenerateToken(userId, email, additionalClaims);
+            var refreshToken = _jwtTokenService.GenerateRefreshToken();
 
             var response = new AuthExchangeResponse
             {
@@ -51,7 +90,12 @@ namespace FacadeApi.Controllers
                 UserId = userId,
                 Email = email,
                 Name = name,
-                Claims = User.Claims.Select(c => new ClaimInfo
+                Role = role,
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                TokenType = "Bearer",
+                ExpiresIn = 86400, // 24 horas en segundos
+                Claims = User.Claims.Select(c => new ClaimInfoDto
                 {
                     Type = c.Type,
                     Value = c.Value
@@ -60,35 +104,47 @@ namespace FacadeApi.Controllers
 
             return Ok(ApiResponse<AuthExchangeResponse>.Ok(
                 response, 
-                "Token validated successfully"));
+                "Token exchanged successfully"));
         }
 
         /// <summary>
         /// Obtiene información del usuario autenticado actual
         /// </summary>
+        /// <remarks>
+        /// **Usa el JWT de la API** (no el de Supabase)
+        /// 
+        /// Envía el token en el header:
+        /// ```
+        /// Authorization: Bearer {tu_jwt_de_la_api}
+        /// ```
+        /// </remarks>
         /// <returns>Información del usuario autenticado</returns>
         /// <response code="200">Usuario autenticado encontrado</response>
         /// <response code="401">No autenticado</response>
         [HttpGet("me")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "ApiJwt")]
         [ProducesResponseType(typeof(ApiResponse<UserInfoResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         public IActionResult GetCurrentUser()
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? 
                          User.FindFirst("sub")?.Value;
-            
+
             var email = User.FindFirst(ClaimTypes.Email)?.Value ?? 
                         User.FindFirst("email")?.Value;
-            
+
             var name = User.FindFirst(ClaimTypes.Name)?.Value ?? 
                        User.FindFirst("name")?.Value;
+
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? 
+                       User.FindFirst("role")?.Value;
 
             var response = new UserInfoResponse
             {
                 UserId = userId,
                 Email = email,
                 Name = name,
+                Role = role,
                 IsAuthenticated = true
             };
 
@@ -100,18 +156,24 @@ namespace FacadeApi.Controllers
         /// <summary>
         /// Verifica si el usuario está autenticado (endpoint de health check)
         /// </summary>
+        /// <remarks>
+        /// **Usa el JWT de la API** (no el de Supabase)
+        /// </remarks>
         /// <returns>Estado de autenticación</returns>
         /// <response code="200">Usuario autenticado</response>
         /// <response code="401">No autenticado</response>
         [HttpGet("check")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "ApiJwt")]
         [ProducesResponseType(typeof(ApiResponse<AuthCheckResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         public IActionResult CheckAuth()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             var response = new AuthCheckResponse
             {
                 IsAuthenticated = true,
+                UserId = userId,
                 Message = "User is authenticated"
             };
 
@@ -120,97 +182,4 @@ namespace FacadeApi.Controllers
                 "Authentication verified"));
         }
     }
-
-    #region Response Models
-
-    /// <summary>
-    /// Respuesta del endpoint de exchange de token
-    /// </summary>
-    public class AuthExchangeResponse
-    {
-        /// <summary>
-        /// Indica si el usuario está autenticado
-        /// </summary>
-        public bool IsAuthenticated { get; set; }
-
-        /// <summary>
-        /// ID del usuario de Supabase
-        /// </summary>
-        public string UserId { get; set; }
-
-        /// <summary>
-        /// Email del usuario
-        /// </summary>
-        public string Email { get; set; }
-
-        /// <summary>
-        /// Nombre del usuario
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Claims adicionales del token JWT
-        /// </summary>
-        public List<ClaimInfo> Claims { get; set; }
-    }
-
-    /// <summary>
-    /// Información de un claim del JWT
-    /// </summary>
-    public class ClaimInfo
-    {
-        /// <summary>
-        /// Tipo del claim (ej: "sub", "email", "role")
-        /// </summary>
-        public string Type { get; set; }
-
-        /// <summary>
-        /// Valor del claim
-        /// </summary>
-        public string Value { get; set; }
-    }
-
-    /// <summary>
-    /// Respuesta con información del usuario
-    /// </summary>
-    public class UserInfoResponse
-    {
-        /// <summary>
-        /// ID del usuario
-        /// </summary>
-        public string UserId { get; set; }
-
-        /// <summary>
-        /// Email del usuario
-        /// </summary>
-        public string Email { get; set; }
-
-        /// <summary>
-        /// Nombre del usuario
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Estado de autenticación
-        /// </summary>
-        public bool IsAuthenticated { get; set; }
-    }
-
-    /// <summary>
-    /// Respuesta del check de autenticación
-    /// </summary>
-    public class AuthCheckResponse
-    {
-        /// <summary>
-        /// Indica si el usuario está autenticado
-        /// </summary>
-        public bool IsAuthenticated { get; set; }
-
-        /// <summary>
-        /// Mensaje descriptivo
-        /// </summary>
-        public string Message { get; set; }
-    }
-
-    #endregion
 }

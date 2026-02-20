@@ -4,9 +4,11 @@ using Application.Interfaces.Repositories;
 using Application.Services.Products;
 using Infrastructure.AWS.S3;
 using Infrastructure.Context;
+using Infrastructure.JWT;
 using Infrastructure.Mapper;
 using Infrastructure.Persistence.Seed;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,6 +31,7 @@ namespace Infrastructure.Extensions
             services.SeedDataAsync();
             services.AddAutoMapperExtension();
             services.AddAWSS3(_config);
+            services.AddJwtServices(_config);
             services.AddAuthenticationSupase(_config);
             return services;
         }
@@ -91,7 +94,11 @@ namespace Infrastructure.Extensions
         }
         public static IServiceCollection AddAuthenticationSupase(this IServiceCollection services, IConfiguration _config)
         {
-            var projectId = _config["Supabase:ProjectId"];
+            var supabaseProjectId = _config["Supabase:ProjectId"];
+            var jwtSecret = _config["Jwt:Secret"];
+            var jwtIssuer = _config["Jwt:Issuer"];
+            var jwtAudience = _config["Jwt:Audience"];
+
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = "ApiJwt";
@@ -99,7 +106,7 @@ namespace Infrastructure.Extensions
             })
                 .AddJwtBearer("SupabaseJwt", options =>
                 {
-                    options.Authority = $"https://{projectId}.supabase.co/auth/v1";
+                    options.Authority = $"https://{supabaseProjectId}.supabase.co/auth/v1";
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -112,7 +119,7 @@ namespace Infrastructure.Extensions
                     {
                         OnAuthenticationFailed = context =>
                         {
-                            Console.WriteLine("❌ AUTH FAILED:");
+                            Console.WriteLine("❌ SUPABASE AUTH FAILED:");
                             Console.WriteLine(context.Exception.ToString());
                             return Task.CompletedTask;
                         }
@@ -123,19 +130,40 @@ namespace Infrastructure.Extensions
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
-                        ValidIssuer = "https://tu-api.com",
+                        ValidIssuer = jwtIssuer,
 
                         ValidateAudience = true,
-                        ValidAudience = "tu-api-client",
+                        ValidAudience = jwtAudience,
 
                         ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero,
 
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes("TU_API_SECRET_KEY"))
+                            Encoding.UTF8.GetBytes(jwtSecret))
+                    };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            Console.WriteLine("❌ API JWT AUTH FAILED:");
+                            Console.WriteLine(context.Exception.ToString());
+                            return Task.CompletedTask;
+                        }
                     };
                 });
 
+            return services;
+        }
+
+        public static IServiceCollection AddJwtServices(this IServiceCollection services, IConfiguration _config)
+        {
+            // Configurar JwtSettings
+            services.Configure<JwtSettings>(_config.GetSection("Jwt"));
+
+            // Registrar el servicio de JWT
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
 
             return services;
         }
