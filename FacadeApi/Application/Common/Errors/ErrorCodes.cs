@@ -42,5 +42,18 @@ namespace Application.Common.Errors
         // External Service Errors (4000-4099)
         public const string EXTERNAL_SERVICE_ERROR = "ERR_4000";
         public const string EXTERNAL_API_UNAVAILABLE = "ERR_4001";
+
+        // User Errors (5000-5099)
+        public const string USER_NOT_FOUND = "ERR_5000";
+        public const string USER_ALREADY_EXISTS = "ERR_5001";
+        public const string USER_INVALID_EMAIL = "ERR_5002";
+        public const string USER_INACTIVE = "ERR_5003";
+        public const string USER_DELETED = "ERR_5004";
+        public const string DUPLICATE_RECORD = "ERR_5005";
+
+        // Role Errors (5100-5199)
+        public const string ROLE_NOT_FOUND = "ERR_5100";
+        public const string ROLE_ALREADY_EXISTS = "ERR_5101";
+        public const string INVALID_ROLE_ASSIGNMENT = "ERR_5102";
     }
 }

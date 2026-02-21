@@ -1,16 +1,22 @@
 ﻿using Amazon.S3;
 using Application.Interfaces;
 using Application.Interfaces.Repositories;
+using Application.Services.Identity;
 using Application.Services.Products;
 using Infrastructure.AWS.S3;
 using Infrastructure.Context;
+using Infrastructure.JWT;
 using Infrastructure.Mapper;
 using Infrastructure.Persistence.Seed;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Infrastructure.Extensions
 {
@@ -26,6 +32,8 @@ namespace Infrastructure.Extensions
             services.SeedDataAsync();
             services.AddAutoMapperExtension();
             services.AddAWSS3(_config);
+            services.AddJwtServices(_config);
+            services.AddAuthenticationSupase(_config);
             return services;
         }
         public static IServiceCollection AddDataContext(this IServiceCollection services, IConfiguration _config)
@@ -41,12 +49,14 @@ namespace Infrastructure.Extensions
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             return services;
         }
 
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IUserService, UserService>();
             return services;
         }
 
@@ -82,6 +92,81 @@ namespace Infrastructure.Extensions
 
             // Uncomment to enable IStorageService abstraction
             services.AddScoped<IStorageService, StorageService>();
+
+            return services;
+        }
+        public static IServiceCollection AddAuthenticationSupase(this IServiceCollection services, IConfiguration _config)
+        {
+            var supabaseProjectId = _config["Supabase:ProjectId"];
+            var jwtSecret = _config["Jwt:Secret"];
+            var jwtIssuer = _config["Jwt:Issuer"];
+            var jwtAudience = _config["Jwt:Audience"];
+
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = "ApiJwt";
+                opt.DefaultChallengeScheme = "ApiJwt";
+            })
+                .AddJwtBearer("SupabaseJwt", options =>
+                {
+                    options.Authority = $"https://{supabaseProjectId}.supabase.co/auth/v1";
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = false,
+                        ValidateLifetime = true
+                    };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            Console.WriteLine("❌ SUPABASE AUTH FAILED:");
+                            Console.WriteLine(context.Exception.ToString());
+                            return Task.CompletedTask;
+                        }
+                    };
+                })
+                .AddJwtBearer("ApiJwt", options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = jwtIssuer,
+
+                        ValidateAudience = true,
+                        ValidAudience = jwtAudience,
+
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero,
+
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtSecret))
+                    };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            Console.WriteLine("❌ API JWT AUTH FAILED:");
+                            Console.WriteLine(context.Exception.ToString());
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
+
+            return services;
+        }
+
+        public static IServiceCollection AddJwtServices(this IServiceCollection services, IConfiguration _config)
+        {
+            // Configurar JwtSettings
+            services.Configure<JwtSettings>(_config.GetSection("Jwt"));
+
+            // Registrar el servicio de JWT
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
 
             return services;
         }

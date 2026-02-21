@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import * as Linking from 'expo-linking';
 import { supabase } from '@/src/lib/supabase';
 import { useAuthStore } from '@/src/stores/auth.store';
+import { exchangeToken } from '@/src/services/auth.service';
 
 /**
  * Callback para deep linking de Supabase
@@ -86,6 +87,16 @@ export default function AuthCallback() {
         
         console.log('→ Verificando estado de autenticación...');
         await checkAuth();
+
+        // Exchange token con la API
+        try {
+          console.log('→ Intercambiando token con la API...');
+          await exchangeToken(access_token);
+          console.log('✅ Token intercambiado exitosamente');
+        } catch (exchangeError: any) {
+          console.warn('⚠️ Error en exchange de token:', exchangeError.message);
+          // No bloquear el flujo si el exchange falla
+        }
 
         console.log('✓ Sesión establecida correctamente');
         

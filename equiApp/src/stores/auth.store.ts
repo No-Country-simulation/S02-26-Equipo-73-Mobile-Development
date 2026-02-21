@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import type { AuthUser, LoginCredentials, RegisterData } from '@/src/types/auth.types';
 import { supabase } from '@/src/lib/supabase';
 import type { Session, AuthChangeEvent } from '@supabase/supabase-js';
+import { exchangeToken } from '@/src/services/auth.service';
+import { clearToken } from '@/src/utils/secure-storage';
 
 interface AuthState {
   // Estado
@@ -129,6 +131,15 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
           error: null,
         });
 
+        // Exchange token con la API
+        try {
+          await exchangeToken(data.session.access_token);
+          console.log('✅ Token intercambiado exitosamente');
+        } catch (exchangeError: any) {
+          console.warn('⚠️ Error en exchange de token:', exchangeError.message);
+          // No bloquear el login si el exchange falla
+        }
+
         // Cargar perfil
         await get().fetchProfile(data.user.id);
       }
@@ -179,6 +190,15 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
           error: null,
         });
 
+        // Exchange token con la API
+        try {
+          await exchangeToken(authData.session.access_token);
+          console.log('✅ Token intercambiado exitosamente (register)');
+        } catch (exchangeError: any) {
+          console.warn('⚠️ Error en exchange de token:', exchangeError.message);
+          // No bloquear el registro si el exchange falla
+        }
+
         // Cargar perfil
         await get().fetchProfile(authData.user.id);
       }
@@ -201,6 +221,9 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     try {
       await supabase.auth.signOut();
 
+      // Limpiar tokens de la API
+      await clearToken();
+
       set({
         session: null,
         user: null,
@@ -212,6 +235,12 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     } catch (error: any) {
       console.error('Error en logout:', error);
       // Limpiar estado de todas formas
+      try {
+        await clearToken();
+      } catch (clearError) {
+        console.error('Error limpiando tokens:', clearError);
+      }
+      
       set({
         session: null,
         user: null,
@@ -249,6 +278,15 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
           isLoading: false,
           isInitialized: true,
         });
+
+        // Exchange token con la API
+        try {
+          await exchangeToken(session.access_token);
+          console.log('✅ Token intercambiado exitosamente (checkAuth)');
+        } catch (exchangeError: any) {
+          console.warn('⚠️ Error en exchange de token:', exchangeError.message);
+          // No bloquear la verificación si el exchange falla
+        }
 
         // Cargar perfil
         await get().fetchProfile(session.user.id);

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ProtectedRoute } from '@/src/components/auth';
 import { useAuth } from '@/src/hooks/useAuth';
@@ -31,7 +32,8 @@ function ProfileContent() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
@@ -65,6 +67,7 @@ function ProfileContent() {
         <Text style={styles.logoutText}>Cerrar Sesión</Text>
       </TouchableOpacity>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -77,6 +80,10 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

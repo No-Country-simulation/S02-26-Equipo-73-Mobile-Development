@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Application.DTOs.Identity;
 using Application.DTOs.Products;
+using Domain.Entities.Identity;
 using Domain.Entities.Products;
 
 namespace Infrastructure.Mapper
@@ -41,6 +43,23 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.Url, opt => opt.MapFrom(src => src.Value))
                 .ForMember(dest => dest.Product, opt => opt.Ignore())
                 .ForMember(dest => dest.ProductId, opt => opt.Ignore());
+
+            // ApplicationUser mappings
+            CreateMap<ApplicationUser, UserDto>()
+                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => 
+                    src.UserRoles.Select(ur => ur.Role).ToList()));
+
+            CreateMap<CreateUserDto, ApplicationUser>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.ProfileImageUrl, opt => opt.MapFrom(src => src.ProfileImage))
+                .ForMember(dest => dest.IsActive, opt => opt.MapFrom(src => true))
+                .ForMember(dest => dest.IsDeleted, opt => opt.MapFrom(src => false))
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UserRoles, opt => opt.Ignore());
+
+            // Role mappings
+            CreateMap<Role, RoleDto>();
         }
     }
 }
