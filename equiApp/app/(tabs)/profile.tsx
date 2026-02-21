@@ -35,6 +35,17 @@ function ProfileContent() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ThemedView style={styles.container}>
+        {/* Botón de Configuración */}
+        <View style={styles.headerBar}>
+          <ThemedText type="title" style={styles.headerTitle}>Perfil</ThemedText>
+          <TouchableOpacity 
+            style={styles.settingsButton}
+            onPress={() => router.push('/settings/' as any)}
+          >
+            <ThemedText style={styles.settingsIcon}>⚙️</ThemedText>
+          </TouchableOpacity>
+        </View>
+
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
           <View style={styles.header}>
             <View style={styles.avatar}>
@@ -81,6 +92,24 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+  },
+  headerBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  headerTitle: {
+    fontSize: 20,
+  },
+  settingsButton: {
+    padding: 8,
+  },
+  settingsIcon: {
+    fontSize: 24,
   },
   content: {
     padding: 20,

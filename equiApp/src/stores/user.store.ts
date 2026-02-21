@@ -1,18 +1,18 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import type { UserProfile, UpdateProfileData, UserPreferences } from '@/src/types/user.types';
+import type { UserProfileData, UserPreferences } from '@/src/types/user.types';
 
 interface UserState {
   // Estado
-  profile: UserProfile | null;
+  profile: UserProfileData | null;
   preferences: UserPreferences;
   isLoading: boolean;
   error: string | null;
 
   // Acciones
-  setProfile: (profile: UserProfile) => void;
-  updateProfile: (data: Partial<UserProfile>) => void;
+  setProfile: (profile: UserProfileData) => void;
+  updateProfile: (data: Partial<UserProfileData>) => void;
   updatePreferences: (preferences: Partial<UserPreferences>) => void;
   clearProfile: () => void;
   setLoading: (loading: boolean) => void;
@@ -38,14 +38,14 @@ export const useUserStore = create<UserState>()(
       /**
        * Establecer perfil completo
        */
-      setProfile: (profile: UserProfile) => {
+      setProfile: (profile: UserProfileData) => {
         set({ profile, error: null });
       },
 
       /**
        * Actualizar perfil parcialmente
        */
-      updateProfile: (data: Partial<UserProfile>) => {
+      updateProfile: (data: Partial<UserProfileData>) => {
         const currentProfile = get().profile;
         if (currentProfile) {
           set({

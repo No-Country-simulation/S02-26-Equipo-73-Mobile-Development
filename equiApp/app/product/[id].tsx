@@ -54,7 +54,7 @@ export default function ProductDetailScreen() {
   const primaryImage = product.media?.find((m) => m.isPrimary)?.url || product.media?.[0]?.url;
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ThemedView style={styles.scrollContainer}>
         <ScrollView style={styles.container}>
           {/* Header con botón de volver */}
