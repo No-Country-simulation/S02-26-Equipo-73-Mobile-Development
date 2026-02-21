@@ -11,6 +11,7 @@ import {
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { supabase } from '@/src/lib/supabase';
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '@/src/schemas/auth.schema';
 
 export default function ForgotPasswordScreen() {
@@ -31,8 +32,12 @@ export default function ForgotPasswordScreen() {
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
       setIsLoading(true);
-      // Aquí llamarías a tu API para recuperar contraseña
-      // await apiClient.post('/auth/forgot-password', data);
+      
+      const { error } = await supabase.auth.resetPasswordForEmail(data.email, {
+        redirectTo: 'equiapp://auth/callback',
+      });
+
+      if (error) throw error;
       
       Alert.alert(
         'Éxito',
@@ -45,7 +50,8 @@ export default function ForgotPasswordScreen() {
         ]
       );
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || 'Error al enviar el email');
+      const errorMessage = error.message || 'Error al enviar el email';
+      Alert.alert('Error', errorMessage);
     } finally {
       setIsLoading(false);
     }

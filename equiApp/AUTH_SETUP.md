@@ -1,27 +1,29 @@
-# EquiApp - Configuración de Autenticación
+# EquiApp - Configuración de Autenticación con Supabase
 
-Sistema completo de autenticación y manejo de estado para React Native con Expo.
+Sistema completo de autenticación con **Supabase** y manejo de estado para React Native con Expo.
 
 ## 📦 Librerías Instaladas
 
-- **axios** - Cliente HTTP
+- **@supabase/supabase-js** - Cliente de Supabase
+- **expo-secure-store** - Almacenamiento seguro de sesiones
 - **@tanstack/react-query** - Gestión de estado del servidor
 - **zod** - Validación de schemas
 - **react-hook-form** - Manejo de formularios
 - **zustand** - Gestión de estado global
 - **@react-native-async-storage/async-storage** - Almacenamiento persistente
-- **expo-secure-store** - Almacenamiento seguro de tokens
 
 ## 🏗️ Estructura del Proyecto
 
 ```
 src/
+├── lib/
+│   └── supabase.ts         # Cliente de Supabase configurado
 ├── config/
 │   ├── env.ts              # Variables de entorno
-│   ├── api.ts              # Cliente Axios configurado
+│   ├── api.ts              # Cliente Axios (opcional para backend custom)
 │   └── query-client.ts     # Configuración de React Query
 ├── stores/
-│   ├── auth.store.ts       # Store de autenticación (Zustand)
+│   ├── auth.store.ts       # Store de autenticación (Zustand + Supabase)
 │   └── user.store.ts       # Store de usuario (Zustand)
 ├── hooks/
 │   ├── useAuth.ts          # Hook de autenticación
@@ -37,8 +39,6 @@ src/
 ├── types/
 │   ├── auth.types.ts       # Tipos de autenticación
 │   └── user.types.ts       # Tipos de usuario
-├── utils/
-│   └── secure-storage.ts   # Utilidades de almacenamiento
 ├── services/
 │   └── products.service.ts # Ejemplo de servicio con React Query
 └── index.ts                # Exportaciones centrales
@@ -46,35 +46,33 @@ src/
 
 ## 🚀 Configuración Inicial
 
-### 1. Variables de Entorno
+### 1. Crear Proyecto en Supabase
 
-Actualiza tu archivo `.env`:
+1. Ve a [Supabase](https://app.supabase.com)
+2. Crea un nuevo proyecto
+3. Ve a **Settings** > **API**
+4. Copia la **Project URL** y **anon/public key**
+
+### 2. Variables de Entorno
+
+Crea un archivo `.env` en la raíz del proyecto con:
 
 ```env
+# Supabase Configuration (REQUERIDO)
+EXPO_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key-aqui
+
+# API Configuration (opcional para backend custom)
 EXPO_PUBLIC_API_URL=https://tu-api.com/api
 ```
 
-### 2. Configuración de TypeScript
+### 3. Configuración de TypeScript
 
 El alias `@/*` ya está configurado en `tsconfig.json` para apuntar a la raíz del proyecto.
 
-### 3. App.json (si usas expo-constants)
-
-Agrega en `app.json`:
-
-```json
-{
-  "expo": {
-    "extra": {
-      "API_URL": process.env.EXPO_PUBLIC_API_URL
-    }
-  }
-}
-```
-
 ## 📱 Uso
 
-### Autenticación
+### Autenticación con Supabase
 
 #### Login
 ```tsx
@@ -84,7 +82,16 @@ function LoginScreen() {
   const { login, isLoading, error } = useAuth();
 
   const handleLogin = async () => {
-    await login({ email: 'user@example.com', password: '123456' });
+    try {
+      await login({ 
+        email: 'user@example.com', 
+        password: '123456' 
+      });
+      // Redirigir al usuario
+      router.replace('/(tabs)');
+    } catch (error: any) {
+      Alert.alert('Error', error.message);
+    }
   };
 }
 ```
@@ -93,12 +100,34 @@ function LoginScreen() {
 ```tsx
 const { register } = useAuth();
 
-await register({
-  email: 'user@example.com',
-  password: '123456',
-  confirmPassword: '123456',
-  name: 'Usuario'
-});
+try {
+  await register({
+    email: 'user@example.com',
+    password: '123456',
+    confirmPassword: '123456',
+    name: 'Usuario'
+  });
+  Alert.alert('Éxito', 'Revisa tu email para confirmar tu cuenta');
+} catch (error: any) {
+  Alert.alert('Error', error.message);
+}
+```
+
+#### Recuperar Contraseña
+```tsx
+import { supabase } from '@/src/lib/supabase';
+
+const handleForgotPassword = async (email: string) => {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'equiapp://reset-password',
+  });
+  
+  if (error) {
+    Alert.alert('Error', error.message);
+  } else {
+    Alert.alert('Éxito', 'Revisa tu email para restablecer tu contraseña');
+  }
+};
 ```
 
 #### Logout
@@ -284,55 +313,161 @@ await saveUserData({ id: '1', email: 'user@example.com' });
 const userData = await getUserData();
 ```
 
-## 🔑 Estructura de Respuestas API
+### Acceso al Usuario y Sesión
 
-Tu API debe seguir este formato:
+```tsx
+import { useAuth } from '@/src/hooks/useAuth';
+
+function ProfileScreen() {
+  const { user, session, isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) return <Loading />;
+  
+  if (!isAuthenticated) {
+    return <Redirect href="/auth/login" />;
+  }
+
+  return (
+    <View>
+      <Text>Email: {user?.email}</Text>
+      <Text>Nombre: {user?.name}</Text>
+      <Text>ID: {session?.user.id}</Text>
+    </View>
+  );
+}
+```
+
+### Acceso Directo a Supabase
+
+```tsx
+import { supabase } from '@/src/lib/supabase';
+
+// Obtener sesión actual
+const { data: { session } } = await supabase.auth.getSession();
+
+// Actualizar perfil de usuario
+const { error } = await supabase.auth.updateUser({
+  data: { name: 'Nuevo Nombre' }
+});
+
+// Verificar email
+const { error } = await supabase.auth.verifyOtp({
+  email: 'user@example.com',
+  token: '123456',
+  type: 'email'
+});
+```
+
+## 🗄️ Base de Datos Supabase
+
+### Crear tabla de perfiles (opcional)
+
+```sql
+-- Tabla de perfiles de usuario
+create table profiles (
+  id uuid references auth.users on delete cascade not null primary key,
+  email text,
+  name text,
+  avatar_url text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Habilitar Row Level Security
+alter table profiles enable row level security;
+
+-- Política: Los usuarios solo pueden ver su propio perfil
+create policy "Users can view own profile"
+  on profiles for select
+  using ( auth.uid() = id );
+
+-- Política: Los usuarios pueden actualizar su propio perfil
+create policy "Users can update own profile"
+  on profiles for update
+  using ( auth.uid() = id );
+
+-- Función para crear perfil automáticamente al registrarse
+create function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, email, name)
+  values (new.id, new.email, new.raw_user_meta_data->>'name');
+  return new;
+end;
+$$ language plpgsql security definer;
+
+-- Trigger para crear perfil al registrarse
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
+```
+
+## 🔑 Estructura de Datos Supabase
+
+### Usuario (Session)
+```typescript
+{
+  user: {
+    id: "uuid-here",
+    email: "user@example.com",
+    user_metadata: {
+      name: "Usuario",
+      avatar_url: "https://..."
+    },
+    created_at: "2024-01-01T00:00:00Z"
+  },
+  access_token: "jwt-token",
+  refresh_token: "refresh-token"
+}
+```
+
+### Errores de Supabase
+```typescript
+{
+  message: "Invalid login credentials",
+  status: 400,
+  name: "AuthApiError"
+}
+```
+
+## 📍 Métodos de Supabase Disponibles
 
 ```typescript
-// Éxito
-{
-  "success": true,
-  "data": {
-    "user": {
-      "id": "123",
-      "email": "user@example.com",
-      "name": "Usuario"
-    },
-    "accessToken": "jwt-token-here",
-    "refreshToken": "refresh-token-here" // opcional
-  },
-  "message": "Login exitoso"
-}
+// Autenticación
+supabase.auth.signUp({ email, password, options })
+supabase.auth.signInWithPassword({ email, password })
+supabase.auth.signOut()
+supabase.auth.resetPasswordForEmail(email)
+supabase.auth.updateUser({ data })
+supabase.auth.getSession()
+supabase.auth.onAuthStateChange(callback)
 
-// Error
-{
-  "success": false,
-  "message": "Credenciales inválidas",
-  "errors": {
-    "email": ["Email inválido"]
-  }
-}
-```
-
-## 📍 Endpoints Esperados
-
-```
-POST   /auth/login         - Iniciar sesión
-POST   /auth/register      - Registrar usuario
-POST   /auth/logout        - Cerrar sesión
-GET    /auth/me            - Obtener usuario actual
-POST   /auth/forgot-password - Recuperar contraseña
-PUT    /user/profile       - Actualizar perfil
-GET    /products           - Listar productos (público)
-GET    /products/:id       - Ver producto (público)
+// Base de datos (ejemplo con perfiles)
+supabase.from('profiles').select('*')
+supabase.from('profiles').insert({ ... })
+supabase.from('profiles').update({ ... }).eq('id', userId)
+supabase.from('profiles').delete().eq('id', userId)
 ```
 
 ## 🛡️ Seguridad
 
-- Los tokens se almacenan en **Expo Secure Store** (iOS/Android) o **AsyncStorage** (web)
-- El interceptor de Axios agrega automáticamente el token a todas las peticiones
-- Si el token expira (401), se limpia automáticamente
+- **Supabase** maneja automáticamente la seguridad de las sesiones
+- Los tokens se almacenan en **Expo Secure Store** (iOS/Android)
+- La sesión se renueva automáticamente (autoRefreshToken: true)
+- Las sesiones persisten entre reinicios de la app (persistSession: true)
+- Row Level Security (RLS) protege los datos en Supabase
 - Las contraseñas se validan con Zod antes de enviarlas
+- Supabase envía emails de confirmación automáticamente (configurable)
+
+## 🔐 Configuración de Supabase Auth
+
+En tu proyecto de Supabase, ve a **Authentication** > **Settings**:
+
+- **Enable Email Confirmations**: Activar para que los usuarios confirmen su email
+- **Enable Email Change Confirmations**: Confirmar cuando cambien el email
+- **Secure Password**: Mínimo 6 caracteres por defecto
+- **Site URL**: Para redirecciones (ej: `equiapp://`)
+- **Redirect URLs**: Agregar URLs permitidas para deep linking
 
 ## 🎨 Personalización
 
@@ -423,6 +558,8 @@ await secureStore.clear();
 
 ## 📚 Recursos
 
+- [Supabase Docs](https://supabase.com/docs)
+- [Supabase Auth](https://supabase.com/docs/guides/auth)
 - [React Query Docs](https://tanstack.com/query/latest)
 - [Zustand Docs](https://github.com/pmndrs/zustand)
 - [Zod Docs](https://zod.dev/)
@@ -431,21 +568,55 @@ await secureStore.clear();
 
 ## ✅ Checklist de Implementación
 
-- [x] Configuración de Axios con interceptores
-- [x] Stores de Zustand para auth y usuario
-- [x] Almacenamiento seguro de tokens
+- [x] Configuración de Supabase con expo-secure-store
+- [x] Store de Zustand consolidado con sesión y perfil
+- [x] Listener de auth state changes en Zustand
 - [x] Validaciones con Zod
 - [x] React Query configurado
-- [x] Hooks personalizados (useAuth, useUser)
+- [x] Hook useAuth simplificado (solo Zustand)
 - [x] Protección de rutas
-- [x] Pantallas de autenticación (login, registro)
+- [x] Pantallas de autenticación (login, registro, recuperar contraseña)
 - [x] Ejemplo de rutas públicas y protegidas
 - [x] Ejemplo de servicio con React Query
+- [x] ✨ **Sin React Context** - Todo en Zustand para mejor rendimiento
 
 ## 🚀 Próximos Pasos
 
-1. Actualiza la `API_URL` en tu `.env`
-2. Ajusta los tipos según las respuestas de tu API
-3. Personaliza los estilos según tu diseño
-4. Agrega más validaciones según tus necesidades
-5. Implementa refresh token si tu API lo soporta
+1. **Configurar Supabase**:
+   - Crea un proyecto en [Supabase](https://app.supabase.com)
+   - Copia las credenciales a tu `.env`
+   - Configura las políticas de autenticación
+
+2. **Crear tablas en Supabase** (opcional):
+   - Tabla de perfiles
+   - Tabla de productos
+   - Configurar Row Level Security
+
+3. **Personalizar la app**:
+   - Ajusta los estilos según tu diseño
+   - Agrega más validaciones según tus necesidades
+   - Configura deep linking para reset password
+
+4. **Testing**:
+   - Probar registro de usuarios
+   - Probar login y logout
+   - Verificar que la sesión persista
+   - Probar recuperación de contraseña
+
+## 🔄 Migración desde API REST
+
+Si tenías una API REST antes, los cambios principales son:
+
+1. ~~`apiClient.post('/auth/login')`~~ → `supabase.auth.signInWithPassword()`
+2. ~~`apiClient.post('/auth/register')`~~ → `supabase.auth.signUp()`
+3. ~~`apiClient.post('/auth/logout')`~~ → `supabase.auth.signOut()`
+4. ~~`setToken()` y `getToken()`~~ → Manejado automáticamente por Supabase
+5. ~~Interceptores de Axios~~ → No necesarios, Supabase maneja los tokens
+
+## 💡 Tips
+
+- **Email Confirmations**: Por defecto, Supabase requiere confirmar email. Puedes desactivarlo en Settings.
+- **Desarrollo Local**: Considera usar [Supabase CLI](https://supabase.com/docs/guides/cli) para desarrollo local.
+- **Deep Linking**: Configura el deep linking para manejar reset password y confirmación de email.
+- **RLS Policies**: Usa Row Level Security para proteger tus datos automáticamente.
+- **Realtime**: Supabase incluye subscripciones en tiempo real si las necesitas.

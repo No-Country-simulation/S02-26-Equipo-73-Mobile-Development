@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,12 +38,14 @@ function LoginScreenContent() {
       await login(data);
       router.replace('/(tabs)');
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || 'Error al iniciar sesión');
+      const errorMessage = error.message || 'Error al iniciar sesión';
+      Alert.alert('Error', errorMessage);
     }
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Iniciar Sesión</Text>
         <Text style={styles.subtitle}>Bienvenido de nuevo</Text>
@@ -129,10 +132,15 @@ function LoginScreenContent() {
         </View>
       </View>
     </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

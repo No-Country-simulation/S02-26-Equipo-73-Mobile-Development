@@ -1,7 +1,7 @@
 {
   "name": "equiapp",
   "main": "expo-router/entry",
-  "version": "1.1.0",
+  "version": "1.0.1",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -12,8 +12,12 @@
     "version:patch": "node ./scripts/bump-version.js patch",
     "version:minor": "node ./scripts/bump-version.js minor",
     "version:major": "node ./scripts/bump-version.js major",
-    "prebuild": "node ./scripts/bump-version.js minor",
-    "build": "npx expo prebuild && npx expo run:android --variant release"
+    "prebuild": "npx expo prebuild",
+    "build:debug": "npx expo prebuild && npx expo run:android",
+    "build": "npx expo prebuild && npx expo run:android --variant release",
+    "build:patch": "node ./scripts/bump-version.js patch && npx expo prebuild && npx expo run:android --variant release",
+    "build:minor": "node ./scripts/bump-version.js minor && npx expo prebuild && npx expo run:android --variant release",
+    "build:major": "node ./scripts/bump-version.js major && npx expo prebuild && npx expo run:android --variant release"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -22,6 +26,7 @@
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
+    "@supabase/supabase-js": "^2.95.3",
     "@tanstack/react-query": "^5.90.21",
     "axios": "^1.13.5",
     "date-fns": "^4.1.0",

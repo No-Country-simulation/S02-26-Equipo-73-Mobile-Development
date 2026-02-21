@@ -9,6 +9,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -38,14 +39,20 @@ function RegisterScreenContent() {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       await registerUser(data);
-      router.replace('/(tabs)');
+      Alert.alert(
+        'Registro Exitoso', 
+        'Revisa tu email para confirmar tu cuenta',
+        [{ text: 'OK', onPress: () => router.replace('/auth/login') }]
+      );
     } catch (error: any) {
-      Alert.alert('Error', error.response?.data?.message || 'Error al registrarse');
+      const errorMessage = error.message || 'Error al registrarse';
+      Alert.alert('Error', errorMessage);
     }
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <View style={styles.content}>
         <Text style={styles.title}>Crear Cuenta</Text>
         <Text style={styles.subtitle}>Únete a nosotros</Text>
@@ -171,10 +178,15 @@ function RegisterScreenContent() {
         </View>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

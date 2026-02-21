@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useProduct } from '@/src/services/products.service';
 
@@ -27,28 +28,33 @@ export default function ProductDetailScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.loadingContainer}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#007AFF" />
         <Text style={styles.loadingText}>Cargando producto...</Text>
       </View>
+      </SafeAreaView>
     );
   }
 
   if (error || !product) {
     return (
-      <View style={styles.errorContainer}>
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.errorContainer}>
         <Text style={styles.errorText}>❌ Error al cargar el producto</Text>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Text style={styles.backButtonText}>← Volver</Text>
         </TouchableOpacity>
       </View>
+      </SafeAreaView>
     );
   }
 
   const primaryImage = product.media?.find((m) => m.isPrimary)?.url || product.media?.[0]?.url;
 
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <ScrollView style={styles.container}>
       {/* Header con botón de volver */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -135,10 +141,15 @@ export default function ProductDetailScreen() {
         </View>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
