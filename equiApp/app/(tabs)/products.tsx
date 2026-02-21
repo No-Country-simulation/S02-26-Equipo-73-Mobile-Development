@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useProducts, type SortBy, type Product } from '@/src/services/products.service';
+import { ThemedText, ThemedView } from '@/src';
 
 /**
  * Pantalla de productos (pública)
@@ -98,16 +99,16 @@ export default function ProductsScreen() {
           <Image source={{ uri: primaryImage }} style={styles.productImage} />
         ) : (
           <View style={[styles.productImage, styles.noImage]}>
-            <Text style={styles.noImageText}>Sin imagen</Text>
+            <ThemedText style={styles.noImageText}>Sin imagen</ThemedText>
           </View>
         )}
         <View style={styles.productInfo}>
-          <Text style={styles.productName} numberOfLines={2}>
+          <ThemedText style={styles.productName} numberOfLines={2}>
             {item.name}
-          </Text>
-          <Text style={styles.productBrand}>{item.brandName}</Text>
-          <Text style={styles.productCategory}>{item.categoryName}</Text>
-          <Text style={styles.productPrice}>${item.price.toFixed(2)}</Text>
+          </ThemedText>
+          <ThemedText style={styles.productBrand}>{item.brandName}</ThemedText>
+          <ThemedText style={styles.productCategory}>{item.categoryName}</ThemedText>
+          <ThemedText style={styles.productPrice}>${item.price.toFixed(2)}</ThemedText>
         </View>
       </TouchableOpacity>
     );
@@ -116,7 +117,7 @@ export default function ProductsScreen() {
   // Footer de loading al cargar más
   const renderFooter = () => {
     if (!isLoading || pageNumber === 1) return null;
-    
+
     return (
       <View style={styles.footerLoader}>
         <ActivityIndicator size="small" color="#007AFF" />
@@ -144,94 +145,94 @@ export default function ProductsScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Catálogo de Productos</Text>
-        {!isAuthenticated && (
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={() => router.push('/auth/login')}
-          >
-            <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
-          </TouchableOpacity>
-        )}
-        {isAuthenticated && (
-          <Text style={styles.welcomeText}>Hola, {user?.name || user?.email}! 👋</Text>
-        )}
-      </View>
-
-      {/* Filtros de ordenamiento */}
-      <View style={styles.filtersContainer}>
-        <Text style={styles.filtersLabel}>Ordenar por:</Text>
-        <View style={styles.sortButtons}>
-          {(['Id', 'Name', 'Price'] as SortBy[]).map((sort) => (
+      <ThemedView style={styles.container}>
+        {/* Header */}
+        <View style={styles.header}>
+          <ThemedText type='title'>Catálogo de Productos</ThemedText>
+          {!isAuthenticated && (
             <TouchableOpacity
-              key={sort}
-              style={[styles.sortButton, sortBy === sort && styles.sortButtonActive]}
-              onPress={() => handleSortChange(sort)}
+              style={styles.loginButton}
+              onPress={() => router.push('/auth/login')}
             >
-              <Text
-                style={[styles.sortButtonText, sortBy === sort && styles.sortButtonTextActive]}
-              >
-                {sort === 'Id' ? 'Recientes' : sort === 'Name' ? 'Nombre' : 'Precio'}
-              </Text>
+              <Text style={styles.loginButtonText}>Iniciar Sesión</Text>
             </TouchableOpacity>
-          ))}
-          <TouchableOpacity
-            style={[styles.sortButton, styles.orderButton]}
-            onPress={handleSortDirectionChange}
-          >
-            <Text style={styles.orderButtonText}>
-              {sortDescending ? '↓ Desc' : '↑ Asc'}
-            </Text>
-          </TouchableOpacity>
+          )}
+          {isAuthenticated && (
+            <ThemedText type='subtitle'>Hola, {user?.name || user?.email}! 👋</ThemedText>
+          )}
         </View>
-      </View>
 
-      {/* Lista de productos */}
-      {isLoading && pageNumber === 1 ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>Cargando productos...</Text>
-        </View>
-      ) : error ? (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>❌ Error al cargar productos</Text>
-          <TouchableOpacity style={styles.retryButton} onPress={() => refetch()}>
-            <Text style={styles.retryButtonText}>Reintentar</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <FlatList
-          data={allProducts}
-          renderItem={renderProduct}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
-          numColumns={2}
-          contentContainerStyle={styles.productsList}
-          columnWrapperStyle={styles.productRow}
-          refreshControl={
-            <RefreshControl 
-              refreshing={isLoading && pageNumber === 1} 
-              onRefresh={handleRefresh} 
-            />
-          }
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={renderFooter}
-          ListEmptyComponent={renderEmpty}
-        />
-      )}
+        {/* Filtros de ordenamiento */}
+        <ThemedView style={styles.filtersContainer}>
+          <ThemedText style={styles.filtersLabel}>Ordenar por:</ThemedText>
+          <View style={styles.sortButtons}>
+            {(['Id', 'Name', 'Price'] as SortBy[]).map((sort) => (
+              <TouchableOpacity
+                key={sort}
+                style={[styles.sortButton, sortBy === sort && styles.sortButtonActive]}
+                onPress={() => handleSortChange(sort)}
+              >
+                <ThemedText
+                  style={[styles.sortButtonText, sortBy === sort && styles.sortButtonTextActive]}
+                >
+                  {sort === 'Id' ? 'Recientes' : sort === 'Name' ? 'Nombre' : 'Precio'}
+                </ThemedText>
+              </TouchableOpacity>
+            ))}
+            <TouchableOpacity
+              style={[styles.sortButton, styles.orderButton]}
+              onPress={handleSortDirectionChange}
+            >
+              <ThemedText style={styles.orderButtonText}>
+                {sortDescending ? '↓ Desc' : '↑ Asc'}
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+        </ThemedView>
 
-      {/* Info de resultados */}
-      {data && allProducts.length > 0 && (
-        <View style={styles.resultsInfo}>
-          <Text style={styles.resultsText}>
-            Mostrando {allProducts.length} de {data.totalCount} productos
-          </Text>
-        </View>
-      )}
-    </View>
+        {/* Lista de productos */}
+        {isLoading && pageNumber === 1 ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#007AFF" />
+            <ThemedText style={styles.loadingText}>Cargando productos...</ThemedText>
+          </View>
+        ) : error ? (
+          <View style={styles.errorContainer}>
+            <ThemedText style={styles.errorText}>❌ Error al cargar productos</ThemedText>
+            <TouchableOpacity style={styles.retryButton} onPress={() => refetch()}>
+              <ThemedText style={styles.retryButtonText}>Reintentar</ThemedText>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <FlatList
+            data={allProducts}
+            renderItem={renderProduct}
+            keyExtractor={(item, index) => `${item.id}-${index}`}
+            numColumns={2}
+            contentContainerStyle={styles.productsList}
+            columnWrapperStyle={styles.productRow}
+            refreshControl={
+              <RefreshControl
+                refreshing={isLoading && pageNumber === 1}
+                onRefresh={handleRefresh}
+              />
+            }
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+            ListEmptyComponent={renderEmpty}
+          />
+        )}
+
+        {/* Info de resultados */}
+        {data && allProducts.length > 0 && (
+          <ThemedView style={styles.resultsInfo}>
+            <ThemedText style={styles.resultsText}>
+              Mostrando {allProducts.length} de {data.totalCount} productos
+            </ThemedText>
+          </ThemedView>
+        )}
+      </ThemedView>
     </SafeAreaView>
   );
 }
@@ -239,14 +240,11 @@ export default function ProductsScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   header: {
-    backgroundColor: '#fff',
     padding: 16,
     paddingTop: 20,
     borderBottomWidth: 1,
@@ -277,7 +275,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   filtersContainer: {
-    backgroundColor: '#fff',
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
@@ -285,7 +282,6 @@ const styles = StyleSheet.create({
   filtersLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#000',
     marginBottom: 8,
   },
   sortButtons: {
@@ -296,7 +292,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
-    backgroundColor: '#f0f0f0',
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
@@ -306,20 +301,17 @@ const styles = StyleSheet.create({
   },
   sortButtonText: {
     fontSize: 14,
-    color: '#666',
     fontWeight: '500',
   },
   sortButtonTextActive: {
     color: '#fff',
   },
   orderButton: {
-    backgroundColor: '#fff',
     borderColor: '#007AFF',
     borderWidth: 2,
   },
   orderButtonText: {
     fontSize: 14,
-    color: '#007AFF',
     fontWeight: '600',
   },
   productsList: {
@@ -330,7 +322,6 @@ const styles = StyleSheet.create({
   },
   productCard: {
     flex: 1,
-    backgroundColor: '#fff',
     borderRadius: 12,
     margin: 8,
     overflow: 'hidden',
@@ -344,14 +335,13 @@ const styles = StyleSheet.create({
   productImage: {
     width: '100%',
     height: 150,
-    backgroundColor: '#f0f0f0',
   },
   noImage: {
     justifyContent: 'center',
     alignItems: 'center',
   },
   noImageText: {
-    color: '#999',
+    // color: '#999',
     fontSize: 12,
   },
   productInfo: {
@@ -360,7 +350,6 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#000',
     marginBottom: 4,
   },
   productBrand: {
@@ -387,7 +376,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 16,
     fontSize: 14,
-    color: '#666',
   },
   errorContainer: {
     flex: 1,
@@ -427,7 +415,7 @@ const styles = StyleSheet.create({
   },
   resultsInfo: {
     padding: 12,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#c7c7c7',
     alignItems: 'center',
   },
   resultsText: {

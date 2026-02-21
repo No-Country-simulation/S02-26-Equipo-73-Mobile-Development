@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { ThemedView, ThemedText } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/src/hooks/useAuth';
@@ -52,10 +53,11 @@ function RegisterScreenContent() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <ThemedView style={styles.scrollContainer}>
       <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <View style={styles.content}>
-        <Text style={styles.title}>Crear Cuenta</Text>
-        <Text style={styles.subtitle}>Únete a nosotros</Text>
+        <ThemedText type="title" style={styles.title}>Crear Cuenta</ThemedText>
+        <ThemedText style={styles.subtitle}>Únete a nosotros</ThemedText>
 
         {/* Name Input */}
         <View style={styles.inputContainer}>
@@ -178,6 +180,7 @@ function RegisterScreenContent() {
         </View>
       </View>
     </ScrollView>
+    </ThemedView>
     </SafeAreaView>
   );
 }
@@ -185,11 +188,12 @@ function RegisterScreenContent() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    flex: 1,
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   contentContainer: {
     flexGrow: 1,
@@ -200,15 +204,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     marginBottom: 8,
-    color: '#000',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
     marginBottom: 32,
+    opacity: 0.7,
   },
   inputContainer: {
     marginBottom: 20,
@@ -217,7 +217,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 8,
-    color: '#000',
   },
   input: {
     borderWidth: 1,

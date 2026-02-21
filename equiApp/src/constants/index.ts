@@ -64,6 +64,9 @@ export const REGEX = {
   URL: /^https?:\/\/.+/,
 } as const;
 
+// ## Theme
+export * from './theme';
+
 // ## App Config
 export const APP_CONFIG = {
   APP_NAME: 'EquiApp',

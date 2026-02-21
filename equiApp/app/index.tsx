@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Redirect } from 'expo-router';
 import { useAuth } from '@/src/hooks/useAuth';
+import { ThemedView } from '@/src';
 
 /**
  * Pantalla inicial de la app
@@ -14,9 +15,9 @@ export default function Index() {
   // Mostrar loading mientras se inicializa
   if (!isInitialized || isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <ThemedView style={styles.container}>
         <ActivityIndicator size="large" color="#007AFF" />
-      </SafeAreaView>
+      </ThemedView>
     );
   }
 
@@ -30,6 +31,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
 });

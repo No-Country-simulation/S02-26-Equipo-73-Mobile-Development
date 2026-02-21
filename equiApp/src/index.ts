@@ -20,6 +20,7 @@ export { AppProvider } from './providers/AppProvider';
 
 // Components
 export { ProtectedRoute, PublicRoute, withAuth } from './components/auth';
+export * from './components/ui';
 
 // Types
 export type * from './types/auth.types';
