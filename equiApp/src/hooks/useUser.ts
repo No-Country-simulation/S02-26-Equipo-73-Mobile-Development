@@ -1,6 +1,6 @@
 import { useUserStore } from '@/src/stores/user.store';
 import { apiClient, handleApiError, type ApiResponse } from '@/src/config/api';
-import type { UserProfile, UpdateProfileData } from '@/src/types/user.types';
+import type { UserProfileData, UpdateProfileData } from '@/src/types/user.types';
 
 /**
  * Hook personalizado para manejar el perfil de usuario
@@ -27,7 +27,7 @@ export const useUser = () => {
       setLoading(true);
       setError(null);
 
-      const response = await apiClient.get<ApiResponse<UserProfile>>('/user/profile');
+      const response = await apiClient.get<ApiResponse<UserProfileData>>('/user/profile');
       const userProfile = response.data.data!;
 
       setProfile(userProfile);
@@ -49,7 +49,7 @@ export const useUser = () => {
       setLoading(true);
       setError(null);
 
-      const response = await apiClient.put<ApiResponse<UserProfile>>('/user/profile', data);
+      const response = await apiClient.put<ApiResponse<UserProfileData>>('/user/profile', data);
       const updatedProfile = response.data.data!;
 
       setProfile(updatedProfile);
@@ -78,7 +78,7 @@ export const useUser = () => {
         name: 'avatar.jpg',
       } as any);
 
-      const response = await apiClient.post<ApiResponse<UserProfile>>(
+      const response = await apiClient.post<ApiResponse<UserProfileData>>(
         '/user/avatar',
         formData,
         {

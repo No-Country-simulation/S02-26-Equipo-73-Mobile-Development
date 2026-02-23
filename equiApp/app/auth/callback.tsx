@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
+import { ThemedView, ThemedText } from '@/src';
 import * as Linking from 'expo-linking';
 import { supabase } from '@/src/lib/supabase';
 import { useAuthStore } from '@/src/stores/auth.store';
@@ -129,12 +130,12 @@ export default function AuthCallback() {
   }, [url, handleCallback]);
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <View style={styles.content}>
         {status === 'loading' && (
           <>
             <ActivityIndicator size="large" color="#007AFF" />
-            <Text style={styles.message}>{message}</Text>
+            <ThemedText style={styles.message}>{message}</ThemedText>
           </>
         )}
 
@@ -143,8 +144,8 @@ export default function AuthCallback() {
             <View style={styles.successIcon}>
               <Text style={styles.iconText}>✓</Text>
             </View>
-            <Text style={styles.successMessage}>{message}</Text>
-            <Text style={styles.subMessage}>Redirigiendo a la app...</Text>
+            <ThemedText style={styles.successMessage}>{message}</ThemedText>
+            <ThemedText style={styles.subMessage}>Redirigiendo a la app...</ThemedText>
           </>
         )}
 
@@ -153,19 +154,18 @@ export default function AuthCallback() {
             <View style={styles.errorIcon}>
               <Text style={styles.iconText}>✕</Text>
             </View>
-            <Text style={styles.errorMessage}>{message}</Text>
-            <Text style={styles.subMessage}>Redirigiendo al login...</Text>
+            <ThemedText style={styles.errorMessage}>{message}</ThemedText>
+            <ThemedText style={styles.subMessage}>Redirigiendo al login...</ThemedText>
           </>
         )}
       </View>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   content: {
     flex: 1,

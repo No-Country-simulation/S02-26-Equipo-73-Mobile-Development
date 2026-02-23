@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { ThemedView, ThemedText } from '@/src';
 import { useProduct } from '@/src/services/products.service';
 
 const { width } = Dimensions.get('window');
@@ -29,10 +30,10 @@ export default function ProductDetailScreen() {
   if (isLoading) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Cargando producto...</Text>
-      </View>
+        <ThemedView style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#007AFF" />
+          <ThemedText style={styles.loadingText}>Cargando producto...</ThemedText>
+        </ThemedView>
       </SafeAreaView>
     );
   }
@@ -40,12 +41,12 @@ export default function ProductDetailScreen() {
   if (error || !product) {
     return (
       <SafeAreaView style={styles.safeArea}>
-        <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>❌ Error al cargar el producto</Text>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Text style={styles.backButtonText}>← Volver</Text>
-        </TouchableOpacity>
-      </View>
+        <ThemedView style={styles.errorContainer}>
+          <ThemedText style={styles.errorText}>❌ Error al cargar el producto</ThemedText>
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+            <Text style={styles.backButtonText}>← Volver</Text>
+          </TouchableOpacity>
+        </ThemedView>
       </SafeAreaView>
     );
   }
@@ -54,93 +55,95 @@ export default function ProductDetailScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <ScrollView style={styles.container}>
-      {/* Header con botón de volver */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Text style={styles.backButtonText}>← Volver</Text>
-        </TouchableOpacity>
-      </View>
+      <ThemedView style={styles.scrollContainer}>
+        <ScrollView style={styles.container}>
+          {/* Header con botón de volver */}
+          <View style={styles.header}>
+            <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+              <Text style={styles.backButtonText}>← Volver</Text>
+            </TouchableOpacity>
+          </View>
 
-      {/* Imagen principal */}
-      {primaryImage ? (
-        <Image source={{ uri: primaryImage }} style={styles.mainImage} resizeMode="cover" />
-      ) : (
-        <View style={[styles.mainImage, styles.noImage]}>
-          <Text style={styles.noImageText}>Sin imagen</Text>
-        </View>
-      )}
+          {/* Imagen principal */}
+          {primaryImage ? (
+            <Image source={{ uri: primaryImage }} style={styles.mainImage} resizeMode="cover" />
+          ) : (
+            <View style={[styles.mainImage, styles.noImage]}>
+              <Text style={styles.noImageText}>Sin imagen</Text>
+            </View>
+          )}
 
-      {/* Galería de imágenes */}
-      {product.media && product.media.length > 1 && (
-        <ScrollView horizontal style={styles.gallery} showsHorizontalScrollIndicator={false}>
-          {product.media.map((media) => (
-            <Image
-              key={media.id}
-              source={{ uri: media.url }}
-              style={styles.galleryImage}
-              resizeMode="cover"
-            />
-          ))}
-        </ScrollView>
-      )}
+          {/* Galería de imágenes */}
+          {product.media && product.media.length > 1 && (
+            <ScrollView horizontal style={styles.gallery} showsHorizontalScrollIndicator={false}>
+              {product.media.map((media) => (
+                <Image
+                  key={media.id}
+                  source={{ uri: media.url }}
+                  style={styles.galleryImage}
+                  resizeMode="cover"
+                />
+              ))}
+            </ScrollView>
+          )}
 
-      {/* Información del producto */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.productName}>{product.name}</Text>
-        
-        <View style={styles.metaInfo}>
-          <Text style={styles.brand}>🏷️ {product.brandName}</Text>
-          <Text style={styles.category}>📦 {product.categoryName}</Text>
-        </View>
+          {/* Información del producto */}
+          <View style={styles.infoContainer}>
+            <ThemedText type="title" style={styles.productName}>{product.name}</ThemedText>
 
-        <Text style={styles.price}>${product.price.toFixed(2)}</Text>
+            <View style={styles.metaInfo}>
+              <ThemedText style={styles.brand}>🏷️ {product.brandName}</ThemedText>
+              <ThemedText style={styles.category}>📦 {product.categoryName}</ThemedText>
+            </View>
 
-        <View style={styles.divider} />
+            <ThemedText style={styles.price}>${product.price.toFixed(2)}</ThemedText>
 
-        <Text style={styles.descriptionTitle}>Descripción</Text>
-        <Text style={styles.description}>{product.description}</Text>
-
-        {/* Variantes (si existen) */}
-        {product.variants && product.variants.length > 0 && (
-          <>
             <View style={styles.divider} />
-            <Text style={styles.variantsTitle}>Variantes disponibles</Text>
-            {product.variants.map((variant) => (
-              <View key={variant.id} style={styles.variantCard}>
-                <Text style={styles.variantName}>{variant.name}</Text>
-                {variant.price && (
-                  <Text style={styles.variantPrice}>${variant.price.toFixed(2)}</Text>
-                )}
-                {variant.stock !== undefined && (
-                  <Text style={styles.variantStock}>Stock: {variant.stock}</Text>
-                )}
-              </View>
-            ))}
-          </>
-        )}
 
-        {/* Botones de acción */}
-        <View style={styles.actionsContainer}>
-          <TouchableOpacity style={styles.addToCartButton}>
-            <Text style={styles.addToCartButtonText}>🛒 Agregar al carrito</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.favoriteButton}>
-            <Text style={styles.favoriteButtonText}>❤️</Text>
-          </TouchableOpacity>
-        </View>
+            <ThemedText type="subtitle" style={styles.descriptionTitle}>Descripción</ThemedText>
+            <ThemedText style={styles.description}>{product.description}</ThemedText>
 
-        {/* Info adicional */}
-        <View style={styles.additionalInfo}>
-          <Text style={styles.additionalInfoText}>
-            ✅ Producto {product.isActive ? 'disponible' : 'no disponible'}
-          </Text>
-          <Text style={styles.additionalInfoText}>📍 Envío a todo el país</Text>
-          <Text style={styles.additionalInfoText}>🔒 Compra segura</Text>
-        </View>
-      </View>
-    </ScrollView>
+            {/* Variantes (si existen) */}
+            {product.variants && product.variants.length > 0 && (
+              <>
+                <View style={styles.divider} />
+                <ThemedText type="subtitle" style={styles.variantsTitle}>Variantes disponibles</ThemedText>
+                {product.variants.map((variant) => (
+                  <View key={variant.id} style={styles.variantCard}>
+                    <Text style={styles.variantName}>{variant.name}</Text>
+                    {variant.price && (
+                      <Text style={styles.variantPrice}>${variant.price.toFixed(2)}</Text>
+                    )}
+                    {variant.stock !== undefined && (
+                      <Text style={styles.variantStock}>Stock: {variant.stock}</Text>
+                    )}
+                  </View>
+                ))}
+              </>
+            )}
+
+            {/* Botones de acción */}
+            <View style={styles.actionsContainer}>
+              <TouchableOpacity style={styles.addToCartButton}>
+                <Text style={styles.addToCartButtonText}>🛒 Agregar al carrito</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.favoriteButton}>
+                <Text style={styles.favoriteButtonText}>❤️</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Info adicional */}
+            <View style={styles.additionalInfo}>
+              <ThemedText style={styles.additionalInfoText}>
+                ✅ Producto {product.isActive ? 'disponible' : 'no disponible'}
+              </ThemedText>
+              <ThemedText style={styles.additionalInfoText}>📍 Envío a todo el país</ThemedText>
+              <ThemedText style={styles.additionalInfoText}>🔒 Compra segura</ThemedText>
+            </View>
+          </View>
+        </ScrollView>
+      </ThemedView>
     </SafeAreaView>
   );
 }
@@ -148,17 +151,17 @@ export default function ProductDetailScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
+  },
+  scrollContainer: {
+    flex: 1,
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
   },
   loadingText: {
     marginTop: 16,
@@ -170,7 +173,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 40,
-    backgroundColor: '#fff',
   },
   errorText: {
     fontSize: 16,

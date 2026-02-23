@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { ThemedView, ThemedText } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { supabase } from '@/src/lib/supabase';
@@ -58,12 +59,12 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Recuperar Contraseña</Text>
-        <Text style={styles.subtitle}>
+        <ThemedText type="title" style={styles.title}>Recuperar Contraseña</ThemedText>
+        <ThemedText style={styles.subtitle}>
           Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña
-        </Text>
+        </ThemedText>
 
         {/* Email Input */}
         <View style={styles.inputContainer}>
@@ -112,14 +113,13 @@ export default function ForgotPasswordScreen() {
           <Text style={styles.backText}>Volver al inicio de sesión</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   content: {
     flex: 1,
@@ -127,16 +127,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     marginBottom: 8,
-    color: '#000',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
     marginBottom: 32,
     lineHeight: 22,
+    opacity: 0.7,
   },
   inputContainer: {
     marginBottom: 20,
@@ -145,7 +141,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 8,
-    color: '#000',
   },
   input: {
     borderWidth: 1,

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ProtectedRoute } from '@/src/components/auth';
 import { useAuth } from '@/src/hooks/useAuth';
+import { ThemedText, ThemedView } from '@/src';
 
 /**
  * Pantalla de perfil (protegida)
@@ -33,40 +34,46 @@ function ProfileContent() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>
-            {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
-          </Text>
+      <ThemedView style={styles.container}>
+        {/* Botón de Configuración */}
+        <View style={styles.headerBar}>
+          <ThemedText type="title" style={styles.headerTitle}>Perfil</ThemedText>
+          <TouchableOpacity 
+            style={styles.settingsButton}
+            onPress={() => router.push('/settings/' as any)}
+          >
+            <ThemedText style={styles.settingsIcon}>⚙️</ThemedText>
+          </TouchableOpacity>
         </View>
-        <Text style={styles.name}>{user?.name || 'Usuario'}</Text>
-        <Text style={styles.email}>{user?.email}</Text>
-      </View>
 
-      <View style={styles.infoBox}>
-        <Text style={styles.infoTitle}>🔒 Ruta Protegida</Text>
-        <Text style={styles.infoText}>
-          Esta pantalla está protegida por ProtectedRoute. Solo usuarios autenticados pueden verla.
-        </Text>
-      </View>
+        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+          <View style={styles.header}>
+            <View style={styles.avatar}>
+              <ThemedText style={styles.avatarText}>
+                {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
+              </ThemedText>
+            </View>
+            <ThemedText style={styles.name}>{user?.name || 'Usuario'}</ThemedText>
+            <ThemedText style={styles.email}>{user?.email}</ThemedText>
+          </View>
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Información de Usuario</ThemedText>
+            <View style={styles.infoRow}>
+              <ThemedText style={styles.label}>ID:</ThemedText>
+              <ThemedText style={styles.value}>{user?.id}</ThemedText>
+            </View>
+            <View style={styles.infoRow}>
+              <ThemedText style={styles.label}>Rol:</ThemedText>
+              <ThemedText style={styles.value}>{user?.role || 'user'}</ThemedText>
+            </View>
+          </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Información de Usuario</Text>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>ID:</Text>
-          <Text style={styles.value}>{user?.id}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>Rol:</Text>
-          <Text style={styles.value}>{user?.role || 'user'}</Text>
-        </View>
-      </View>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutText}>Cerrar Sesión</Text>
+          </TouchableOpacity>
+        </ScrollView>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Cerrar Sesión</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      </ThemedView>
     </SafeAreaView>
   );
 }
@@ -82,11 +89,27 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+  },
+  headerBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  headerTitle: {
+    fontSize: 20,
+  },
+  settingsButton: {
+    padding: 8,
+  },
+  settingsIcon: {
+    fontSize: 24,
   },
   content: {
     padding: 20,
@@ -108,12 +131,10 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#fff',
   },
   name: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000',
     marginBottom: 4,
   },
   email: {
@@ -146,7 +167,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 12,
-    color: '#000',
   },
   infoRow: {
     flexDirection: 'row',
@@ -162,7 +182,6 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 14,
-    color: '#000',
   },
   logoutButton: {
     backgroundColor: '#ff3b30',

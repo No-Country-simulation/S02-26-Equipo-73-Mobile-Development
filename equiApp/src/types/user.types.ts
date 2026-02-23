@@ -21,7 +21,7 @@ export enum UserRole {
   SELLER = 'seller',
 }
 
-export interface UserProfile extends User {
+export interface UserProfileData extends User {
   address?: Address;
   preferences?: UserPreferences;
 }

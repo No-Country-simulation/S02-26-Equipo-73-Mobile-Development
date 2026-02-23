@@ -9,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { ThemedView, ThemedText } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as Linking from 'expo-linking';
@@ -124,34 +125,34 @@ export default function ResetPasswordScreen() {
   // Loading state mientras valida
   if (isValidToken === null) {
     return (
-      <View style={styles.loadingContainer}>
+      <ThemedView style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Validando enlace...</Text>
-      </View>
+        <ThemedText style={styles.loadingText}>Validando enlace...</ThemedText>
+      </ThemedView>
     );
   }
 
   // Token inválido
   if (isValidToken === false) {
     return (
-      <View style={styles.loadingContainer}>
+      <ThemedView style={styles.loadingContainer}>
         <Text style={styles.errorIcon}>⚠️</Text>
-        <Text style={styles.errorTitle}>Enlace Inválido</Text>
-        <Text style={styles.errorMessage}>
+        <ThemedText style={styles.errorTitle}>Enlace Inválido</ThemedText>
+        <ThemedText style={styles.errorMessage}>
           El enlace de recuperación es inválido o ha expirado
-        </Text>
-      </View>
+        </ThemedText>
+      </ThemedView>
     );
   }
 
   // Form para cambiar contraseña
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Nueva Contraseña</Text>
-        <Text style={styles.subtitle}>
+        <ThemedText type="title" style={styles.title}>Nueva Contraseña</ThemedText>
+        <ThemedText style={styles.subtitle}>
           Ingresa tu nueva contraseña
-        </Text>
+        </ThemedText>
 
         {/* Password Input */}
         <View style={styles.inputContainer}>
@@ -225,26 +226,24 @@ export default function ResetPasswordScreen() {
           <Text style={styles.cancelText}>Cancelar</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
     padding: 24,
   },
   loadingText: {
     fontSize: 16,
-    color: '#666',
     marginTop: 16,
+    opacity: 0.7,
   },
   errorIcon: {
     fontSize: 64,
@@ -253,13 +252,12 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000',
     marginBottom: 8,
   },
   errorMessage: {
     fontSize: 16,
-    color: '#666',
     textAlign: 'center',
+    opacity: 0.7,
   },
   content: {
     flex: 1,
@@ -267,15 +265,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
     marginBottom: 8,
-    color: '#000',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
     marginBottom: 32,
+    opacity: 0.7,
   },
   inputContainer: {
     marginBottom: 20,
@@ -284,7 +278,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 8,
-    color: '#000',
   },
   input: {
     borderWidth: 1,

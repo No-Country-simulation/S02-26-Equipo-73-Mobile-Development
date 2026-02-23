@@ -19,6 +19,20 @@ export interface AuthTokens {
   refreshToken?: string;
 }
 
+export interface UserProfile {
+  userId: string;
+  internalUserId?: number;
+  email: string;
+  name?: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  phone?: string | null;
+  profileImageUrl?: string | null;
+  role: string;
+  roles?: string[];
+  isAuthenticated: boolean;
+}
+
 export interface AuthUser {
   id: string;
   email: string;
@@ -32,6 +46,52 @@ export interface AuthState {
   tokens: AuthTokens | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+}
+
+export interface AuthExchangeResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    isAuthenticated: boolean;
+    userId: string;
+    internalUserId?: number;
+    email: string;
+    name?: string;
+    firstName?: string | null;
+    lastName?: string | null;
+    phone?: string | null;
+    profileImageUrl?: string | null;
+    role: string;
+    roles?: string[];
+    accessToken: string;
+    refreshToken?: string;
+    tokenType?: string;
+    expiresIn?: number;
+    claims?: Array<{
+      type: string;
+      value: string;
+    }>;
+  };
+  errors?: string[];
+}
+
+export interface UserMeResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    userId: string;
+    email: string;
+    name?: string;
+    role: string;
+    isAuthenticated: boolean;
+  };
+  errors?: string[];
+}
+
+export interface ChangePasswordData {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
 export interface LoginResponse {

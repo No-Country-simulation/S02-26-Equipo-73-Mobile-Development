@@ -1,22 +1,6 @@
 import { apiClient, handleApiError } from '@/src/config/api';
 import { setToken, setRefreshToken } from '@/src/utils/secure-storage';
-
-/**
- * Respuesta del endpoint de exchange
- */
-export interface AuthExchangeResponse {
-  isAuthenticated: boolean;
-  userId?: string;
-  email?: string;
-  name?: string;
-  claims?: Array<{
-    type: string;
-    value: string;
-  }>;
-  // Cuando el backend implemente el token JWT propio:
-  token?: string;
-  refreshToken?: string;
-}
+import type { AuthExchangeResponse, UserMeResponse, ChangePasswordData } from '@/src/types/auth.types';
 
 /**
  * Exchange token de Supabase por token de la API
@@ -26,10 +10,9 @@ export interface AuthExchangeResponse {
 export const exchangeToken = async (supabaseToken: string): Promise<AuthExchangeResponse> => {
   try {
     console.log('🔄 Intercambiando token con la API...');
-    console.log('→ Token de Supabase:', supabaseToken)
+    
     // Hacer la petición al endpoint de exchange
-    // El token de Supabase se envía por Bearer
-    const response = await apiClient.post<{ data: AuthExchangeResponse }>(
+    const response = await apiClient.post<AuthExchangeResponse>(
       '/auth/exchange',
       {}, // Body vacío
       {
@@ -39,34 +22,93 @@ export const exchangeToken = async (supabaseToken: string): Promise<AuthExchange
       }
     );
 
-    const exchangeData = response.data.data;
+    // Manejar error 401
+    if (response.status === 401) {
+      throw new Error('No se pudo iniciar sesión. Token inválido o expirado.');
+    }
+
+    const exchangeData = response.data;
     
+    if (!exchangeData.success || !exchangeData.data) {
+      throw new Error(exchangeData.message || 'Error en el intercambio de token');
+    }
+
     console.log('✅ Exchange exitoso:', {
-      isAuthenticated: exchangeData.isAuthenticated,
-      userId: exchangeData.userId,
-      email: exchangeData.email,
+      isAuthenticated: exchangeData.data.isAuthenticated,
+      userId: exchangeData.data.userId,
+      email: exchangeData.data.email,
     });
 
-    // Cuando el backend devuelva su propio token, guardarlo
-    if (exchangeData.token) {
+    // Guardar el token de la API
+    if (exchangeData.data.accessToken) {
       console.log('💾 Guardando token de la API...');
-      await setToken(exchangeData.token);
+      await setToken(exchangeData.data.accessToken);
       
-      if (exchangeData.refreshToken) {
-        await setRefreshToken(exchangeData.refreshToken);
+      if (exchangeData.data.refreshToken) {
+        await setRefreshToken(exchangeData.data.refreshToken);
       }
     }
 
     return exchangeData;
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Error en exchange de token:', error);
+    
+    // Manejar específicamente el error 401
+    if (error.response?.status === 401) {
+      throw new Error('No se pudo iniciar sesión. Por favor, intenta nuevamente.');
+    }
+    
     const apiError = handleApiError(error);
-    
-    // No bloquear el flujo si el exchange falla
-    // El usuario puede seguir usando la app con el token de Supabase
-    console.warn('⚠️ Exchange falló, continuando con token de Supabase');
-    
     throw new Error(apiError.message || 'Error al intercambiar token');
+  }
+};
+
+/**
+ * Obtiene la información del usuario autenticado actual
+ * @returns Datos del usuario desde el endpoint /me
+ */
+export const getUserProfile = async (): Promise<UserMeResponse> => {
+  try {
+    console.log('👤 Obteniendo perfil del usuario...');
+    
+    const response = await apiClient.get<UserMeResponse>('/auth/me');
+    
+    if (!response.data.success || !response.data.data) {
+      throw new Error(response.data.message || 'Error al obtener perfil del usuario');
+    }
+
+    console.log('✅ Perfil obtenido:', {
+      userId: response.data.data.userId,
+      email: response.data.data.email,
+      role: response.data.data.role,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('❌ Error al obtener perfil del usuario:', error);
+    const apiError = handleApiError(error);
+    throw new Error(apiError.message || 'Error al obtener perfil del usuario');
+  }
+};
+
+/**
+ * Cambia la contraseña del usuario
+ * @param data - Datos para cambiar la contraseña
+ */
+export const changePassword = async (data: ChangePasswordData): Promise<void> => {
+  try {
+    console.log('🔐 Cambiando contraseña...');
+    
+    const response = await apiClient.post('/auth/change-password', {
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword,
+    });
+
+    console.log('✅ Contraseña cambiada exitosamente');
+  } catch (error) {
+    console.error('❌ Error al cambiar contraseña:', error);
+    const apiError = handleApiError(error);
+    throw new Error(apiError.message || 'Error al cambiar contraseña');
   }
 };
 
