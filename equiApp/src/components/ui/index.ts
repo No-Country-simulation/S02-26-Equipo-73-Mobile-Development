@@ -4,3 +4,4 @@
 
 export { ThemedView, type ThemedViewProps } from './ThemedView';
 export { ThemedText, type ThemedTextProps } from './ThemedText';
+export { Text } from './Text';

@@ -3,10 +3,8 @@
  * Soporta modo claro y oscuro
  */
 
-import { Platform } from 'react-native';
-
-const tintColorLight = '#007AFF';
-const tintColorDark = '#0A84FF';
+const tintColorLight = '#1B365D';
+const tintColorDark = '#2A4A7F';
 
 export const Colors = {
   light: {
@@ -20,8 +18,10 @@ export const Colors = {
     tabIconSelected: tintColorLight,
     border: '#e0e0e0',
     card: '#fff',
-    primary: '#007AFF',
-    secondary: '#5856D6',
+    primary: '#1B365D',
+    secondary: '#8C6239',
+    tertiary: '#2D523B',
+    accent: '#B38F24',
     success: '#34C759',
     warning: '#FF9500',
     error: '#FF3B30',
@@ -38,8 +38,10 @@ export const Colors = {
     tabIconSelected: tintColorDark,
     border: '#2C2C2E',
     card: '#1C1C1E',
-    primary: '#0A84FF',
-    secondary: '#5E5CE6',
+    primary: '#2A4A7F',
+    secondary: '#A67A4E',
+    tertiary: '#3D6B4F',
+    accent: '#D4A92F',
     success: '#32D74B',
     warning: '#FF9F0A',
     error: '#FF453A',
@@ -47,30 +49,102 @@ export const Colors = {
   },
 };
 
-export const Fonts = Platform.select({
-  ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
-    serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
-    rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
-    mono: 'ui-monospace',
+/**
+ * Tipografía Syne - Sistema de fuentes personalizado
+ * 
+ * Uso:
+ * - regular: Texto normal (400)
+ * - medium: Texto con énfasis medio (500)
+ * - semiBold: Texto con énfasis (600)
+ * - bold: Títulos y texto destacado (700)
+ * - extraBold: Títulos principales (800)
+ */
+export const Fonts = {
+  regular: 'Syne-Regular',
+  medium: 'Syne-Medium',
+  semiBold: 'Syne-SemiBold',
+  bold: 'Syne-Bold',
+  extraBold: 'Syne-ExtraBold',
+};
+
+/**
+ * Sistema de tipografía - Typescale
+ * Cada estilo incluye familia, tamaño, lineHeight y letterSpacing
+ */
+export const Typography = {
+  display: {
+    fontFamily: 'Syne-SemiBold',
+    fontSize: 72,
+    lineHeight: 80,
+    letterSpacing: -1.296, // -1.8%
   },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
+  heading1: {
+    fontFamily: 'Syne-SemiBold',
+    fontSize: 48,
+    lineHeight: 56,
+    letterSpacing: -0.72, // -1.5%
   },
-  web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
-    serif: "Georgia, 'Times New Roman', serif",
-    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
-    mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
+  heading2: {
+    fontFamily: 'Syne-SemiBold',
+    fontSize: 40,
+    lineHeight: 48,
+    letterSpacing: -0.6, // -1.5%
   },
-});
+  heading3: {
+    fontFamily: 'Syne-SemiBold',
+    fontSize: 32,
+    lineHeight: 40,
+    letterSpacing: -0.384, // -1.2%
+  },
+  subheading1: {
+    fontFamily: 'Syne-SemiBold',
+    fontSize: 24,
+    lineHeight: 32,
+    letterSpacing: -0.288, // -1.2%
+  },
+  subheading2: {
+    fontFamily: 'Syne-SemiBold',
+    fontSize: 20,
+    lineHeight: 28,
+    letterSpacing: -0.3, // -1.5%
+  },
+  buttonRegular: {
+    fontFamily: 'Syne-SemiBold',
+    fontSize: 17,
+    lineHeight: 56,
+    letterSpacing: 0,
+  },
+  caption: {
+    fontFamily: 'Syne-Regular',
+    fontSize: 14,
+    lineHeight: 14,
+    letterSpacing: 0,
+  },
+  bodyLarge: {
+    fontFamily: 'Syne-Regular',
+    fontSize: 20,
+    lineHeight: 24,
+    letterSpacing: 0,
+  },
+  bodyRegular: {
+    fontFamily: 'Syne-Regular',
+    fontSize: 16,
+    lineHeight: 24,
+    letterSpacing: 0,
+  },
+  bodySmall: {
+    fontFamily: 'Syne-Regular',
+    fontSize: 14,
+    lineHeight: 20,
+    letterSpacing: 0,
+  },
+  bodyTiny: {
+    fontFamily: 'Syne-Regular',
+    fontSize: 12,
+    lineHeight: 16,
+    letterSpacing: 0,
+  },
+};
 
 export const Spacing = {
   xs: 4,

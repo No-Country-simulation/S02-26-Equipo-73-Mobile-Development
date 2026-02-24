@@ -6,7 +6,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedView, ThemedText } from '@/src/components/ui';
+import { ThemedView, ThemedText, Text } from '@/src/components/ui';
 import { useColorScheme, useThemeColor } from '@/src/hooks';
 import { Colors, Spacing, BorderRadius } from '@/src/constants';
 
@@ -34,10 +34,28 @@ export default function ThemeDemoScreen() {
             <ThemedText type="link">Enlace</ThemedText>
           </Section>
 
+          {/* Typography Scale */}
+          <Section title="Escala Tipográfica Syne">
+            <Text variant="display">Display</Text>
+            <Text variant="heading1">Heading 1</Text>
+            <Text variant="heading2">Heading 2</Text>
+            <Text variant="heading3">Heading 3</Text>
+            <Text variant="subheading1">Subheading 1</Text>
+            <Text variant="subheading2">Subheading 2</Text>
+            <Text variant="buttonRegular">Button Regular</Text>
+            <Text variant="caption">Caption</Text>
+            <Text variant="bodyLarge">Body Large</Text>
+            <Text variant="bodyRegular">Body Regular</Text>
+            <Text variant="bodySmall">Body Small</Text>
+            <Text variant="bodyTiny">Body Tiny</Text>
+          </Section>
+
           {/* Color Palette */}
           <Section title="Paleta de Colores">
             <ColorBox label="Primary" colorKey="primary" />
             <ColorBox label="Secondary" colorKey="secondary" />
+            <ColorBox label="Tertiary" colorKey="tertiary" />
+            <ColorBox label="Accent" colorKey="accent" />
             <ColorBox label="Success" colorKey="success" />
             <ColorBox label="Warning" colorKey="warning" />
             <ColorBox label="Error" colorKey="error" />

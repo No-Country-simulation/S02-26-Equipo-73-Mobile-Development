@@ -17,16 +17,19 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   
-  // Cargar fuentes personalizadas (puedes agregar más fuentes aquí)
+  // Cargar fuentes personalizadas Syne
   const [fontsLoaded] = useFonts({
-    // Ejemplo: 'CustomFont': require('../assets/fonts/CustomFont.ttf'),
-    // Por ahora usamos las fuentes del sistema
+    'Syne-Regular': require('../assets/fonts/Syne-Regular.ttf'),
+    'Syne-Medium': require('../assets/fonts/Syne-Medium.ttf'),
+    'Syne-SemiBold': require('../assets/fonts/Syne-SemiBold.ttf'),
+    'Syne-Bold': require('../assets/fonts/Syne-Bold.ttf'),
+    'Syne-ExtraBold': require('../assets/fonts/Syne-ExtraBold.ttf'),
   });
 
   useEffect(() => {
     if (fontsLoaded) {
       // Ocultar el splash screen cuando las fuentes estén cargadas
-      // SplashScreen.hideAsync();
+      SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
