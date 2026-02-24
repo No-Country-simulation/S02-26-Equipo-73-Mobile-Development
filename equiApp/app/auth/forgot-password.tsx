@@ -7,7 +7,7 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ThemedView, ThemedText, ThemedInput } from '@/src';
+import { ThemedView, ThemedText, ThemedInput, ThemedButton } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
 import { Colors, Spacing, BorderRadius } from '@/src/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -87,19 +87,11 @@ export default function ForgotPasswordScreen() {
         </View>
 
         {/* Submit Button */}
-        <TouchableOpacity
-          style={[styles.button, isLoading && styles.buttonDisabled]}
+        <ThemedButton 
+          label='Enviar Enlace'
           onPress={handleSubmit(onSubmit)}
           disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color={Colors.light.primary} />
-          ) : (
-            <ThemedText variant="buttonRegular" lightColor={Colors.light.primary} style={styles.buttonText}>
-              Enviar Enlace
-            </ThemedText>
-          )}
-        </TouchableOpacity>
+        />
 
         {/* Back to Login */}
         <TouchableOpacity
@@ -138,24 +130,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginBottom: Spacing.lg,
   },
-  button: {
-    backgroundColor: Colors.light.accent,
-    paddingVertical: Spacing.md + 2,
-    borderRadius: BorderRadius.xl,
-    alignItems: 'center',
-    marginBottom: Spacing.lg,
-    shadowColor: Colors.light.accent,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    fontWeight: '700',
-  },
+
   backButton: {
     padding: Spacing.sm,
     alignItems: 'center',

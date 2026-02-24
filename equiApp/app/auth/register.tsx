@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ThemedView, ThemedText, ThemedInput } from '@/src';
+import { ThemedView, ThemedText, ThemedInput, ThemedButton } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/src/hooks/useAuth';
@@ -70,7 +70,7 @@ function RegisterScreenContent() {
           </View>
 
           {/* Logo */}
-          <View style={styles.logoContainer}>
+          {/* <View style={styles.logoContainer}>
             <View style={[
               styles.iconCircle, 
               { 
@@ -80,11 +80,11 @@ function RegisterScreenContent() {
             ]}>
               <Ionicons name="layers" size={40} color={Colors.light.accent} />
             </View>
-          </View>
+          </View> */}
 
           {/* Title */}
-          <ThemedText variant="heading2" style={styles.title}>
-            EquiData
+          <ThemedText variant="heading3" style={styles.title}>
+            Rider Fit
           </ThemedText>
           <ThemedText variant="bodyRegular" style={styles.subtitle} lightColor={Colors.light.textSecondary} darkColor={Colors.dark.textSecondary}>
             Medición precisa y compras con IA para el ecuestre moderno
@@ -173,19 +173,13 @@ function RegisterScreenContent() {
           </View>
 
           {/* Register Button */}
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: Colors.light.accent }, isLoading && styles.buttonDisabled]}
+
+          <ThemedButton 
             onPress={handleSubmit(onSubmit)}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color={Colors.light.primary} />
-            ) : (
-              <ThemedText variant="buttonRegular" lightColor={Colors.light.primary} style={styles.buttonText}>
-                REGISTRARSE
-              </ThemedText>
-            )}
-          </TouchableOpacity>
+            isLoading={isLoading}
+            label='Registrarse'
+          
+          />
 
           {/* Divider */}
           <View style={styles.dividerContainer}>
@@ -292,24 +286,6 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginBottom: Spacing.md,
-  },
-  button: {
-    paddingVertical: Spacing.md + 2,
-    borderRadius: BorderRadius.xl,
-    alignItems: 'center',
-    marginTop: Spacing.md,
-    marginBottom: Spacing.lg,
-    shadowColor: Colors.light.accent,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    fontWeight: '700',
   },
   dividerContainer: {
     flexDirection: 'row',

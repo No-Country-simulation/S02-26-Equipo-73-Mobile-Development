@@ -37,23 +37,23 @@ export function ThemedInput({
   ...textInputProps
 }: ThemedInputProps) {
   const colorScheme = useColorScheme();
-  
+
   const iconColor = useThemeColor({}, 'icon');
   const textColor = useThemeColor({}, 'text');
-  
+
   const backgroundColor = useThemeColor(
-    { 
-      light: lightBackgroundColor || Colors.light.backgroundSecondary, 
-      dark: darkBackgroundColor || Colors.dark.backgroundSecondary 
-    }, 
+    {
+      light: lightBackgroundColor || Colors.light.backgroundSecondary,
+      dark: darkBackgroundColor || Colors.dark.backgroundSecondary
+    },
     'backgroundSecondary'
   );
-  
+
   const borderColor = useThemeColor(
-    { 
-      light: lightBorderColor || Colors.light.border, 
-      dark: darkBorderColor || Colors.dark.border 
-    }, 
+    {
+      light: lightBorderColor || Colors.light.border,
+      dark: darkBorderColor || Colors.dark.border
+    },
     'border'
   );
 
@@ -62,21 +62,21 @@ export function ThemedInput({
   return (
     <View style={styles.container}>
       <View style={[
-        styles.inputWrapper, 
-        { 
-          backgroundColor, 
-          borderColor: errorBorderColor 
+        styles.inputWrapper,
+        {
+          backgroundColor,
+          borderColor: errorBorderColor
         }
       ]}>
         {leftIcon && (
-          <Ionicons 
-            name={leftIcon} 
-            size={20} 
-            color={iconColor} 
-            style={styles.leftIcon} 
+          <Ionicons
+            name={leftIcon}
+            size={20}
+            color={iconColor}
+            style={styles.leftIcon}
           />
         )}
-        
+
         <TextInput
           style={[
             styles.input,
@@ -86,24 +86,24 @@ export function ThemedInput({
           placeholderTextColor={iconColor}
           {...textInputProps}
         />
-        
+
         {rightIcon && (
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={onRightIconPress}
             disabled={!onRightIconPress}
           >
-            <Ionicons 
-              name={rightIcon} 
-              size={20} 
-              color={iconColor} 
+            <Ionicons
+              name={rightIcon}
+              size={20}
+              color={iconColor}
             />
           </TouchableOpacity>
         )}
       </View>
-      
+
       {error && (
-        <ThemedText 
-          variant="bodyTiny" 
+        <ThemedText
+          variant="bodyTiny"
           style={styles.errorText}
           lightColor={Colors.light.error}
           darkColor={Colors.dark.error}

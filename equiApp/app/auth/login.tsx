@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ThemedView, ThemedText, ThemedInput } from '@/src';
+import { ThemedView, ThemedText, ThemedInput, ThemedButton } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/src/hooks/useAuth';
@@ -64,7 +64,7 @@ function LoginScreenContent() {
           </View>
 
           {/* Logo */}
-          <View style={styles.logoContainer}>
+          {/* <View style={styles.logoContainer}>
             <View style={[
               styles.iconCircle, 
               { 
@@ -74,10 +74,10 @@ function LoginScreenContent() {
             ]}>
               <Ionicons name="pulse" size={40} color={Colors.light.accent} />
             </View>
-          </View>
+          </View> */}
 
           {/* Title */}
-          <ThemedText variant="heading2" style={styles.title}>
+          <ThemedText variant="heading3" style={styles.title}>
             Bienvenido de Vuelta
           </ThemedText>
           <ThemedText variant="bodyRegular" style={styles.subtitle} lightColor={Colors.light.textSecondary} darkColor={Colors.dark.textSecondary}>
@@ -139,19 +139,12 @@ function LoginScreenContent() {
           </TouchableOpacity>
 
           {/* Login Button */}
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: Colors.light.accent }, isLoading && styles.buttonDisabled]}
+
+          <ThemedButton 
+            isLoading={isLoading}
+            label="INICIAR SESIÓN →"
             onPress={handleSubmit(onSubmit)}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color={Colors.light.primary} />
-            ) : (
-              <ThemedText variant="buttonRegular" lightColor={Colors.light.primary} style={styles.buttonText}>
-                INICIAR SESIÓN →
-              </ThemedText>
-            )}
-          </TouchableOpacity>
+          />
 
           {/* Divider */}
           <View style={styles.dividerContainer}>
@@ -262,23 +255,6 @@ const styles = StyleSheet.create({
   forgotPasswordContainer: {
     alignSelf: 'flex-end',
     marginBottom: Spacing.lg,
-  },
-  button: {
-    paddingVertical: Spacing.md + 2,
-    borderRadius: BorderRadius.xl,
-    alignItems: 'center',
-    marginBottom: Spacing.lg,
-    shadowColor: Colors.light.accent,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    fontWeight: '700',
   },
   dividerContainer: {
     flexDirection: 'row',

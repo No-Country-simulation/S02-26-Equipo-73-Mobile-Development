@@ -7,7 +7,7 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ThemedView, ThemedText, ThemedInput } from '@/src';
+import { ThemedView, ThemedText, ThemedInput, ThemedButton } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as Linking from 'expo-linking';
@@ -196,19 +196,12 @@ export default function ResetPasswordScreen() {
         </View>
 
         {/* Submit Button */}
-        <TouchableOpacity
-          style={[styles.button, isLoading && styles.buttonDisabled]}
+
+        <ThemedButton 
+          label='Actualizar Contraseña'
           onPress={handleSubmit(onSubmit)}
           disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color={Colors.light.primary} />
-          ) : (
-            <ThemedText variant="buttonRegular" lightColor={Colors.light.primary} style={styles.buttonText}>
-              Actualizar Contraseña
-            </ThemedText>
-          )}
-        </TouchableOpacity>
+        />
 
         {/* Cancel Button */}
         <TouchableOpacity
@@ -267,25 +260,6 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginBottom: Spacing.lg,
-  },
-  button: {
-    backgroundColor: Colors.light.accent,
-    paddingVertical: Spacing.md + 2,
-    borderRadius: BorderRadius.xl,
-    alignItems: 'center',
-    marginTop: Spacing.md,
-    marginBottom: Spacing.lg,
-    shadowColor: Colors.light.accent,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    fontWeight: '700',
   },
   cancelButton: {
     padding: Spacing.sm,
