@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import {
   View,
-  Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ThemedView, ThemedText } from '@/src';
+import { ThemedView, ThemedText, ThemedInput } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as Linking from 'expo-linking';
 import { supabase } from '@/src/lib/supabase';
 import { resetPasswordSchema, type ResetPasswordFormData } from '@/src/schemas/auth.schema';
+import { Colors, Spacing, BorderRadius } from '@/src/constants';
 
 /**
  * Pantalla para resetear contraseña
@@ -126,7 +125,7 @@ export default function ResetPasswordScreen() {
   if (isValidToken === null) {
     return (
       <ThemedView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
+        <ActivityIndicator size="large" color={Colors.light.accent} />
         <ThemedText style={styles.loadingText}>Validando enlace...</ThemedText>
       </ThemedView>
     );
@@ -136,9 +135,9 @@ export default function ResetPasswordScreen() {
   if (isValidToken === false) {
     return (
       <ThemedView style={styles.loadingContainer}>
-        <Text style={styles.errorIcon}>⚠️</Text>
-        <ThemedText style={styles.errorTitle}>Enlace Inválido</ThemedText>
-        <ThemedText style={styles.errorMessage}>
+        <ThemedText style={styles.errorIcon}>⚠️</ThemedText>
+        <ThemedText variant="heading2" style={styles.errorTitle}>Enlace Inválido</ThemedText>
+        <ThemedText variant="bodyRegular" style={styles.errorMessage}>
           El enlace de recuperación es inválido o ha expirado
         </ThemedText>
       </ThemedView>
@@ -156,52 +155,44 @@ export default function ResetPasswordScreen() {
 
         {/* Password Input */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Nueva Contraseña</Text>
           <Controller
             control={control}
             name="password"
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, errors.password && styles.inputError]}
+              <ThemedInput
+                leftIcon="lock-closed-outline"
                 placeholder="Mínimo 6 caracteres"
-                placeholderTextColor="#999"
                 secureTextEntry
                 autoCapitalize="none"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 editable={!isLoading}
+                error={errors.password?.message}
               />
             )}
           />
-          {errors.password && (
-            <Text style={styles.errorText}>{errors.password.message}</Text>
-          )}
         </View>
 
         {/* Confirm Password Input */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Confirmar Contraseña</Text>
           <Controller
             control={control}
             name="confirmPassword"
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, errors.confirmPassword && styles.inputError]}
+              <ThemedInput
+                leftIcon="lock-closed-outline"
                 placeholder="Repite tu contraseña"
-                placeholderTextColor="#999"
                 secureTextEntry
                 autoCapitalize="none"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 editable={!isLoading}
+                error={errors.confirmPassword?.message}
               />
             )}
           />
-          {errors.confirmPassword && (
-            <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
-          )}
         </View>
 
         {/* Submit Button */}
@@ -211,9 +202,11 @@ export default function ResetPasswordScreen() {
           disabled={isLoading}
         >
           {isLoading ? (
-            <ActivityIndicator color="#fff" />
+            <ActivityIndicator color={Colors.light.primary} />
           ) : (
-            <Text style={styles.buttonText}>Actualizar Contraseña</Text>
+            <ThemedText variant="buttonRegular" lightColor={Colors.light.primary} style={styles.buttonText}>
+              Actualizar Contraseña
+            </ThemedText>
           )}
         </TouchableOpacity>
 
@@ -223,7 +216,9 @@ export default function ResetPasswordScreen() {
           disabled={isLoading}
           style={styles.cancelButton}
         >
-          <Text style={styles.cancelText}>Cancelar</Text>
+          <ThemedText variant="bodyRegular" lightColor={Colors.light.accent} darkColor={Colors.dark.accent}>
+            Cancelar
+          </ThemedText>
         </TouchableOpacity>
       </View>
     </ThemedView>
@@ -238,84 +233,62 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: Spacing.xl,
   },
   loadingText: {
     fontSize: 16,
-    marginTop: 16,
+    marginTop: Spacing.md,
     opacity: 0.7,
   },
   errorIcon: {
     fontSize: 64,
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   errorTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   errorMessage: {
-    fontSize: 16,
     textAlign: 'center',
     opacity: 0.7,
   },
   content: {
     flex: 1,
-    padding: 24,
+    padding: Spacing.xl,
     justifyContent: 'center',
   },
   title: {
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
+    textAlign: 'center',
   },
   subtitle: {
-    marginBottom: 32,
+    marginBottom: Spacing.xxl,
     opacity: 0.7,
+    textAlign: 'center',
   },
   inputContainer: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#f9f9f9',
-  },
-  inputError: {
-    borderColor: '#ff3b30',
-  },
-  errorText: {
-    color: '#ff3b30',
-    fontSize: 12,
-    marginTop: 4,
+    marginBottom: Spacing.lg,
   },
   button: {
-    backgroundColor: '#007AFF',
-    padding: 16,
-    borderRadius: 8,
+    backgroundColor: Colors.light.accent,
+    paddingVertical: Spacing.md + 2,
+    borderRadius: BorderRadius.xl,
     alignItems: 'center',
-    marginBottom: 16,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.lg,
+    shadowColor: Colors.light.accent,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   buttonDisabled: {
     opacity: 0.6,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   cancelButton: {
-    padding: 12,
+    padding: Spacing.sm,
     alignItems: 'center',
-  },
-  cancelText: {
-    color: '#007AFF',
-    fontSize: 14,
   },
 });
