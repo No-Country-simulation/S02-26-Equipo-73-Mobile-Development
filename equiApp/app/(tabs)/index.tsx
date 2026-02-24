@@ -36,6 +36,16 @@ export default function HomeScreen() {
                 Explora nuestro catálogo completo
               </ThemedText>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => router.push('/settings')}
+            >
+              <ThemedText style={styles.cardIcon}>🛍️</ThemedText>
+              <ThemedText style={styles.cardTitle}>Productos</ThemedText>
+              <ThemedText style={styles.cardDescription}>
+                Ir a settings
+              </ThemedText>
+            </TouchableOpacity>
 
             {!isAuthenticated ? (
               <TouchableOpacity

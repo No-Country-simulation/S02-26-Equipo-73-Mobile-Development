@@ -8,7 +8,9 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import * as SystemUI from 'expo-system-ui';
 import { useColorScheme } from '@/src/hooks';
+import { Colors } from '@/src/constants';
 
 // Prevenir que el splash screen se oculte automáticamente
 SplashScreen.setOptions({duration: 2000, fade: true});
@@ -33,6 +35,12 @@ export default function RootLayout() {
     }
   }, [fontsLoaded]);
 
+  useEffect(() => {
+    // Configurar el color de la barra de navegación del sistema globalmente
+    const backgroundColor = colorScheme === 'dark' ? Colors.dark.background : Colors.light.background;
+    SystemUI.setBackgroundColorAsync(backgroundColor);
+  }, [colorScheme]);
+
   // No renderizar nada hasta que las fuentes estén cargadas
   if (!fontsLoaded) {
     return null;
@@ -48,6 +56,13 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="index" />
+            <Stack.Screen 
+              name="onboarding" 
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="theme-demo" />
             <Stack.Screen 
