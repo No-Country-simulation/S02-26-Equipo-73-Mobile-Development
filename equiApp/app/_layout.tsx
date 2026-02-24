@@ -11,6 +11,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useColorScheme } from '@/src/hooks';
 
 // Prevenir que el splash screen se oculte automáticamente
+SplashScreen.setOptions({duration: 2000, fade: true});
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -25,7 +26,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (fontsLoaded) {
       // Ocultar el splash screen cuando las fuentes estén cargadas
-      SplashScreen.hideAsync();
+      // SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 

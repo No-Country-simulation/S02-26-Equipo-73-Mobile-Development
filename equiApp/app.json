@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "equiApp",
-    "slug": "equiApp",
+    "name": "Equi data",
+    "slug": "Equi data",
     "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/icon-o.png",
     "scheme": "equiapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -19,9 +19,9 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "monochromeImage": "./assets/images/icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -36,13 +36,14 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#D2EBF2",
+          "image": "./assets/SplashOverBackground.png",
+          "resizeMode": "cover",
           "dark": {
-            "backgroundColor": "#000000"
-          }
+            "image": "./assets/SplashOverBackground.png",
+            "backgroundColor": "#0F1F23"
+          },
+          "imageWidth": 250
         }
       ],
       "expo-secure-store"
