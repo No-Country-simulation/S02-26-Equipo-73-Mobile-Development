@@ -5,10 +5,12 @@ import { useRouter } from 'expo-router';
 import { ProtectedRoute } from '@/src/components/auth';
 import { useAuth } from '@/src/hooks/useAuth';
 import { ThemedText, ThemedView } from '@/src';
+import { Spacing, BorderRadius } from '@/src/constants';
+import AntDesignIcon from '@expo/vector-icons/AntDesign';
 
 /**
  * Pantalla de perfil (protegida)
- * Requiere autenticación
+ * Menú principal de configuración del perfil del usuario
  */
 function ProfileContent() {
   const { user, logout } = useAuth();
@@ -25,50 +27,94 @@ function ProfileContent() {
           style: 'destructive',
           onPress: async () => {
             await logout();
-            // ProtectedRoute redirigirá automáticamente al login
           },
         },
       ]
     );
   };
 
+  const profileMenuItems = [
+    {
+      id: 'measurements',
+      title: 'Mis Medidas',
+      icon: 'API',
+      description: 'Gestiona tus medidas corporales',
+      onPress: () => router.push('/settings/measurements'),
+    },
+    {
+      id: 'horses',
+      title: 'Mis Caballos',
+      icon: 'star',
+      description: 'Administra tus caballos',
+      onPress: () => router.push('/settings/horses'),
+    },
+    {
+      id: 'data',
+      title: 'Mis Datos',
+      icon: 'idcard',
+      description: 'Información personal',
+      onPress: () => router.push('/settings/profile'),
+    },
+    {
+      id: 'password',
+      title: 'Cambiar Contraseña',
+      icon: 'lock',
+      description: 'Actualiza tu contraseña',
+      onPress: () => router.push('/settings/change-password'),
+    },
+  ];
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ThemedView style={styles.container}>
-        {/* Botón de Configuración */}
+        {/* Header */}
         <View style={styles.headerBar}>
-          <ThemedText type="title" style={styles.headerTitle}>Perfil</ThemedText>
-          <TouchableOpacity 
-            style={styles.settingsButton}
-            onPress={() => router.push('/settings/' as any)}
-          >
-            <ThemedText style={styles.settingsIcon}>⚙️</ThemedText>
-          </TouchableOpacity>
+          <ThemedText type="title" style={styles.headerTitle}>Profile</ThemedText>
         </View>
 
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-          <View style={styles.header}>
+          {/* User Info Card */}
+          <View style={styles.userCard}>
             <View style={styles.avatar}>
               <ThemedText style={styles.avatarText}>
                 {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
               </ThemedText>
             </View>
-            <ThemedText style={styles.name}>{user?.name || 'Usuario'}</ThemedText>
-            <ThemedText style={styles.email}>{user?.email}</ThemedText>
-          </View>
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Información de Usuario</ThemedText>
-            <View style={styles.infoRow}>
-              <ThemedText style={styles.label}>ID:</ThemedText>
-              <ThemedText style={styles.value}>{user?.id}</ThemedText>
-            </View>
-            <View style={styles.infoRow}>
-              <ThemedText style={styles.label}>Rol:</ThemedText>
-              <ThemedText style={styles.value}>{user?.role || 'user'}</ThemedText>
+            <View style={styles.userInfo}>
+              <ThemedText style={styles.name}>{user?.name || 'Usuario'}</ThemedText>
+              <ThemedText style={styles.email}>{user?.email}</ThemedText>
+              <ThemedText style={styles.role}>{user?.role || 'user'}</ThemedText>
             </View>
           </View>
 
+          {/* Profile Menu */}
+          <View style={styles.menuContainer}>
+            {profileMenuItems.map((item, index) => (
+              <TouchableOpacity
+                key={item.id}
+                style={[
+                  styles.menuItem,
+                  index !== profileMenuItems.length - 1 && styles.menuItemBorder,
+                ]}
+                onPress={item.onPress}
+              >
+                <View style={styles.menuItemContent}>
+                  <AntDesignIcon name={item.icon as any} size={24} color="#007AFF" style={styles.menuIcon} />
+                  <View style={styles.menuTextContainer}>
+                    <ThemedText type="defaultSemiBold">{item.title}</ThemedText>
+                    <ThemedText style={styles.menuDescription}>
+                      {item.description}
+                    </ThemedText>
+                  </View>
+                </View>
+                <ThemedText style={styles.chevron}>›</ThemedText>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Logout Button */}
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <AntDesignIcon name="logout" size={20} color="#fff" style={styles.logoutIcon} />
             <Text style={styles.logoutText}>Cerrar Sesión</Text>
           </TouchableOpacity>
         </ScrollView>
@@ -98,97 +144,104 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: '#e0e0e0',
   },
   headerTitle: {
-    fontSize: 20,
-  },
-  settingsButton: {
-    padding: 8,
-  },
-  settingsIcon: {
-    fontSize: 24,
+    fontSize: 28,
+    fontWeight: 'bold',
   },
   content: {
-    padding: 20,
+    padding: Spacing.lg,
   },
-  header: {
+  userCard: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
-    paddingTop: 20,
+    padding: Spacing.lg,
+    backgroundColor: '#f8f8f8',
+    borderRadius: BorderRadius.lg,
+    marginBottom: Spacing.lg,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     backgroundColor: '#007AFF',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginRight: Spacing.md,
   },
   avatarText: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
+    color: '#fff',
+  },
+  userInfo: {
+    flex: 1,
   },
   name: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 20,
+    fontWeight: '700',
     marginBottom: 4,
   },
   email: {
-    fontSize: 16,
-    color: '#666',
-  },
-  infoBox: {
-    backgroundColor: '#f0fdf4',
-    padding: 16,
-    borderRadius: 8,
-    borderLeftWidth: 4,
-    borderLeftColor: '#22c55e',
-    marginBottom: 24,
-  },
-  infoTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#000',
-  },
-  infoText: {
     fontSize: 14,
-    color: '#333',
-    lineHeight: 20,
+    opacity: 0.7,
+    marginBottom: 4,
   },
-  section: {
-    marginBottom: 24,
+  role: {
+    fontSize: 12,
+    opacity: 0.6,
+    textTransform: 'uppercase',
   },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12,
+  menuContainer: {
+    backgroundColor: '#fff',
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    marginBottom: Spacing.lg,
   },
-  infoRow: {
+  menuItem: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
+    padding: Spacing.lg,
+  },
+  menuItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: '#f3f4f6',
+    borderBottomColor: '#f0f0f0',
   },
-  label: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '600',
+  menuItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
-  value: {
-    fontSize: 14,
+  menuIcon: {
+    marginRight: Spacing.md,
+  },
+  menuTextContainer: {
+    flex: 1,
+  },
+  menuDescription: {
+    fontSize: 12,
+    marginTop: 2,
+    opacity: 0.6,
+  },
+  chevron: {
+    fontSize: 28,
+    opacity: 0.3,
   },
   logoutButton: {
-    backgroundColor: '#ff3b30',
-    padding: 16,
-    borderRadius: 8,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 12,
+    justifyContent: 'center',
+    backgroundColor: '#ff3b30',
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    marginTop: Spacing.md,
+  },
+  logoutIcon: {
+    marginRight: Spacing.sm,
   },
   logoutText: {
     color: '#fff',

@@ -37,6 +37,12 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen 
+        name="measurements" 
+        options={{
+          title: 'Mis Medidas',
+        }}
+      />
+      <Stack.Screen 
         name="preferences" 
         options={{
           title: 'Preferencias',
