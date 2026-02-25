@@ -224,11 +224,6 @@ export default function SettingsScreen() {
                             <Text style={styles.signOutText}>Sign Out</Text>
                         </TouchableOpacity>
                     )}
-
-                    {/* Version */}
-                    <ThemedText style={[styles.versionText, { color: colorScheme === 'dark' ? '#666' : '#BDBDBD' }]}>
-                        EquiData v1.2.0
-                    </ThemedText>
                 </ScrollView>
             </ThemedView>
         </SafeAreaView>
