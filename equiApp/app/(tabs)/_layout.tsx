@@ -1,12 +1,17 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, useColorScheme } from 'react-native';
 import AntDesignIcon from '@expo/vector-icons/AntDesign';
+import { Colors } from '@/src/constants';
 export default function TabLayout() {
+
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+  
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#007AFF',
+        tabBarActiveTintColor: colors.accent,
         headerShown: false,
         tabBarStyle: Platform.select({
           ios: {
@@ -20,22 +25,37 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Inicio',
+          title: 'Home',
           tabBarIcon: ({ color }) => <AntDesignIcon name="home" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="products"
         options={{
-          title: 'Productos',
+          title: 'Shop',
           tabBarIcon: ({ color }) => <AntDesignIcon name="shopping-cart" size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="closet"
+        options={{
+          title: 'Closet',
+          tabBarIcon: ({ color }) => <AntDesignIcon name="appstore" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Perfil',
-          tabBarIcon: ({ color }) => <AntDesignIcon name="profile" size={24} color={color} />,
+          title: 'Profile',
+          // tabBarIcon: ({ color }) => <AntDesignIcon name="user" size={24} color={color} />,
+          href: null
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ color }) => <AntDesignIcon name="setting" size={24} color={color} />,
         }}
       />
     </Tabs>

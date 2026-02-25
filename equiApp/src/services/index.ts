@@ -1,6 +1,7 @@
 // Exportar todos los servicios
 export * from './products.service';
 export * from './auth.service';
+export * from './user.service';
 
 // Puedes agregar más servicios aquí:
 // export * from './orders.service';

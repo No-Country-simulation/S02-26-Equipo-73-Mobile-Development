@@ -93,6 +93,31 @@ namespace Application.Services.Identity
             return await _userRepository.CreateAsync(createDto);
         }
 
+        public async Task<UserDto> UpdateProfileAsync(int userId, UpdateProfileDto dto)
+        {
+            var existingUser = await _userRepository.GetByIdAsync(userId);
+
+            if (existingUser == null)
+            {
+                throw ApiErrorException.NotFound(
+                    ErrorCodes.USER_NOT_FOUND,
+                    "User not found");
+            }
+
+            var updateDto = new UpdateUserDto
+            {
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Phone = dto.Phone,
+                ProfileImage = dto.ProfileImageUrl != null && dto.ProfileImageUrl.IsBase64Image()
+                    ? await _storageService.ProcessImageUrlAsync(dto.ProfileImageUrl!, "profiles")
+                    : dto.ProfileImageUrl
+            };
+
+            return await _userRepository.UpdateAsync(userId, updateDto)
+                ?? throw ApiErrorException.NotFound(ErrorCodes.USER_NOT_FOUND, "User not found");
+        }
+
         public async Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updateDto)
         {
             var existingUser = await _userRepository.GetByIdAsync(id);

@@ -34,6 +34,11 @@ namespace Application.Interfaces
         Task<UserDto> GetOrCreateUserFromSupabaseAsync(string supabaseId, string email, string? name);
 
         /// <summary>
+        /// Actualiza el perfil del usuario autenticado (firstName, lastName, phone, profileImageUrl)
+        /// </summary>
+        Task<UserDto> UpdateProfileAsync(int userId, UpdateProfileDto dto);
+
+        /// <summary>
         /// Actualiza un usuario existente
         /// </summary>
         Task<UserDto> UpdateUserAsync(int id, UpdateUserDto updateDto);

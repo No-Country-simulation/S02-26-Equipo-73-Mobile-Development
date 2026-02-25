@@ -113,9 +113,9 @@ export default function ProfileScreen() {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <AntDesignIcon name="left" size={24} color={colors.text} />
+            <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
           </TouchableOpacity>
-          <ThemedText type="title" style={styles.headerTitle}>Datos Personales</ThemedText>
+          <ThemedText variant='subheading1'>Datos Personales</ThemedText>
           <View style={styles.placeholder} />
         </View>
 
@@ -255,11 +255,6 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
     width: 40,
   },
-  headerTitle: {
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: Spacing.md,
-  },
   placeholder: {
     width: 40,
   },
@@ -321,4 +316,3 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
 });
-

@@ -2,7 +2,7 @@
   "expo": {
     "name": "Rider Fit",
     "slug": "Rider Fit",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "equiapp",
@@ -25,7 +25,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.s022673.riderfit"
+      "package": "com.s022673.equiApp"
     },
     "web": {
       "output": "static",
@@ -46,7 +46,8 @@
           "imageWidth": 250
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,

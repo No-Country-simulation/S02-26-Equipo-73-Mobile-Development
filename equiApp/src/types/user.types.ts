@@ -9,6 +9,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   phone?: string;
+  dateOfBirth?: string;
   avatar?: string;
   role?: UserRole;
   createdAt?: string;
@@ -45,6 +46,7 @@ export interface UpdateProfileData {
   firstName?: string;
   lastName?: string;
   phone?: string;
+  dateOfBirth?: string;
   avatar?: string;
   address?: Address;
   preferences?: UserPreferences;

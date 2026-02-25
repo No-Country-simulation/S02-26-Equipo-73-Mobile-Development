@@ -40,6 +40,14 @@ export interface BaseEntity {
   updatedAt?: string;
 }
 
+// Respuesta genérica de la API
+export interface ApiResponse<T> {
+  success: boolean;
+  message?: string;
+  data: T;
+  errors?: string[];
+}
+
 // Estados de carga
 export interface LoadingState {
   isLoading: boolean;
