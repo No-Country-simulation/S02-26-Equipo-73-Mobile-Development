@@ -6,6 +6,7 @@ import { ThemedView, ThemedText, ThemedButton } from '@/src';
 import { useAuth } from '@/src/hooks/useAuth';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
 import { useColorScheme, useOnboarding } from '@/src/hooks';
+import { useUserStore } from '@/src/stores/user.store';
 import AntDesignIcon from '@expo/vector-icons/AntDesign';
 
 type MenuItem = {
@@ -30,10 +31,16 @@ export default function SettingsScreen() {
     const { isAuthenticated, user, logout } = useAuth();
     const colorScheme = useColorScheme();
     const colors = Colors[colorScheme ?? 'light'];
-  const { resetOnboarding } = useOnboarding();
+    const { resetOnboarding } = useOnboarding();
+    const { preferences, updatePreferences } = useUserStore();
+    
     // Estados locales para switches
-    const [darkMode, setDarkMode] = useState(colorScheme === 'dark');
     const [notifications, setNotifications] = useState(true);
+
+    // Handler para cambiar el tema
+    const handleThemeToggle = (enabled: boolean) => {
+        updatePreferences({ theme: enabled ? 'dark' : 'light' });
+    };
 
     // Función helper para adaptar colores al tema
     const getIconBg = (lightColor: string, darkColor: string) =>
@@ -64,8 +71,8 @@ export default function SettingsScreen() {
             iconColor: '#8B7FD8',
             iconBg: getIconBg('#F0EEFF', 'rgba(139, 127, 216, 0.2)'),
             hasSwitch: true,
-            switchValue: darkMode,
-            onSwitchChange: setDarkMode,
+            switchValue: colorScheme === 'dark',
+            onSwitchChange: handleThemeToggle,
         },
         {
             id: 'language',
