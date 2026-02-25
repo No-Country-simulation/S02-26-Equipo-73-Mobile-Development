@@ -30,6 +30,12 @@ export default function SettingsLayout() {
           title: 'Cambiar Contraseña',
         }}
       />
+      <Stack.Screen 
+        name="personal-data" 
+        options={{
+          title: 'Datos Personales',
+        }}
+      />
     </Stack>
   );
 }

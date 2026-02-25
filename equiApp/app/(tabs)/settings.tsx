@@ -81,7 +81,7 @@ export default function SettingsScreen() {
             iconColor: '#4CAF50',
             iconBg: getIconBg('#E8F5E9', 'rgba(76, 175, 80, 0.2)'),
             rightText: 'English (US)',
-            onPress: () => router.push('/settings/preferences'),
+            // onPress: () => router.push('/settings/preferences'),
         },
         {
             id: 'restartTuturial',
@@ -175,7 +175,7 @@ export default function SettingsScreen() {
             <ThemedView style={styles.container}>
                 {/* Header */}
                 <View style={styles.header}>
-                    <ThemedText style={styles.headerTitle}>Settings</ThemedText>
+                    <ThemedText variant='subheading1'>Ajustes</ThemedText>
                 </View>
 
                 <ScrollView
@@ -248,10 +248,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: Spacing.lg,
         paddingVertical: Spacing.lg,
         alignItems: 'center',
-    },
-    headerTitle: {
-        fontSize: 24,
-        fontWeight: '700',
     },
     content: {
         padding: Spacing.lg,

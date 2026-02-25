@@ -66,7 +66,7 @@ function ProfileContent() {
       icon: 'star',
       iconColor: colors.primary,
       iconBg: getIconBg(colors.primary),
-      onPress: () => router.push('/settings/horses'),
+      // onPress: () => router.push('/settings/horses'),
     },
     {
       id: 'measurements-log',
@@ -86,7 +86,7 @@ function ProfileContent() {
       icon: 'user',
       iconColor: colors.secondary,
       iconBg: getIconBg(colors.secondary),
-      onPress: () => router.push('/settings/profile'),
+      onPress: () => router.push('/settings/personal-data'),
     },
     {
       id: 'measurements',
@@ -165,7 +165,7 @@ function ProfileContent() {
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
           </TouchableOpacity>
-          <ThemedText style={styles.headerTitle}>Profile</ThemedText>
+          <ThemedText variant='subheading1'>Cuenta</ThemedText>
           <View style={styles.placeholder} />
         </View>
 
@@ -236,10 +236,6 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: Spacing.sm,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
   },
   placeholder: {
     width: 40,
