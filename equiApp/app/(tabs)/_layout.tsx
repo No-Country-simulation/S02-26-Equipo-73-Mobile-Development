@@ -1,12 +1,17 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, useColorScheme } from 'react-native';
 import AntDesignIcon from '@expo/vector-icons/AntDesign';
+import { Colors } from '@/src/constants';
 export default function TabLayout() {
+
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
+  
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#007AFF',
+        tabBarActiveTintColor: colors.accent,
         headerShown: false,
         tabBarStyle: Platform.select({
           ios: {

@@ -25,45 +25,9 @@ export default function SettingsLayout() {
         }}
       />
       <Stack.Screen 
-        name="profile" 
-        options={{
-          title: 'Perfil de Usuario',
-        }}
-      />
-      <Stack.Screen 
         name="change-password" 
         options={{
           title: 'Cambiar Contraseña',
-        }}
-      />
-      <Stack.Screen 
-        name="measurements" 
-        options={{
-          title: 'Mis Medidas',
-        }}
-      />
-      <Stack.Screen 
-        name="preferences" 
-        options={{
-          title: 'Preferencias',
-        }}
-      />
-      <Stack.Screen 
-        name="closet" 
-        options={{
-          title: 'Closet',
-        }}
-      />
-      <Stack.Screen 
-        name="horses" 
-        options={{
-          title: 'Mis Caballos',
-        }}
-      />
-      <Stack.Screen 
-        name="help" 
-        options={{
-          title: 'Ayuda',
         }}
       />
     </Stack>

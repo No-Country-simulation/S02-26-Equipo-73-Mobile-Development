@@ -39,7 +39,7 @@ function ProfileContent() {
       title: 'Mis Medidas',
       icon: 'API',
       description: 'Gestiona tus medidas corporales',
-      onPress: () => router.push('/settings/measurements'),
+      // onPress: () => router.push('/settings/measurements'),
     },
     {
       id: 'horses',
