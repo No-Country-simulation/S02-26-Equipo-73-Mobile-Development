@@ -9,6 +9,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   phone?: string;
+  dateOfBirth?: string;
   avatar?: string;
   role?: UserRole;
   createdAt?: string;
@@ -21,7 +22,7 @@ export enum UserRole {
   SELLER = 'seller',
 }
 
-export interface UserProfile extends User {
+export interface UserProfileData extends User {
   address?: Address;
   preferences?: UserPreferences;
 }
@@ -45,6 +46,7 @@ export interface UpdateProfileData {
   firstName?: string;
   lastName?: string;
   phone?: string;
+  dateOfBirth?: string;
   avatar?: string;
   address?: Address;
   preferences?: UserPreferences;

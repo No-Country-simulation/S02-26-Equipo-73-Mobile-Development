@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
@@ -11,16 +9,21 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { ThemedView, ThemedText, ThemedInput, ThemedButton } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/src/hooks/useAuth';
 import { PublicRoute } from '@/src/components/auth';
 import { registerSchema, type RegisterFormData } from '@/src/schemas/auth.schema';
+import { Ionicons } from '@expo/vector-icons';
+import { Colors, Spacing, BorderRadius } from '@/src/constants';
+import { useColorScheme } from '@/src/hooks';
 
 function RegisterScreenContent() {
   const router = useRouter();
   const { register: registerUser, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const colorScheme = useColorScheme();
 
   const {
     control,
@@ -52,132 +55,189 @@ function RegisterScreenContent() {
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Crear Cuenta</Text>
-        <Text style={styles.subtitle}>Únete a nosotros</Text>
+      <ThemedView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          {/* Header */}
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color={colorScheme === 'dark' ? Colors.dark.icon : Colors.light.icon} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/settings/help')}>
+              <ThemedText variant="bodyRegular" lightColor={Colors.light.accent} darkColor={Colors.dark.accent}>
+                Ayuda
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
 
-        {/* Name Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Nombre (Opcional)</Text>
-          <Controller
-            control={control}
-            name="name"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, errors.name && styles.inputError]}
-                placeholder="Tu nombre"
-                placeholderTextColor="#999"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                editable={!isLoading}
-              />
-            )}
+          {/* Logo */}
+          {/* <View style={styles.logoContainer}>
+            <View style={[
+              styles.iconCircle, 
+              { 
+                backgroundColor: colorScheme === 'dark' ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary,
+                borderColor: colorScheme === 'dark' ? Colors.dark.border : Colors.light.border
+              }
+            ]}>
+              <Ionicons name="layers" size={40} color={Colors.light.accent} />
+            </View>
+          </View> */}
+
+          {/* Title */}
+          <ThemedText variant="heading3" style={styles.title}>
+            Rider Fit
+          </ThemedText>
+          <ThemedText variant="bodyRegular" style={styles.subtitle} lightColor={Colors.light.textSecondary} darkColor={Colors.dark.textSecondary}>
+            Medición precisa y compras con IA para el ecuestre moderno
+          </ThemedText>
+
+          {/* Name Input */}
+          <View style={styles.inputContainer}>
+            <Controller
+              control={control}
+              name="name"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <ThemedInput
+                  leftIcon="person-outline"
+                  placeholder="Nombre (opcional)"
+                  value={value}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  editable={!isLoading}
+                  error={errors.name?.message}
+                />
+              )}
+            />
+          </View>
+
+          {/* Email Input */}
+          <View style={styles.inputContainer}>
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <ThemedInput
+                  leftIcon="mail-outline"
+                  placeholder="Email Address"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  value={value}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  editable={!isLoading}
+                  error={errors.email?.message}
+                />
+              )}
+            />
+          </View>
+
+          {/* Password Input */}
+          <View style={styles.inputContainer}>
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <ThemedInput
+                  leftIcon="lock-closed-outline"
+                  rightIcon={showPassword ? "eye-off-outline" : "eye-outline"}
+                  onRightIconPress={() => setShowPassword(!showPassword)}
+                  placeholder="Contraseña"
+                  secureTextEntry={!showPassword}
+                  value={value}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  editable={!isLoading}
+                  error={errors.password?.message}
+                />
+              )}
+            />
+          </View>
+
+          {/* Confirm Password Input */}
+          <View style={styles.inputContainer}>
+            <Controller
+              control={control}
+              name="confirmPassword"
+              render={({ field: { onChange, onBlur, value } }) => (
+                <ThemedInput
+                  leftIcon="lock-closed-outline"
+                  placeholder="Confirmar Contraseña"
+                  secureTextEntry={!showPassword}
+                  value={value}
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  editable={!isLoading}
+                  error={errors.confirmPassword?.message}
+                />
+              )}
+            />
+          </View>
+
+          {/* Register Button */}
+
+          <ThemedButton 
+            onPress={handleSubmit(onSubmit)}
+            isLoading={isLoading}
+            label='Registrarse'
+          
           />
-          {errors.name && (
-            <Text style={styles.errorText}>{errors.name.message}</Text>
-          )}
-        </View>
 
-        {/* Email Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
-          <Controller
-            control={control}
-            name="email"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, errors.email && styles.inputError]}
-                placeholder="tu@email.com"
-                placeholderTextColor="#999"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                editable={!isLoading}
-              />
-            )}
-          />
-          {errors.email && (
-            <Text style={styles.errorText}>{errors.email.message}</Text>
-          )}
-        </View>
+          {/* Divider */}
+          <View style={styles.dividerContainer}>
+            <View style={[styles.divider, { backgroundColor: colorScheme === 'dark' ? Colors.dark.border : Colors.light.border }]} />
+            <ThemedText variant="bodySmall" style={styles.dividerText} lightColor={Colors.light.textSecondary} darkColor={Colors.dark.textSecondary}>
+              O continuar con
+            </ThemedText>
+            <View style={[styles.divider, { backgroundColor: colorScheme === 'dark' ? Colors.dark.border : Colors.light.border }]} />
+          </View>
 
-        {/* Password Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Contraseña</Text>
-          <Controller
-            control={control}
-            name="password"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, errors.password && styles.inputError]}
-                placeholder="••••••••"
-                placeholderTextColor="#999"
-                secureTextEntry={!showPassword}
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                editable={!isLoading}
-              />
-            )}
-          />
-          {errors.password && (
-            <Text style={styles.errorText}>{errors.password.message}</Text>
-          )}
-        </View>
+          {/* Social Buttons */}
+          <View style={styles.socialContainer}>
+            <TouchableOpacity style={[
+              styles.socialButton, 
+              { 
+                backgroundColor: colorScheme === 'dark' ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary,
+                borderColor: colorScheme === 'dark' ? Colors.dark.border : Colors.light.border
+              }
+            ]} disabled={isLoading}>
+              <Ionicons name="logo-google" size={24} color={colorScheme === 'dark' ? Colors.dark.icon : Colors.light.icon} />
+              <ThemedText variant="bodyRegular" style={styles.socialText}>Google</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity style={[
+              styles.socialButton, 
+              { 
+                backgroundColor: colorScheme === 'dark' ? Colors.dark.backgroundSecondary : Colors.light.backgroundSecondary,
+                borderColor: colorScheme === 'dark' ? Colors.dark.border : Colors.light.border
+              }
+            ]} disabled={isLoading}>
+              <Ionicons name="logo-apple" size={24} color={colorScheme === 'dark' ? Colors.dark.icon : Colors.light.icon} />
+              <ThemedText variant="bodyRegular" style={styles.socialText}>Apple</ThemedText>
+            </TouchableOpacity>
+          </View>
 
-        {/* Confirm Password Input */}
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>Confirmar Contraseña</Text>
-          <Controller
-            control={control}
-            name="confirmPassword"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, errors.confirmPassword && styles.inputError]}
-                placeholder="••••••••"
-                placeholderTextColor="#999"
-                secureTextEntry={!showPassword}
-                value={value}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                editable={!isLoading}
-              />
-            )}
-          />
-          {errors.confirmPassword && (
-            <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
-          )}
-        </View>
+          {/* Login Link */}
+          <View style={styles.footer}>
+            <ThemedText variant="bodyRegular" lightColor={Colors.light.textSecondary} darkColor={Colors.dark.textSecondary}>
+              ¿Ya tienes cuenta?{' '}
+            </ThemedText>
+            <TouchableOpacity onPress={() => router.back()} disabled={isLoading}>
+              <ThemedText variant="bodyRegular" lightColor={Colors.light.accent} darkColor={Colors.dark.accent} style={styles.link}>
+                Inicia Sesión
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
 
-        {/* Register Button */}
-        <TouchableOpacity
-          style={[styles.button, isLoading && styles.buttonDisabled]}
-          onPress={handleSubmit(onSubmit)}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Registrarse</Text>
-          )}
-        </TouchableOpacity>
-
-        {/* Login Link */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>¿Ya tienes cuenta? </Text>
+          {/* Browse as Guest */}
           <TouchableOpacity
-            onPress={() => router.back()}
+            onPress={() => router.replace('/(tabs)')}
             disabled={isLoading}
+            style={styles.guestLink}
           >
-            <Text style={styles.link}>Inicia Sesión</Text>
+            <ThemedText variant="bodyRegular" lightColor={Colors.light.textSecondary} darkColor={Colors.dark.textSecondary}>
+              Explorar Catálogo como Invitado →
+            </ThemedText>
           </TouchableOpacity>
-        </View>
-      </View>
-    </ScrollView>
+        </ScrollView>
+      </ThemedView>
     </SafeAreaView>
   );
 }
@@ -185,85 +245,91 @@ function RegisterScreenContent() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
-  contentContainer: {
+  scrollContent: {
     flexGrow: 1,
+    padding: Spacing.lg,
   },
-  content: {
-    flex: 1,
-    padding: 24,
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
+  },
+  backButton: {
+    padding: Spacing.xs,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginVertical: Spacing.lg,
+  },
+  iconCircle: {
+    width: 80,
+    height: 80,
+    borderRadius: 20,
     justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#000',
+    textAlign: 'center',
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 32,
+    textAlign: 'center',
+    marginBottom: Spacing.xl,
+    paddingHorizontal: Spacing.md,
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: Spacing.md,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
-    color: '#000',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#f9f9f9',
-  },
-  inputError: {
-    borderColor: '#ff3b30',
-  },
-  errorText: {
-    color: '#ff3b30',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 16,
-    borderRadius: 8,
+  dividerContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 16,
+    marginVertical: Spacing.lg,
   },
-  buttonDisabled: {
-    opacity: 0.6,
+  divider: {
+    flex: 1,
+    height: 1,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+  dividerText: {
+    marginHorizontal: Spacing.md,
+  },
+  socialContainer: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+    marginBottom: Spacing.lg,
+  },
+  socialButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+  },
+  socialText: {
+    fontWeight: '500',
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  footerText: {
-    color: '#666',
-    fontSize: 14,
+    marginTop: Spacing.md,
   },
   link: {
-    color: '#007AFF',
-    fontSize: 14,
     fontWeight: '600',
+  },
+  guestLink: {
+    alignItems: 'center',
+    marginTop: Spacing.lg,
+    paddingVertical: Spacing.sm,
   },
 });
 

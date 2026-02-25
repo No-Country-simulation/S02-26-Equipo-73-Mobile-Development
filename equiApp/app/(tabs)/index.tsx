@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/src/hooks/useAuth';
+import { ThemedView, ThemedText } from '@/src';
 
 /**
  * Pantalla principal (pública)
@@ -13,60 +14,72 @@ export default function HomeScreen() {
   const router = useRouter();
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Bienvenido a EquiApp</Text>
-        {isAuthenticated ? (
-          <Text style={styles.subtitle}>Hola, {user?.name || user?.email}! 👋</Text>
-        ) : (
-          <Text style={styles.subtitle}>Explora nuestros productos y servicios</Text>
-        )}
-      </View>
+      <ThemedView style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+          <View style={styles.header}>
+            <ThemedText type='title'>Bienvenido a EquiApp</ThemedText>
+            {isAuthenticated ? (
+              <ThemedText type='subtitle'>Hola, {user?.name || user?.email}! 👋</ThemedText>
+            ) : (
+              <ThemedText type='subtitle'>Explora nuestros productos y servicios</ThemedText>
+            )}
+          </View>
 
-      <View style={styles.cardsContainer}>
-        <TouchableOpacity
-          style={styles.card}
-          onPress={() => router.push('/(tabs)/products')}
-        >
-          <Text style={styles.cardIcon}>🛍️</Text>
-          <Text style={styles.cardTitle}>Productos</Text>
-          <Text style={styles.cardDescription}>
-            Explora nuestro catálogo completo
-          </Text>
-        </TouchableOpacity>
+          <View style={styles.cardsContainer}>
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => router.push('/(tabs)/products')}
+            >
+              <ThemedText style={styles.cardIcon}>🛍️</ThemedText>
+              <ThemedText style={styles.cardTitle}>Productos</ThemedText>
+              <ThemedText style={styles.cardDescription}>
+                Explora nuestro catálogo completo
+              </ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => router.push('/settings')}
+            >
+              <ThemedText style={styles.cardIcon}>🛍️</ThemedText>
+              <ThemedText style={styles.cardTitle}>Productos</ThemedText>
+              <ThemedText style={styles.cardDescription}>
+                Ir a settings
+              </ThemedText>
+            </TouchableOpacity>
 
-        {!isAuthenticated ? (
-          <TouchableOpacity
-            style={[styles.card, styles.cardPrimary]}
-            onPress={() => router.push('/auth/login')}
-          >
-            <Text style={styles.cardIcon}>🔐</Text>
-            <Text style={[styles.cardTitle, styles.cardTextWhite]}>Iniciar Sesión</Text>
-            <Text style={[styles.cardDescription, styles.cardTextWhite]}>
-              Accede a todas las funcionalidades
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            style={[styles.card, styles.cardSuccess]}
-            onPress={() => router.push('/(tabs)/profile')}
-          >
-            <Text style={styles.cardIcon}>👤</Text>
-            <Text style={[styles.cardTitle, styles.cardTextWhite]}>Mi Perfil</Text>
-            <Text style={[styles.cardDescription, styles.cardTextWhite]}>
-              Administra tu cuenta
-            </Text>
-          </TouchableOpacity>
-        )}
-      </View>
+            {!isAuthenticated ? (
+              <TouchableOpacity
+                style={[styles.card, styles.cardPrimary]}
+                onPress={() => router.push('/auth/login')}
+              >
+                <ThemedText style={styles.cardIcon}>🔐</ThemedText>
+                <ThemedText style={[styles.cardTitle, styles.cardTextWhite]}>Iniciar Sesión</ThemedText>
+                <ThemedText style={[styles.cardDescription, styles.cardTextWhite]}>
+                  Accede a todas las funcionalidades
+                </ThemedText>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={[styles.card, styles.cardSuccess]}
+                onPress={() => router.push('/(tabs)/profile')}
+              >
+                <ThemedText style={styles.cardIcon}>👤</ThemedText>
+                <ThemedText style={[styles.cardTitle, styles.cardTextWhite]}>Mi Perfil</ThemedText>
+                <ThemedText style={[styles.cardDescription, styles.cardTextWhite]}>
+                  Administra tu cuenta
+                </ThemedText>
+              </TouchableOpacity>
+            )}
+          </View>
 
-      <View style={styles.infoBox}>
-        <Text style={styles.infoText}>
-          ✨ Esta es una app de ejemplo con autenticación completa, 
-          navegación libre y rutas protegidas.
-        </Text>
-      </View>
-    </ScrollView>
+          <View style={styles.infoBox}>
+            <ThemedText style={styles.infoText}>
+              ✨ Esta es una app de ejemplo con autenticación completa,
+              navegación libre y rutas protegidas.
+            </ThemedText>
+          </View>
+        </ScrollView>
+      </ThemedView>
     </SafeAreaView>
   );
 }
@@ -74,11 +87,11 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    // backgroundColor: '#f5f5f5',
   },
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    // backgroundColor: '#f5f5f5',
   },
   content: {
     flexGrow: 1,
@@ -93,7 +106,6 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#000',
     textAlign: 'center',
   },
   subtitle: {

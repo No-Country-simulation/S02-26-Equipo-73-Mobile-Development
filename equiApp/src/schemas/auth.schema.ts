@@ -125,3 +125,29 @@ export const updateProfileSchema = z.object({
 });
 
 export type UpdateProfileFormData = z.infer<typeof updateProfileSchema>;
+
+/**
+ * Schema para cambiar contraseña
+ */
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z
+      .string({ message: errorMessages.required })
+      .min(6, { message: errorMessages.passwordStrength }),
+    newPassword: z
+      .string({ message: errorMessages.required })
+      .min(6, { message: errorMessages.passwordStrength }),
+    confirmPassword: z
+      .string({ message: errorMessages.required })
+      .min(6, { message: errorMessages.passwordStrength }),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: errorMessages.passwordMatch,
+    path: ['confirmPassword'],
+  })
+  .refine((data) => data.currentPassword !== data.newPassword, {
+    message: 'La nueva contraseña debe ser diferente a la actual',
+    path: ['newPassword'],
+  });
+
+export type ChangePasswordFormData = z.infer<typeof changePasswordSchema>;

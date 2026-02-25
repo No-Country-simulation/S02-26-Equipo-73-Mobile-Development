@@ -1,15 +1,15 @@
 import React from 'react';
 import {
   View,
-  Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ActivityIndicator,
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { ThemedView, ThemedText, ThemedInput, ThemedButton } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
+import { Colors, Spacing, BorderRadius } from '@/src/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { supabase } from '@/src/lib/supabase';
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '@/src/schemas/auth.schema';
@@ -58,50 +58,40 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ThemedView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Recuperar Contraseña</Text>
-        <Text style={styles.subtitle}>
+        <ThemedText type="title" style={styles.title}>Recuperar Contraseña</ThemedText>
+        <ThemedText style={styles.subtitle}>
           Ingresa tu email y te enviaremos un enlace para restablecer tu contraseña
-        </Text>
+        </ThemedText>
 
         {/* Email Input */}
         <View style={styles.inputContainer}>
-          <Text style={styles.label}>Email</Text>
           <Controller
             control={control}
             name="email"
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={[styles.input, errors.email && styles.inputError]}
+              <ThemedInput
+                leftIcon="mail-outline"
                 placeholder="tu@email.com"
-                placeholderTextColor="#999"
                 autoCapitalize="none"
                 keyboardType="email-address"
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
                 editable={!isLoading}
+                error={errors.email?.message}
               />
             )}
           />
-          {errors.email && (
-            <Text style={styles.errorText}>{errors.email.message}</Text>
-          )}
         </View>
 
         {/* Submit Button */}
-        <TouchableOpacity
-          style={[styles.button, isLoading && styles.buttonDisabled]}
+        <ThemedButton 
+          label='Enviar Enlace'
           onPress={handleSubmit(onSubmit)}
           disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Enviar Enlace</Text>
-          )}
-        </TouchableOpacity>
+        />
 
         {/* Back to Login */}
         <TouchableOpacity
@@ -109,81 +99,40 @@ export default function ForgotPasswordScreen() {
           disabled={isLoading}
           style={styles.backButton}
         >
-          <Text style={styles.backText}>Volver al inicio de sesión</Text>
+          <ThemedText variant="bodyRegular" lightColor={Colors.light.accent} darkColor={Colors.dark.accent}>
+            Volver al inicio de sesión
+          </ThemedText>
         </TouchableOpacity>
       </View>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   content: {
     flex: 1,
-    padding: 24,
+    padding: Spacing.xl,
     justifyContent: 'center',
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#000',
+    marginBottom: Spacing.sm,
+    textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 32,
+    marginBottom: Spacing.xxl,
     lineHeight: 22,
+    opacity: 0.7,
+    textAlign: 'center',
   },
   inputContainer: {
-    marginBottom: 20,
+    marginBottom: Spacing.lg,
   },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
-    color: '#000',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-    backgroundColor: '#f9f9f9',
-  },
-  inputError: {
-    borderColor: '#ff3b30',
-  },
-  errorText: {
-    color: '#ff3b30',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
+
   backButton: {
-    padding: 12,
+    padding: Spacing.sm,
     alignItems: 'center',
-  },
-  backText: {
-    color: '#007AFF',
-    fontSize: 14,
   },
 });
