@@ -89,32 +89,32 @@ export default function SettingsScreen() {
 
     // Sección de App Controls
     const appControlsItems: MenuItem[] = [
-        {
-            id: 'notifications',
-            title: 'Push Notifications',
-            icon: 'notification',
-            iconColor: '#FF9800',
-            iconBg: getIconBg('#FFF3E0', 'rgba(255, 152, 0, 0.2)'),
-            hasSwitch: true,
-            switchValue: notifications,
-            onSwitchChange: setNotifications,
-        },
-        {
-            id: 'privacy',
-            title: 'Privacy Settings',
-            icon: 'lock',
-            iconColor: '#F44336',
-            iconBg: getIconBg('#FFEBEE', 'rgba(244, 67, 54, 0.2)'),
-            onPress: () => router.push('/settings/preferences'),
-        },
-        {
-            id: 'storage',
-            title: 'Data & Storage',
-            icon: 'database',
-            iconColor: '#2196F3',
-            iconBg: getIconBg('#E3F2FD', 'rgba(33, 150, 243, 0.2)'),
-            onPress: () => router.push('/settings/preferences'),
-        },
+        // {
+        //     id: 'notifications',
+        //     title: 'Push Notifications',
+        //     icon: 'notification',
+        //     iconColor: '#FF9800',
+        //     iconBg: getIconBg('#FFF3E0', 'rgba(255, 152, 0, 0.2)'),
+        //     hasSwitch: true,
+        //     switchValue: notifications,
+        //     onSwitchChange: setNotifications,
+        // },
+        // {
+        //     id: 'privacy',
+        //     title: 'Privacy Settings',
+        //     icon: 'lock',
+        //     iconColor: '#F44336',
+        //     iconBg: getIconBg('#FFEBEE', 'rgba(244, 67, 54, 0.2)'),
+        //     onPress: () => router.push('/settings/preferences'),
+        // },
+        // {
+        //     id: 'storage',
+        //     title: 'Data & Storage',
+        //     icon: 'database',
+        //     iconColor: '#2196F3',
+        //     iconBg: getIconBg('#E3F2FD', 'rgba(33, 150, 243, 0.2)'),
+        //     onPress: () => router.push('/settings/preferences'),
+        // },
     ];
 
     const handleLogout = () => {
