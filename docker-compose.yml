@@ -45,8 +45,6 @@ services:
 
 volumes:
   pgdata:
-    external: true
-    name: panfa-equiapp-yoitpm_pgdata
   minio_data:
 
 networks:
