@@ -3,7 +3,6 @@ using Application.DTOs.Identity;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace FacadeApi.Controllers
 {
@@ -11,11 +10,11 @@ namespace FacadeApi.Controllers
     [Route("api/[controller]")]
     [Produces("application/json")]
     [Authorize(AuthenticationSchemes = "ApiJwt")]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
 
-        public UsersController(IUserService userService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
         }

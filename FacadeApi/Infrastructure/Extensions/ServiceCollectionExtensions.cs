@@ -50,6 +50,8 @@ namespace Infrastructure.Extensions
         {
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserMeasurementRepository, UserMeasurementRepository>();
+            services.AddScoped<IMeasurementReferenceRepository, MeasurementReferenceRepository>();
             return services;
         }
 
@@ -57,6 +59,8 @@ namespace Infrastructure.Extensions
         {
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserMeasurementService, Application.Services.Measurements.UserMeasurementService>();
+            services.AddScoped<IMeasurementReferenceService, MeasurementReferenceService>();
             return services;
         }
 
