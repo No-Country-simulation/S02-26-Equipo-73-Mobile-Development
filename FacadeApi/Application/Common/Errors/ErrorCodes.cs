@@ -62,5 +62,10 @@ namespace Application.Common.Errors
         public const string MEASUREMENT_TYPE_NOT_FOUND = "ERR_6002";
         public const string MEASUREMENT_UNIT_NOT_FOUND = "ERR_6003";
         public const string MEASUREMENT_FORBIDDEN = "ERR_6004";
+
+        // Horse Errors (7000-7099)
+        public const string HORSE_NOT_FOUND = "ERR_7000";
+        public const string HORSE_FORBIDDEN = "ERR_7001";
+        public const string HORSE_ALREADY_EXISTS = "ERR_7002";
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Amazon.S3;
 using Application.Interfaces;
 using Application.Interfaces.Repositories;
+using Application.Services.Horses;
 using Application.Services.Identity;
 using Application.Services.Products;
 using Infrastructure.AWS.S3;
@@ -52,6 +53,8 @@ namespace Infrastructure.Extensions
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUserMeasurementRepository, UserMeasurementRepository>();
             services.AddScoped<IMeasurementReferenceRepository, MeasurementReferenceRepository>();
+            services.AddScoped<IHorseRepository, HorseRepository>();
+            services.AddScoped<IHorseReferenceRepository, HorseReferenceRepository>();
             return services;
         }
 
@@ -61,6 +64,7 @@ namespace Infrastructure.Extensions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserMeasurementService, Application.Services.Measurements.UserMeasurementService>();
             services.AddScoped<IMeasurementReferenceService, MeasurementReferenceService>();
+            services.AddScoped<IHorseService, HorseService>();
             return services;
         }
 

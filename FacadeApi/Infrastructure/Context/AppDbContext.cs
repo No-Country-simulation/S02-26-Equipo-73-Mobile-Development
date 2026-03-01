@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Horse;
 using Domain.Entities.Identity;
 using Domain.Entities.Measurement;
 using Domain.Entities.Products;
@@ -23,6 +24,12 @@ namespace Infrastructure.Context
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
         public virtual DbSet<BrandSize> BrandSizes { get; set; }
         public virtual DbSet<BrandSizeMeasurement> BrandSizeMeasurements { get; set; }
+
+        // Horse
+        public virtual DbSet<Horse> Horses { get; set; }
+        public virtual DbSet<Breed> Breeds { get; set; }
+        public virtual DbSet<Discipline> Disciplines { get; set; }
+        public virtual DbSet<HorseLevel> HorseLevels { get; set; }
 
         // Identity
         public virtual DbSet<ApplicationUser> ApplicationUsers { get; set; }
@@ -493,6 +500,127 @@ namespace Infrastructure.Context
 
                 entity.HasIndex(x => x.UserId);
                 entity.HasIndex(x => x.RoleId);
+            });
+
+            // =============================
+            // Breed
+            // =============================
+            builder.Entity<Breed>(entity =>
+            {
+                entity.ToTable("Breeds");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.IsActive)
+                    .HasDefaultValue(true);
+
+                entity.HasIndex(x => x.Name).IsUnique();
+            });
+
+            // =============================
+            // Discipline
+            // =============================
+            builder.Entity<Discipline>(entity =>
+            {
+                entity.ToTable("Disciplines");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.IsActive)
+                    .HasDefaultValue(true);
+
+                entity.HasIndex(x => x.Name).IsUnique();
+            });
+
+            // =============================
+            // HorseLevel
+            // =============================
+            builder.Entity<HorseLevel>(entity =>
+            {
+                entity.ToTable("HorseLevels");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.IsActive)
+                    .HasDefaultValue(true);
+
+                entity.HasIndex(x => x.Name).IsUnique();
+            });
+
+            // =============================
+            // Horse
+            // =============================
+            builder.Entity<Horse>(entity =>
+            {
+                entity.ToTable("Horses");
+
+                entity.HasKey(x => x.Id);
+
+                entity.Property(x => x.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.Sex)
+                    .HasConversion<string>()
+                    .HasMaxLength(10);
+
+                entity.Property(x => x.IsActive)
+                    .HasDefaultValue(true);
+
+                entity.Property(x => x.CreatedAt);
+                entity.Property(x => x.UpdatedAt);
+
+                entity.HasOne(x => x.Owner)
+                    .WithMany()
+                    .HasForeignKey(x => x.OwnerId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(x => x.Breed)
+                    .WithMany()
+                    .HasForeignKey(x => x.BreedId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Discipline)
+                    .WithMany()
+                    .HasForeignKey(x => x.DisciplineId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(x => x.Level)
+                    .WithMany()
+                    .HasForeignKey(x => x.LevelId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.OwnsOne(x => x.Measurement, m =>
+                {
+                    m.Property(x => x.WithersHeight).HasColumnType("decimal(10,2)");
+                    m.Property(x => x.BackLength).HasColumnType("decimal(10,2)");
+                    m.Property(x => x.ChestCircumference).HasColumnType("decimal(10,2)");
+                    m.Property(x => x.WithersWidth).HasColumnType("decimal(10,2)");
+                    m.Property(x => x.NeckLength).HasColumnType("decimal(10,2)");
+                    m.Property(x => x.CannonCircumference).HasColumnType("decimal(10,2)");
+                    m.Property(x => x.HeadLength).HasColumnType("decimal(10,2)");
+                    m.Property(x => x.BackType).HasConversion<string>().HasMaxLength(20);
+                    m.Property(x => x.WithersType).HasConversion<string>().HasMaxLength(20);
+                    m.Property(x => x.ShoulderType).HasConversion<string>().HasMaxLength(20);
+                });
+
+                entity.HasIndex(x => x.OwnerId);
+                entity.HasIndex(x => x.BreedId);
+                entity.HasIndex(x => x.DisciplineId);
+                entity.HasIndex(x => x.LevelId);
+                entity.HasIndex(x => x.IsActive);
             });
         }
     }
