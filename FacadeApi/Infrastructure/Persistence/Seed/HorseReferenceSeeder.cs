@@ -24,8 +24,9 @@ namespace Infrastructure.Persistence.Seed
                 new { Id = 5, Name = "Warmblood" },
                 new { Id = 6, Name = "Andalusian" },
                 new { Id = 7, Name = "Friesian" },
-                new { Id = 8, Name = "Appaloosa" }
-            };
+                new { Id = 8, Name = "Appaloosa" },
+                new { Id = 9, Name = "Other" },
+            };                                    
 
             foreach (var data in breeds)
             {
@@ -59,7 +60,9 @@ namespace Infrastructure.Persistence.Seed
                 new { Id = 3, Name = "Endurance" },
                 new { Id = 4, Name = "Polo" },
                 new { Id = 5, Name = "Ranch Work" },
-                new { Id = 6, Name = "Trail Riding" }
+                new { Id = 6, Name = "Trail Riding" },
+                new { Id = 7, Name = "Other" },
+
             };
 
             foreach (var data in disciplines)
