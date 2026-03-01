@@ -119,7 +119,7 @@ export default function ChangePasswordScreen() {
                     }
                   >
                     <AntDesignIcon
-                      name={showPasswords.current ? 'eye' : 'eyeo'}
+                      name={showPasswords.current ? 'eye-invisible' : 'eye'}
                       size={20}
                       color={colors.textSecondary}
                     />
@@ -155,7 +155,7 @@ export default function ChangePasswordScreen() {
                     }
                   >
                     <AntDesignIcon
-                      name={showPasswords.new ? 'eye' : 'eyeo'}
+                      name={showPasswords.new ? 'eye-invisible' : 'eye'}
                       size={20}
                       color={colors.textSecondary}
                     />
@@ -191,7 +191,7 @@ export default function ChangePasswordScreen() {
                     }
                   >
                     <AntDesignIcon
-                      name={showPasswords.confirm ? 'eye' : 'eyeo'}
+                      name={showPasswords.confirm ? 'eye-invisible' : 'eye'}
                       size={20}
                       color={colors.textSecondary}
                     />
@@ -213,7 +213,7 @@ export default function ChangePasswordScreen() {
           {/* Información de seguridad */}
           <View style={[styles.infoBox, { backgroundColor: `${colors.info}15` }]}>
             <View style={styles.infoHeader}>
-              <AntDesignIcon name="infocirlceo" size={20} color={colors.info} />
+              <AntDesignIcon name="info-circle" size={20} color={colors.info} />
               <ThemedText style={[styles.infoTitle, { color: colors.info }]}>
                 Security Tips
               </ThemedText>
