@@ -94,7 +94,7 @@ function ProfileContent() {
       icon: 'profile',
       iconColor: colors.secondary,
       iconBg: getIconBg(colors.secondary),
-      // onPress: () => router.push('/settings/measurements'),
+      onPress: () => router.push('/settings/measurements'),
     },
     {
       id: 'account',

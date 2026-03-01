@@ -4,17 +4,16 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View, ActivityIndicator, Alert, Platform } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ThemedView, ThemedText, ThemedInput, ThemedButton } from '@/src';
+import { ThemedView, ThemedText, ThemedInput, ThemedButton, DatePickerWithActionSheet } from '@/src';
 import { useAuth } from '@/src/hooks/useAuth';
 import { getUserData, updateUserData } from '@/src/services/user.service';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
 import { useColorScheme } from '@/src/hooks';
 import AntDesignIcon from '@expo/vector-icons/AntDesign';
 import type { User, UpdateProfileData } from '@/src/types/user.types';
-import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -31,7 +30,6 @@ export default function ProfileScreen() {
   const [lastName, setLastName] = useState('');
   const [phone, setPhone] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
 
   useEffect(() => {
     loadUserData();
@@ -80,20 +78,8 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(Platform.OS === 'ios');
-    if (selectedDate) {
-      setDateOfBirth(selectedDate);
-    }
-  };
-
-  const formatDate = (date: Date | null) => {
-    if (!date) return 'Seleccionar fecha';
-    return date.toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
+  const handleDateChange = (date: Date) => {
+    setDateOfBirth(date);
   };
 
   if (isLoading) {
@@ -166,29 +152,10 @@ export default function ProfileScreen() {
 
           {/* Date of Birth */}
           <View style={styles.section}>
-            <ThemedText type="defaultSemiBold" style={styles.label}>
-              Fecha de Nacimiento
-            </ThemedText>
-            <TouchableOpacity
-              style={[styles.dateButton, { backgroundColor: colors.card, borderColor: colors.border }]}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <AntDesignIcon name="calendar" size={20} color={colors.text} />
-              <ThemedText style={[styles.dateText, !dateOfBirth && styles.datePlaceholder]}>
-                {formatDate(dateOfBirth)}
-              </ThemedText>
-            </TouchableOpacity>
-
-            {showDatePicker && (
-              <DateTimePicker
-                value={dateOfBirth || new Date()}
-                mode="date"
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                onChange={handleDateChange}
-                maximumDate={new Date()}
-                locale="es-ES"
-              />
-            )}
+            <DatePickerWithActionSheet
+              dateOfBirth={dateOfBirth}
+              onDateChange={handleDateChange}
+            />
           </View>
 
           {/* Phone Number */}
@@ -281,20 +248,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: Spacing.xs,
     opacity: 0.6,
-  },
-  dateButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Spacing.md,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    gap: Spacing.sm,
-  },
-  dateText: {
-    flex: 1,
-  },
-  datePlaceholder: {
-    opacity: 0.5,
   },
   saveButton: {
     marginTop: Spacing.lg,

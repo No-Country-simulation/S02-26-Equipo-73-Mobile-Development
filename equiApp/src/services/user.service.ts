@@ -10,7 +10,7 @@ export const getUserData = async (): Promise<ApiResponse<User>> => {
   try {
     console.log('👤 Obteniendo datos del usuario...');
     
-    const response = await apiClient.get<ApiResponse<User>>('/user');
+    const response = await apiClient.get<ApiResponse<User>>('/user/me');
     
     if (!response.data.success || !response.data.data) {
       throw new Error(response.data.message || 'Error al obtener datos del usuario');
@@ -40,7 +40,7 @@ export const updateUserData = async (data: UpdateProfileData): Promise<ApiRespon
   try {
     console.log('💾 Actualizando datos del usuario...', data);
     
-    const response = await apiClient.put<ApiResponse<User>>('/user', data);
+    const response = await apiClient.put<ApiResponse<User>>('/user/me', data);
     
     if (!response.data.success || !response.data.data) {
       throw new Error(response.data.message || 'Error al actualizar datos del usuario');
