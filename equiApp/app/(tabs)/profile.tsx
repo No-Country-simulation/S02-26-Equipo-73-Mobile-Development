@@ -66,16 +66,16 @@ function ProfileContent() {
       icon: 'star',
       iconColor: colors.primary,
       iconBg: getIconBg(colors.primary),
-      // onPress: () => router.push('/settings/horses'),
+      onPress: () => router.push('/settings/horses'),
     },
-    {
-      id: 'measurements-log',
-      title: 'Measurement Log',
-      icon: 'clock-circle',
-      iconColor: colors.primary,
-      iconBg: getIconBg(colors.primary),
-      // onPress: () => router.push('/settings/measurement-log'),
-    },
+    // {
+    //   id: 'measurements-log',
+    //   title: 'Measurement Log',
+    //   icon: 'clock-circle',
+    //   iconColor: colors.primary,
+    //   iconBg: getIconBg(colors.primary),
+    //   // onPress: () => router.push('/settings/measurement-log'),
+    // },
   ];
 
   // Sección MY ACCOUNT
