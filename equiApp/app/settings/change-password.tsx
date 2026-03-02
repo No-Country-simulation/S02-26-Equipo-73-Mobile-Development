@@ -4,26 +4,28 @@
  */
 
 import React, { useState } from 'react';
-import { 
-  View, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  ActivityIndicator, 
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
   Alert,
-  ScrollView 
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ThemedView, ThemedText } from '@/src';
+import { ThemedView, ThemedText, ThemedInput, ThemedButton } from '@/src';
 import { changePasswordSchema, type ChangePasswordFormData } from '@/src/schemas/auth.schema';
 import { changePassword } from '@/src/services/auth.service';
-import { Spacing, BorderRadius } from '@/src/constants';
+import { Spacing, BorderRadius, Colors } from '@/src/constants';
+import { useColorScheme } from '@/src/hooks';
+import AntDesignIcon from '@expo/vector-icons/AntDesign';
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
+  const colorScheme = useColorScheme();
+  const colors = Colors[colorScheme ?? 'light'];
   const [isLoading, setIsLoading] = useState(false);
   const [showPasswords, setShowPasswords] = useState({
     current: false,
@@ -49,10 +51,10 @@ export default function ChangePasswordScreen() {
     try {
       setIsLoading(true);
       await changePassword(data);
-      
+
       Alert.alert(
-        'Éxito',
-        'Tu contraseña ha sido cambiada correctamente',
+        'Success',
+        'Your password has been changed successfully',
         [
           {
             text: 'OK',
@@ -64,7 +66,7 @@ export default function ChangePasswordScreen() {
         ]
       );
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudo cambiar la contraseña');
+      Alert.alert('Error', error.message || 'Could not change password');
     } finally {
       setIsLoading(false);
     }
@@ -73,38 +75,42 @@ export default function ChangePasswordScreen() {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ThemedView style={styles.container}>
-        <ScrollView contentContainerStyle={styles.content}>
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => router.back()}>
-              <ThemedText style={styles.backButton}>← Volver</ThemedText>
-            </TouchableOpacity>
-            <ThemedText type="title" style={styles.title}>
-              Cambiar Contraseña
-            </ThemedText>
-            <ThemedText style={styles.subtitle}>
-              Asegúrate de usar una contraseña segura
-            </ThemedText>
-          </View>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
+          </TouchableOpacity>
+          <ThemedText style={styles.headerTitle}>Change Password</ThemedText>
+          <View style={{ width: 24 }} />
+        </View>
+
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+        >
+          <ThemedText style={[styles.subtitle, { color: colors.textSecondary }]}>
+            Make sure to use a strong password
+          </ThemedText>
 
           {/* Contraseña Actual */}
           <View style={styles.inputContainer}>
-            <ThemedText style={styles.label}>Contraseña Actual</ThemedText>
+            <ThemedText style={styles.label}>Current Password</ThemedText>
             <Controller
               control={control}
               name="currentPassword"
               render={({ field: { onChange, onBlur, value } }) => (
                 <View style={styles.inputWrapper}>
-                  <TextInput
-                    style={[styles.input, errors.currentPassword && styles.inputError]}
-                    placeholder="Ingresa tu contraseña actual"
-                    placeholderTextColor="#999"
+                  <ThemedInput
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Enter your current password"
                     secureTextEntry={!showPasswords.current}
                     autoCapitalize="none"
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
                     editable={!isLoading}
+                    error={errors.currentPassword?.message}
+                    style={styles.input}
                   />
                   <TouchableOpacity
                     style={styles.eyeButton}
@@ -112,36 +118,35 @@ export default function ChangePasswordScreen() {
                       setShowPasswords((prev) => ({ ...prev, current: !prev.current }))
                     }
                   >
-                    <ThemedText>{showPasswords.current ? '👁️' : '👁️‍🗨️'}</ThemedText>
+                    <AntDesignIcon
+                      name={showPasswords.current ? 'eye-invisible' : 'eye'}
+                      size={20}
+                      color={colors.textSecondary}
+                    />
                   </TouchableOpacity>
                 </View>
               )}
             />
-            {errors.currentPassword && (
-              <ThemedText style={styles.errorText}>
-                {errors.currentPassword.message}
-              </ThemedText>
-            )}
           </View>
 
           {/* Nueva Contraseña */}
           <View style={styles.inputContainer}>
-            <ThemedText style={styles.label}>Nueva Contraseña</ThemedText>
+            <ThemedText style={styles.label}>New Password</ThemedText>
             <Controller
               control={control}
               name="newPassword"
               render={({ field: { onChange, onBlur, value } }) => (
                 <View style={styles.inputWrapper}>
-                  <TextInput
-                    style={[styles.input, errors.newPassword && styles.inputError]}
-                    placeholder="Mínimo 6 caracteres"
-                    placeholderTextColor="#999"
+                  <ThemedInput
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Minimum 6 characters"
                     secureTextEntry={!showPasswords.new}
                     autoCapitalize="none"
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
                     editable={!isLoading}
+                    error={errors.newPassword?.message}
+                    style={styles.input}
                   />
                   <TouchableOpacity
                     style={styles.eyeButton}
@@ -149,36 +154,35 @@ export default function ChangePasswordScreen() {
                       setShowPasswords((prev) => ({ ...prev, new: !prev.new }))
                     }
                   >
-                    <ThemedText>{showPasswords.new ? '👁️' : '👁️‍🗨️'}</ThemedText>
+                    <AntDesignIcon
+                      name={showPasswords.new ? 'eye-invisible' : 'eye'}
+                      size={20}
+                      color={colors.textSecondary}
+                    />
                   </TouchableOpacity>
                 </View>
               )}
             />
-            {errors.newPassword && (
-              <ThemedText style={styles.errorText}>
-                {errors.newPassword.message}
-              </ThemedText>
-            )}
           </View>
 
           {/* Confirmar Nueva Contraseña */}
           <View style={styles.inputContainer}>
-            <ThemedText style={styles.label}>Confirmar Nueva Contraseña</ThemedText>
+            <ThemedText style={styles.label}>Confirm New Password</ThemedText>
             <Controller
               control={control}
               name="confirmPassword"
               render={({ field: { onChange, onBlur, value } }) => (
                 <View style={styles.inputWrapper}>
-                  <TextInput
-                    style={[styles.input, errors.confirmPassword && styles.inputError]}
-                    placeholder="Repite la nueva contraseña"
-                    placeholderTextColor="#999"
+                  <ThemedInput
+                    value={value}
+                    onChangeText={onChange}
+                    onBlur={onBlur}
+                    placeholder="Repeat the new password"
                     secureTextEntry={!showPasswords.confirm}
                     autoCapitalize="none"
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
                     editable={!isLoading}
+                    error={errors.confirmPassword?.message}
+                    style={styles.input}
                   />
                   <TouchableOpacity
                     style={styles.eyeButton}
@@ -186,39 +190,39 @@ export default function ChangePasswordScreen() {
                       setShowPasswords((prev) => ({ ...prev, confirm: !prev.confirm }))
                     }
                   >
-                    <ThemedText>{showPasswords.confirm ? '👁️' : '👁️‍🗨️'}</ThemedText>
+                    <AntDesignIcon
+                      name={showPasswords.confirm ? 'eye-invisible' : 'eye'}
+                      size={20}
+                      color={colors.textSecondary}
+                    />
                   </TouchableOpacity>
                 </View>
               )}
             />
-            {errors.confirmPassword && (
-              <ThemedText style={styles.errorText}>
-                {errors.confirmPassword.message}
-              </ThemedText>
-            )}
           </View>
 
           {/* Botón de Guardar */}
-          <TouchableOpacity
-            style={[styles.button, isLoading && styles.buttonDisabled]}
+          <ThemedButton
+            label={isLoading ? 'Saving...' : 'Change Password'}
             onPress={handleSubmit(onSubmit)}
             disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <ThemedText style={styles.buttonText}>Cambiar Contraseña</ThemedText>
-            )}
-          </TouchableOpacity>
+            isLoading={isLoading}
+            style={styles.button}
+          />
 
           {/* Información de seguridad */}
-          <View style={styles.infoBox}>
-            <ThemedText style={styles.infoTitle}>💡 Consejos de seguridad</ThemedText>
-            <ThemedText style={styles.infoText}>
-              • Usa al menos 8 caracteres{'\n'}
-              • Combina mayúsculas, minúsculas y números{'\n'}
-              • Evita información personal obvia{'\n'}
-              • No reutilices contraseñas de otras cuentas
+          <View style={[styles.infoBox, { backgroundColor: `${colors.info}15` }]}>
+            <View style={styles.infoHeader}>
+              <AntDesignIcon name="info-circle" size={20} color={colors.info} />
+              <ThemedText style={[styles.infoTitle, { color: colors.info }]}>
+                Security Tips
+              </ThemedText>
+            </View>
+            <ThemedText style={[styles.infoText, { color: colors.textSecondary }]}>
+              • Use at least 8 characters{'\n'}
+              • Combine uppercase, lowercase, and numbers{'\n'}
+              • Avoid obvious personal information{'\n'}
+              • Don't reuse passwords from other accounts
             </ThemedText>
           </View>
         </ScrollView>
@@ -234,22 +238,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  content: {
-    padding: Spacing.lg,
-  },
   header: {
-    marginBottom: Spacing.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
   },
   backButton: {
-    fontSize: 16,
-    color: '#007AFF',
-    marginBottom: Spacing.sm,
+    padding: Spacing.xs,
   },
-  title: {
-    marginBottom: Spacing.sm,
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  content: {
+    padding: Spacing.lg,
+    paddingBottom: Spacing.xl * 2,
   },
   subtitle: {
-    opacity: 0.7,
+    fontSize: 14,
+    marginBottom: Spacing.xl,
+    lineHeight: 20,
   },
   inputContainer: {
     marginBottom: Spacing.lg,
@@ -263,16 +276,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-    fontSize: 16,
-    backgroundColor: '#f9f9f9',
     paddingRight: 50,
-  },
-  inputError: {
-    borderColor: '#ff3b30',
   },
   eyeButton: {
     position: 'absolute',
@@ -280,40 +284,30 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     justifyContent: 'center',
-  },
-  errorText: {
-    color: '#ff3b30',
-    fontSize: 12,
-    marginTop: Spacing.xs,
+    paddingHorizontal: Spacing.sm,
   },
   button: {
-    backgroundColor: '#007AFF',
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    alignItems: 'center',
     marginTop: Spacing.md,
-  },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+    height: 50,
   },
   infoBox: {
-    backgroundColor: '#e7f3ff',
     padding: Spacing.md,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.lg,
     marginTop: Spacing.xl,
+  },
+  infoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: Spacing.sm,
   },
   infoTitle: {
     fontWeight: '600',
-    marginBottom: Spacing.sm,
+    fontSize: 15,
   },
   infoText: {
     fontSize: 14,
     lineHeight: 22,
-    opacity: 0.8,
+    marginLeft: Spacing.lg + 8,
   },
 });

@@ -45,8 +45,6 @@ services:
 
 volumes:
   pgdata:
-    external: true
-    name: s0273-cloud-erf4kk_pgdata
   minio_data:
 
 networks:

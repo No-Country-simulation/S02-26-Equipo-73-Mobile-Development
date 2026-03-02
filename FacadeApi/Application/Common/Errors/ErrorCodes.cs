@@ -55,5 +55,17 @@ namespace Application.Common.Errors
         public const string ROLE_NOT_FOUND = "ERR_5100";
         public const string ROLE_ALREADY_EXISTS = "ERR_5101";
         public const string INVALID_ROLE_ASSIGNMENT = "ERR_5102";
+
+        // Measurement Errors (6000-6099)
+        public const string MEASUREMENT_NOT_FOUND = "ERR_6000";
+        public const string MEASUREMENT_ALREADY_EXISTS = "ERR_6001";
+        public const string MEASUREMENT_TYPE_NOT_FOUND = "ERR_6002";
+        public const string MEASUREMENT_UNIT_NOT_FOUND = "ERR_6003";
+        public const string MEASUREMENT_FORBIDDEN = "ERR_6004";
+
+        // Horse Errors (7000-7099)
+        public const string HORSE_NOT_FOUND = "ERR_7000";
+        public const string HORSE_FORBIDDEN = "ERR_7001";
+        public const string HORSE_ALREADY_EXISTS = "ERR_7002";
     }
 }
