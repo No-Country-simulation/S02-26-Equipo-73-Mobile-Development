@@ -93,6 +93,143 @@ namespace Infrastructure.Migrations
                     b.ToTable("BrandSizes", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.Horse.Breed", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Breeds", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Horse.Discipline", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Disciplines", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Horse.Horse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("BreedId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DisciplineId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<int>("LevelId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Sex")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BreedId");
+
+                    b.HasIndex("DisciplineId");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("LevelId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Horses", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.Horse.HorseLevel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("HorseLevels", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Identity.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
@@ -626,6 +763,92 @@ namespace Infrastructure.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("SizeSystem");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Horse.Horse", b =>
+                {
+                    b.HasOne("Domain.Entities.Horse.Breed", "Breed")
+                        .WithMany()
+                        .HasForeignKey("BreedId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Horse.Discipline", "Discipline")
+                        .WithMany()
+                        .HasForeignKey("DisciplineId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Horse.HorseLevel", "Level")
+                        .WithMany()
+                        .HasForeignKey("LevelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Identity.ApplicationUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Domain.Entities.Horse.HorseMeasurement", "Measurement", b1 =>
+                        {
+                            b1.Property<int>("HorseId")
+                                .HasColumnType("integer");
+
+                            b1.Property<decimal?>("BackLength")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.Property<string>("BackType")
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)");
+
+                            b1.Property<decimal?>("CannonCircumference")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.Property<decimal?>("ChestCircumference")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.Property<decimal?>("HeadLength")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.Property<int>("Id")
+                                .HasColumnType("integer");
+
+                            b1.Property<decimal?>("NeckLength")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.Property<string>("ShoulderType")
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)");
+
+                            b1.Property<decimal?>("WithersHeight")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.Property<string>("WithersType")
+                                .HasMaxLength(20)
+                                .HasColumnType("character varying(20)");
+
+                            b1.Property<decimal?>("WithersWidth")
+                                .HasColumnType("decimal(10,2)");
+
+                            b1.HasKey("HorseId");
+
+                            b1.ToTable("Horses");
+
+                            b1.WithOwner()
+                                .HasForeignKey("HorseId");
+                        });
+
+                    b.Navigation("Breed");
+
+                    b.Navigation("Discipline");
+
+                    b.Navigation("Level");
+
+                    b.Navigation("Measurement");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("Domain.Entities.Identity.ApplicationUserRole", b =>

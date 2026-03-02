@@ -22,11 +22,6 @@ export const exchangeToken = async (supabaseToken: string): Promise<AuthExchange
       }
     );
 
-    // Manejar error 401
-    if (response.status === 401) {
-      throw new Error('No se pudo iniciar sesión. Token inválido o expirado.');
-    }
-
     const exchangeData = response.data;
     
     if (!exchangeData.success || !exchangeData.data) {
@@ -51,11 +46,16 @@ export const exchangeToken = async (supabaseToken: string): Promise<AuthExchange
 
     return exchangeData;
   } catch (error: any) {
-    console.error('❌ Error en exchange de token:', error);
+    console.error('❌ Error en exchange de token:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data,
+    });
     
-    // Manejar específicamente el error 401
-    if (error.response?.status === 401) {
-      throw new Error('No se pudo iniciar sesión. Por favor, intenta nuevamente.');
+    // Manejar específicamente el error 400/401
+    if (error.response?.status === 400 || error.response?.status === 401) {
+      const errorMessage = error.response?.data?.message || 'Token inválido o expirado';
+      throw new Error(`Exchange token falló: ${errorMessage}`);
     }
     
     const apiError = handleApiError(error);

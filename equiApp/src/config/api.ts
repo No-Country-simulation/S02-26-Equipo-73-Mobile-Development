@@ -32,6 +32,11 @@ export const apiClient = axios.create({
  */
 apiClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
+    // No agregar token si ya viene en los headers (caso de /auth/exchange)
+    if (config.headers.Authorization) {
+      return config;
+    }
+    
     const token = await getToken();
     
     if (token) {
@@ -54,10 +59,16 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
 
     // Si el token expiró (401), limpiar autenticación
+    // EXCEPTO para el endpoint de exchange (que usa token de Supabase)
     if (error.response?.status === 401 && originalRequest) {
-      await clearToken();
-      // Aquí podrías disparar un evento o actualizar el store de auth
-      // useAuthStore.getState().logout();
+      const isExchangeEndpoint = originalRequest.url?.includes('/auth/exchange');
+      
+      if (!isExchangeEndpoint) {
+        console.log('🔒 Token expirado, limpiando autenticación...');
+        await clearToken();
+        // Aquí podrías disparar un evento o actualizar el store de auth
+        // useAuthStore.getState().logout();
+      }
     }
 
     // Puedes manejar otros códigos de error aquí

@@ -49,8 +49,25 @@ export const queryKeys = {
   },
   // User
   user: {
+    me: ['user', 'me'] as const,
     profile: ['user', 'profile'] as const,
+    data: ['user', 'data'] as const,
     orders: ['user', 'orders'] as const,
     favorites: ['user', 'favorites'] as const,
+  },
+  // Horses
+  horses: {
+    all: ['horses'] as const,
+    list: ['horses', 'list'] as const,
+    detail: (id: number) => ['horses', 'detail', id] as const,
+    reference: ['horses', 'reference'] as const,
+  },
+  // Measurements
+  measurements: {
+    all: ['measurements'] as const,
+    list: ['measurements', 'list'] as const,
+    detail: (id: number) => ['measurements', 'detail', id] as const,
+    reference: ['measurements', 'reference'] as const,
+    user: ['measurements', 'user'] as const,
   },
 } as const;

@@ -133,7 +133,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function ColorBox({ label, colorKey }: { label: string; colorKey: keyof typeof Colors.light }) {
   const color = useThemeColor({}, colorKey);
   const borderColor = useThemeColor({}, 'border');
-  
+
   return (
     <View style={[styles.colorBox, { borderColor }]}>
       <View style={[styles.colorSwatch, { backgroundColor: color }]} />
@@ -149,7 +149,7 @@ function ColorBox({ label, colorKey }: { label: string; colorKey: keyof typeof C
 function SpacingBox({ size }: { size: keyof typeof Spacing }) {
   const backgroundColor = useThemeColor({}, 'primary');
   const value = Spacing[size];
-  
+
   return (
     <View style={styles.spacingBoxContainer}>
       <View style={[styles.spacingBoxInner, { width: value * 2, height: value * 2, backgroundColor }]} />
@@ -164,14 +164,14 @@ function RadiusBox({ radius }: { radius: keyof typeof BorderRadius }) {
   const backgroundColor = useThemeColor({}, 'secondary');
   const borderColor = useThemeColor({}, 'border');
   const value = BorderRadius[radius];
-  
+
   return (
     <View style={styles.radiusBoxContainer}>
-      <View 
+      <View
         style={[
-          styles.radiusBoxInner, 
+          styles.radiusBoxInner,
           { backgroundColor, borderRadius: value, borderColor, borderWidth: 2 }
-        ]} 
+        ]}
       />
       <ThemedText style={styles.spacingLabel}>{radius}</ThemedText>
       <ThemedText style={styles.spacingValue}>{value}px</ThemedText>
