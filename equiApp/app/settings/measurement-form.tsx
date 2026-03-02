@@ -20,10 +20,10 @@ import { Spacing, BorderRadius, Colors } from '@/src/constants';
 import { useColorScheme } from '@/src/hooks';
 import AntDesignIcon from '@expo/vector-icons/AntDesign';
 import {
-  getMeasurementReference,
-  getUserMeasurements,
-  createUserMeasurement,
-  updateUserMeasurement,
+  useMeasurementReference,
+  useUserMeasurements,
+  useCreateUserMeasurement,
+  useUpdateUserMeasurement,
 } from '@/src/services/measurements.service';
 import type {
   MeasurementReference,
@@ -39,10 +39,14 @@ export default function MeasurementFormScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [reference, setReference] = useState<MeasurementReference | null>(null);
-  const [currentMeasurement, setCurrentMeasurement] = useState<Measurement | null>(null);
+  // React Query hooks
+  const { data: reference, isLoading: isLoadingReference } = useMeasurementReference();
+  const { data: measurements = [], isLoading: isLoadingMeasurements } = useUserMeasurements();
+  const createMutation = useCreateUserMeasurement();
+  const updateMutation = useUpdateUserMeasurement();
+
+  const isLoading = isLoadingReference || (measurementId ? isLoadingMeasurements : false);
+  const isSaving = createMutation.isPending || updateMutation.isPending;
 
   // Estados del formulario
   const [selectedMeasurementType, setSelectedMeasurementType] = useState<MeasurementType | null>(
@@ -55,49 +59,29 @@ export default function MeasurementFormScreen() {
   const [showMeasurementTypePicker, setShowMeasurementTypePicker] = useState(false);
   const [showUnitPicker, setShowUnitPicker] = useState(false);
 
+  // Load measurement data when editing
   useEffect(() => {
-    loadData();
-  }, []);
+    if (measurementId && measurements.length > 0 && reference) {
+      const measurement = measurements.find((m: Measurement) => m.id === measurementId);
 
-  const loadData = async () => {
-    try {
-      setIsLoading(true);
+      if (measurement) {
+        // Buscar el tipo de medida
+        const entityType = reference.entityTypes.find(
+          (et) => et.name.toLowerCase() === measurement.entityTypeName.toLowerCase()
+        );
+        const measurementType = entityType?.measurementTypes.find(
+          (mt) => mt.id === measurement.measurementTypeId
+        );
 
-      // Cargar referencia
-      const refResponse = await getMeasurementReference();
-      setReference(refResponse.data);
+        setSelectedMeasurementType(measurementType || null);
+        setValue(measurement.value.toString());
 
-      // Si es edición, cargar la medida actual
-      if (measurementId) {
-        const measurementsResponse = await getUserMeasurements();
-        const measurement = measurementsResponse.data.find((m) => m.id === measurementId);
-
-        if (measurement) {
-          setCurrentMeasurement(measurement);
-
-          // Buscar el tipo de medida
-          const entityType = refResponse.data.entityTypes.find(
-            (et) => et.name.toLowerCase() === measurement.entityTypeName.toLowerCase()
-          );
-          const measurementType = entityType?.measurementTypes.find(
-            (mt) => mt.id === measurement.measurementTypeId
-          );
-
-          setSelectedMeasurementType(measurementType || null);
-          setValue(measurement.value.toString());
-
-          // Buscar la unidad
-          const unit = refResponse.data.units.find((u) => u.id === measurement.unitId);
-          setSelectedUnit(unit || null);
-        }
+        // Buscar la unidad
+        const unit = reference.units.find((u: Unit) => u.id === measurement.unitId);
+        setSelectedUnit(unit || null);
       }
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudieron cargar los datos');
-      router.back();
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [measurementId, measurements, reference]);
 
   const handleSave = async () => {
     // Validaciones
@@ -117,8 +101,6 @@ export default function MeasurementFormScreen() {
     }
 
     try {
-      setIsSaving(true);
-
       const data = {
         measurementTypeId: selectedMeasurementType.id,
         value: Number(value),
@@ -127,19 +109,17 @@ export default function MeasurementFormScreen() {
 
       if (measurementId) {
         // Actualizar medida existente
-        await updateUserMeasurement(measurementId, data);
+        await updateMutation.mutateAsync({ id: measurementId, data });
         Alert.alert('Éxito', 'Medida actualizada correctamente');
       } else {
         // Crear nueva medida
-        await createUserMeasurement(data);
+        await createMutation.mutateAsync(data);
         Alert.alert('Éxito', 'Medida creada correctamente');
       }
 
       router.back();
     } catch (error: any) {
       Alert.alert('Error', error.message || 'No se pudo guardar la medida');
-    } finally {
-      setIsSaving(false);
     }
   };
 

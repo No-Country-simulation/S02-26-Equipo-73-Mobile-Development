@@ -3,7 +3,7 @@
  * Shows complete information about a horse including measurements
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -19,7 +19,7 @@ import { ThemedText, ThemedView, ThemedButton } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
 import { useColorScheme } from '@/src/hooks';
 import AntDesignIcon from '@expo/vector-icons/AntDesign';
-import { getHorseById, deleteHorse } from '@/src/services/horses.service';
+import { useHorse, useDeleteHorse } from '@/src/services/horses.service';
 import type { Horse } from '@/src/types/horse.types';
 import {
   getSexLabel,
@@ -35,43 +35,15 @@ export default function HorseDetailScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [horse, setHorse] = useState<Horse | null>(null);
+  // React Query hooks
+  const { data: horse, isLoading, error, refetch, isRefetching } = useHorse(horseId);
+  const deleteMutation = useDeleteHorse();
 
   useEffect(() => {
-    if (horseId) {
-      loadHorse();
-    } else {
+    if (!horseId) {
       router.back();
     }
   }, [horseId]);
-
-  const loadHorse = async (isRefresh = false) => {
-    if (!horseId) return;
-
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setIsLoading(true);
-      }
-
-      const response = await getHorseById(horseId);
-      setHorse(response.data);
-      console.log('✅ Horse details loaded:', response.data);
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Could not load horse details');
-      router.back();
-    } finally {
-      setIsLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  const handleRefresh = () => {
-    loadHorse(true);
-  };
 
   const handleEdit = () => {
     if (horse) {
@@ -95,7 +67,7 @@ export default function HorseDetailScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await deleteHorse(horse.id);
+              await deleteMutation.mutateAsync(horse.id);
               Alert.alert('Success', 'Horse deleted successfully', [
                 { text: 'OK', onPress: () => router.back() },
               ]);
@@ -214,8 +186,8 @@ export default function HorseDetailScreen() {
           contentContainerStyle={styles.contentContainer}
           refreshControl={
             <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
+              refreshing={isRefetching}
+              onRefresh={() => refetch()}
               tintColor={colors.primary}
               colors={[colors.primary]}
             />

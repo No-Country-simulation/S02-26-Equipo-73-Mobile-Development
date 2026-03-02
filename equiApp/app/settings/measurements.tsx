@@ -3,7 +3,7 @@
  * Permite ver, agregar, editar y eliminar medidas del usuario
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
   Alert,
   ActivityIndicator,
   Animated,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -22,8 +23,8 @@ import { Spacing, BorderRadius, Colors } from '@/src/constants';
 import { useColorScheme } from '@/src/hooks';
 import AntDesignIcon from '@expo/vector-icons/AntDesign';
 import {
-  getUserMeasurements,
-  deleteUserMeasurement,
+  useUserMeasurements,
+  useDeleteUserMeasurement,
 } from '@/src/services/measurements.service';
 import type { Measurement } from '@/src/types/measurement.types';
 
@@ -32,40 +33,16 @@ export default function MeasurementsScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [measurements, setMeasurements] = useState<Measurement[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
+  // React Query hooks
+  const { data: allMeasurements = [], isLoading, error, refetch, isRefetching } = useUserMeasurements();
+  const deleteMutation = useDeleteUserMeasurement();
 
-  useEffect(() => {
-    loadMeasurements();
-  }, []);
-
-  const loadMeasurements = async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setIsLoading(true);
-      }
-
-      const response = await getUserMeasurements();
-      // Filtrar solo medidas de tipo User
-      const userMeasurements = response.data.filter(
-        (m) => m.entityTypeName.toLowerCase() === 'rider'
-      );
-
-      setMeasurements(userMeasurements);
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudieron cargar las medidas');
-    } finally {
-      setIsLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  const handleRefresh = () => {
-    loadMeasurements(true);
-  };
+  // Filter only user (rider) measurements
+  const measurements = useMemo(() => {
+    return allMeasurements.filter(
+      (m: Measurement) => m.entityTypeName.toLowerCase() === 'rider'
+    );
+  }, [allMeasurements]);
 
   const handleDelete = async (measurement: Measurement) => {
     Alert.alert(
@@ -78,9 +55,7 @@ export default function MeasurementsScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
-              await deleteUserMeasurement(measurement.id);
-              // Actualizar la lista local
-              setMeasurements((prev) => prev.filter((m) => m.id !== measurement.id));
+              await deleteMutation.mutateAsync(measurement.id);
               Alert.alert('Éxito', 'Medida eliminada correctamente');
             } catch (error: any) {
               Alert.alert('Error', error.message || 'No se pudo eliminar la medida');
@@ -201,7 +176,7 @@ export default function MeasurementsScreen() {
             <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
           </TouchableOpacity>
           <ThemedText variant="subheading1">Mis Medidas</ThemedText>
-          <TouchableOpacity onPress={handleRefresh} style={styles.refreshButton}>
+          <TouchableOpacity onPress={() => refetch()} style={styles.refreshButton}>
             <AntDesignIcon name="reload" size={20} color={colors.text} />
           </TouchableOpacity>
         </View>
@@ -210,6 +185,14 @@ export default function MeasurementsScreen() {
           style={styles.scrollView}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              onRefresh={() => refetch()}
+              tintColor={colors.primary}
+              colors={[colors.primary]}
+            />
+          }
         >
           {measurements.length === 0 ? (
             <View style={styles.emptyContainer}>

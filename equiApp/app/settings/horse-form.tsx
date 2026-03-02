@@ -23,10 +23,10 @@ import { useColorScheme } from '@/src/hooks';
 import AntDesignIcon from '@expo/vector-icons/AntDesign';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {
-  getHorseReference,
-  getHorseById,
-  createHorse,
-  updateHorse,
+  useHorseReference,
+  useHorse,
+  useCreateHorse,
+  useUpdateHorse,
 } from '@/src/services/horses.service';
 import {
   HorseReference,
@@ -49,10 +49,14 @@ export default function HorseFormScreen() {
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [reference, setReference] = useState<HorseReference | null>(null);
-  const [currentHorse, setCurrentHorse] = useState<Horse | null>(null);
+  // React Query hooks
+  const { data: reference, isLoading: isLoadingReference } = useHorseReference();
+  const { data: currentHorse, isLoading: isLoadingHorse } = useHorse(horseId);
+  const createMutation = useCreateHorse();
+  const updateMutation = useUpdateHorse();
+
+  const isLoading = isLoadingReference || (horseId ? isLoadingHorse : false);
+  const isSaving = createMutation.isPending || updateMutation.isPending;
 
   // Basic form fields
   const [name, setName] = useState('');
@@ -84,61 +88,39 @@ export default function HorseFormScreen() {
   const [showWithersTypePicker, setShowWithersTypePicker] = useState(false);
   const [showShoulderTypePicker, setShowShoulderTypePicker] = useState(false);
 
+  // Load horse data when editing
   useEffect(() => {
-    loadData();
-  }, []);
+    if (currentHorse && reference) {
+      setName(currentHorse.name);
+      setBirthDate(new Date(currentHorse.birthDate));
+      setSex(currentHorse.sex === 'Male' ? SexType.Male : SexType.Female);
 
-  const loadData = async () => {
-    try {
-      setIsLoading(true);
+      // Set references
+      const breed = reference.breeds.find((b) => b.id === currentHorse.breedId);
+      setSelectedBreed(breed || null);
 
-      // Load reference data
-      const refResponse = await getHorseReference();
-      setReference(refResponse.data);
+      const discipline = reference.disciplines.find((d) => d.id === currentHorse.disciplineId);
+      setSelectedDiscipline(discipline || null);
 
-      // If editing, load current horse
-      if (horseId) {
-        const horseResponse = await getHorseById(horseId);
-        const horse = horseResponse.data;
-        setCurrentHorse(horse);
+      const level = reference.levels.find((l) => l.id === currentHorse.levelId);
+      setSelectedLevel(level || null);
 
-        // Set basic fields
-        setName(horse.name);
-        setBirthDate(new Date(horse.birthDate));
-        setSex(horse.sex === 'Male' ? SexType.Male : SexType.Female);
-
-        // Set references
-        const breed = refResponse.data.breeds.find((b) => b.id === horse.breedId);
-        setSelectedBreed(breed || null);
-
-        const discipline = refResponse.data.disciplines.find((d) => d.id === horse.disciplineId);
-        setSelectedDiscipline(discipline || null);
-
-        const level = refResponse.data.levels.find((l) => l.id === horse.levelId);
-        setSelectedLevel(level || null);
-
-        // Set measurements if they exist
-        if (horse.measurement) {
-          const m = horse.measurement;
-          if (m.withersHeight !== null && m.withersHeight !== undefined) setWithersHeight(m.withersHeight.toString());
-          if (m.backLength !== null && m.backLength !== undefined) setBackLength(m.backLength.toString());
-          if (m.chestCircumference !== null && m.chestCircumference !== undefined) setChestCircumference(m.chestCircumference.toString());
-          if (m.withersWidth !== null && m.withersWidth !== undefined) setWithersWidth(m.withersWidth.toString());
-          if (m.neckLength !== null && m.neckLength !== undefined) setNeckLength(m.neckLength.toString());
-          if (m.cannonCircumference !== null && m.cannonCircumference !== undefined) setCannonCircumference(m.cannonCircumference.toString());
-          if (m.headLength !== null && m.headLength !== undefined) setHeadLength(m.headLength.toString());
-          if (m.backType !== null && m.backType !== undefined) setBackType(m.backType);
-          if (m.withersType !== null && m.withersType !== undefined) setWithersType(m.withersType);
-          if (m.shoulderType !== null && m.shoulderType !== undefined) setShoulderType(m.shoulderType);
-        }
+      // Set measurements if they exist
+      if (currentHorse.measurement) {
+        const m = currentHorse.measurement;
+        if (m.withersHeight !== null && m.withersHeight !== undefined) setWithersHeight(m.withersHeight.toString());
+        if (m.backLength !== null && m.backLength !== undefined) setBackLength(m.backLength.toString());
+        if (m.chestCircumference !== null && m.chestCircumference !== undefined) setChestCircumference(m.chestCircumference.toString());
+        if (m.withersWidth !== null && m.withersWidth !== undefined) setWithersWidth(m.withersWidth.toString());
+        if (m.neckLength !== null && m.neckLength !== undefined) setNeckLength(m.neckLength.toString());
+        if (m.cannonCircumference !== null && m.cannonCircumference !== undefined) setCannonCircumference(m.cannonCircumference.toString());
+        if (m.headLength !== null && m.headLength !== undefined) setHeadLength(m.headLength.toString());
+        if (m.backType !== null && m.backType !== undefined) setBackType(m.backType);
+        if (m.withersType !== null && m.withersType !== undefined) setWithersType(m.withersType);
+        if (m.shoulderType !== null && m.shoulderType !== undefined) setShoulderType(m.shoulderType);
       }
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Could not load data');
-      router.back();
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [currentHorse, reference]);
 
   const handleSave = async () => {
     // Validations
@@ -163,8 +145,6 @@ export default function HorseFormScreen() {
     }
 
     try {
-      setIsSaving(true);
-
       // Build measurement object with only filled values
       const measurement: any = {};
       if (withersHeight) measurement.withersHeight = Number(withersHeight);
@@ -190,7 +170,7 @@ export default function HorseFormScreen() {
           measurement: Object.keys(measurement).length > 0 ? measurement : undefined,
         };
 
-        await updateHorse(horseId, updateData);
+        await updateMutation.mutateAsync({ id: horseId, data: updateData });
         Alert.alert('Success', 'Horse updated successfully');
       } else {
         // Create new horse
@@ -204,15 +184,13 @@ export default function HorseFormScreen() {
           measurement: Object.keys(measurement).length > 0 ? measurement : undefined,
         };
 
-        await createHorse(createData);
+        await createMutation.mutateAsync(createData);
         Alert.alert('Success', 'Horse created successfully');
       }
 
       router.back();
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Could not save horse');
-    } finally {
-      setIsSaving(false);
     }
   };
 

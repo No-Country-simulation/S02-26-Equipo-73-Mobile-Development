@@ -39,7 +39,7 @@ export default function ProfileScreen() {
     try {
       setIsLoading(true);
       const response = await getUserData();
-      const data = response.data;
+      const data = response;
       setUserData(data);
 
       // Poblar el formulario con los datos existentes
@@ -68,7 +68,7 @@ export default function ProfileScreen() {
       };
 
       const response = await updateUserData(updateData);
-      setUserData(response.data);
+      setUserData(response);
 
       Alert.alert('Éxito', 'Datos actualizados correctamente');
     } catch (error: any) {
