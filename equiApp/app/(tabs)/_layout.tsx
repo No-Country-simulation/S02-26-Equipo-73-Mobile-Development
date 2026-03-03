@@ -47,15 +47,7 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          // tabBarIcon: ({ color }) => <AntDesignIcon name="user" size={24} color={color} />,
-          href: null
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color }) => <AntDesignIcon name="setting" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <AntDesignIcon name="user" size={24} color={color} />,
         }}
       />
     </Tabs>

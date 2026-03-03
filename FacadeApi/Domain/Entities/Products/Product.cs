@@ -18,6 +18,7 @@ namespace Domain.Entities.Products
 
         public virtual ICollection<ProductVariant> Variants { get; set; }
         public virtual ICollection<MediaProduct> MediaProducts { get; set; }
+        public virtual ICollection<ProductSpecification> Specifications { get; set; }
 
         // Auditoría
         public int? CreatedBy { get; set; }

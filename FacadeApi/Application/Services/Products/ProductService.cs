@@ -108,6 +108,11 @@ namespace Application.Services.Products
             }
         }
 
+        public async Task<SizeGuideDto?> GetSizeGuideAsync(int brandId, int? categoryId)
+        {
+            return await _productRepository.GetSizeGuideAsync(brandId, categoryId);
+        }
+
         /// <summary>
         /// Processes media input (base64 or URLs)
         /// - If Value is a URL: keep it (existing image)

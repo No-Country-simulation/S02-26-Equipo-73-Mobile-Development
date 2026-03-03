@@ -16,10 +16,20 @@ export interface ProductMedia {
 
 export interface ProductVariant {
   id: number;
-  name: string;
-  sku?: string;
-  price?: number;
-  stock?: number;
+  productId: number;
+  sizeLabel: string;
+  sizeSystem: string;
+  price: number;
+  stock: number;
+  isActive: boolean;
+  color: string | null;
+  material: string | null;
+  weight: number | null;
+}
+
+export interface ProductSpecification {
+  key: string;
+  value: string;
 }
 
 export interface Product {
@@ -34,6 +44,32 @@ export interface Product {
   categoryName: string;
   media: ProductMedia[];
   variants: ProductVariant[];
+  specifications: ProductSpecification[];
+}
+
+export interface SizeGuideSize {
+  euLabel: string;
+  usLabel: string | null;
+  ukLabel: string | null;
+  footLengthMinCm: number | null;
+  footLengthMaxCm: number | null;
+  footLengthMinIn: number | null;
+  footLengthMaxIn: number | null;
+}
+
+export interface SizeGuide {
+  brandId: number;
+  brandName: string;
+  categoryId: number | null;
+  categoryName: string | null;
+  sizes: SizeGuideSize[];
+}
+
+export interface SizeGuideResponse {
+  success: boolean;
+  message: string;
+  data: SizeGuide;
+  errors: string[] | null;
 }
 
 export type SortBy = 'Price' | 'Id' | 'Name';
@@ -97,6 +133,19 @@ export const productService = {
     }>(`/Products/${id}`);
     return response.data.data;
   },
+
+  /**
+   * Obtener guía de tallas por marca y categoría
+   */
+  getSizeGuide: async (brandId: number, categoryId?: number): Promise<SizeGuide> => {
+    const response = await apiClient.get<SizeGuideResponse>('/Products/size-guide', {
+      params: {
+        brandId,
+        ...(categoryId && { categoryId }),
+      },
+    });
+    return response.data.data;
+  },
 };
 
 /**
@@ -118,5 +167,17 @@ export const useProduct = (id: number) => {
     queryKey: queryKeys.products.detail(String(id)),
     queryFn: () => productService.getProduct(id),
     enabled: !!id,
+  });
+};
+
+/**
+ * Hook para obtener guía de tallas
+ */
+export const useSizeGuide = (brandId?: number, categoryId?: number) => {
+  return useQuery({
+    queryKey: ['sizeGuide', brandId, categoryId],
+    queryFn: () => productService.getSizeGuide(brandId!, categoryId),
+    enabled: !!brandId,
+    staleTime: 1000 * 60 * 60, // 1 hora (las guías de tallas no cambian frecuentemente)
   });
 };
