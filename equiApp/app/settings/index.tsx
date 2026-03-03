@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View, Switch, Alert } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View, Switch, Alert, Platform, ActionSheetIOS } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ThemedView, ThemedText } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
-import { useColorScheme, useOnboarding } from '@/src/hooks';
+import { useColorScheme, useOnboarding, useLanguage } from '@/src/hooks';
 import { useUserStore } from '@/src/stores/user.store';
 import AntDesignIcon from '@expo/vector-icons/AntDesign';
 
@@ -27,10 +28,12 @@ type MenuItem = {
  */
 export default function SettingsScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
     const colorScheme = useColorScheme();
     const colors = Colors[colorScheme ?? 'light'];
     const { resetOnboarding } = useOnboarding();
     const { updatePreferences } = useUserStore();
+    const { getCurrentLanguageName, changeLanguage, languageOptions } = useLanguage();
     
     // Estados locales para switches
     const [notifications, setNotifications] = useState(true);
@@ -43,14 +46,63 @@ export default function SettingsScreen() {
     // Función helper para adaptar colores al tema
     const getIconBg = (lightColor: string, darkColor: string) =>
         colorScheme === 'dark' ? darkColor : lightColor;
+    
+    // Handler para cambiar idioma
+    const handleLanguagePress = () => {
+        const systemOption = t('settings.language.useDeviceLanguage');
+        const englishOption = languageOptions['en-US'].nativeName;
+        const spanishOption = languageOptions['es-ES'].nativeName;
+        
+        if (Platform.OS === 'ios') {
+            ActionSheetIOS.showActionSheetWithOptions(
+                {
+                    title: t('settings.language.selectLanguage'),
+                    options: [
+                        t('common.cancel'),
+                        systemOption,
+                        englishOption,
+                        spanishOption,
+                    ],
+                    cancelButtonIndex: 0,
+                },
+                (buttonIndex) => {
+                    if (buttonIndex === 1) changeLanguage('system');
+                    else if (buttonIndex === 2) changeLanguage('en-US');
+                    else if (buttonIndex === 3) changeLanguage('es-ES');
+                }
+            );
+        } else {
+            Alert.alert(
+                t('settings.language.selectLanguage'),
+                '',
+                [
+                    { text: t('common.cancel'), style: 'cancel' },
+                    {
+                        text: systemOption,
+                        onPress: () => changeLanguage('system'),
+                    },
+                    {
+                        text: englishOption,
+                        onPress: () => changeLanguage('en-US'),
+                    },
+                    {
+                        text: spanishOption,
+                        onPress: () => changeLanguage('es-ES'),
+                    },
+                ],
+                { cancelable: true }
+            );
+        }
+    };
+    
     const handleResetOnboarding = () => {
         Alert.alert(
-            'Reiniciar Tutorial',
-            '¿Deseas ver el tutorial de bienvenida nuevamente? La app se reiniciará.',
+            t('settings.restartTutorial'),
+            t('settings.restartTutorialConfirm'),
             [
-                { text: 'Cancelar', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                    text: 'Reiniciar',
+                    text: t('common.confirm'),
                     style: 'destructive',
                     onPress: async () => {
                         await resetOnboarding();
@@ -64,7 +116,7 @@ export default function SettingsScreen() {
     const preferencesItems: MenuItem[] = [
         {
             id: 'theme',
-            title: 'Dark Mode',
+            title: t('settings.darkMode'),
             icon: 'bulb',
             iconColor: '#8B7FD8',
             iconBg: getIconBg('#F0EEFF', 'rgba(139, 127, 216, 0.2)'),
@@ -74,20 +126,19 @@ export default function SettingsScreen() {
         },
         {
             id: 'language',
-            title: 'Language',
+            title: t('settings.language.title'),
             icon: 'global',
             iconColor: '#4CAF50',
             iconBg: getIconBg('#E8F5E9', 'rgba(76, 175, 80, 0.2)'),
-            rightText: 'English (US)',
-            // onPress: () => router.push('/settings/preferences'),
+            rightText: getCurrentLanguageName(),
+            onPress: handleLanguagePress,
         },
         {
             id: 'restartTuturial',
-            title: 'Restart Tutorial',
+            title: t('settings.restartTutorial'),
             icon: 'backward',
             iconColor: '#e9e512',
             iconBg: getIconBg('#E8F5E9', 'rgba(76, 175, 80, 0.2)'),
-            //   rightText: 'English (US)',
             onPress: handleResetOnboarding,
         },
     ];
@@ -172,7 +223,7 @@ export default function SettingsScreen() {
                     <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                         <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
                     </TouchableOpacity>
-                    <ThemedText variant='subheading1'>Ajustes</ThemedText>
+                    <ThemedText variant='subheading1'>{t('settings.title')}</ThemedText>
                     <View style={styles.placeholder} />
                 </View>
 
@@ -181,10 +232,10 @@ export default function SettingsScreen() {
                     showsVerticalScrollIndicator={false}
                 >
                     {/* Preferences Section */}
-                    {renderSection('Preferences', preferencesItems)}
+                    {renderSection(t('settings.preferences'), preferencesItems)}
 
                     {/* App Controls Section */}
-                    {renderSection('App Controls', appControlsItems)}
+                    {renderSection(t('settings.appControls'), appControlsItems)}
                 </ScrollView>
             </ThemedView>
         </SafeAreaView>

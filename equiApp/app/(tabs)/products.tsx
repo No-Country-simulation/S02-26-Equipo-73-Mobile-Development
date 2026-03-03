@@ -10,15 +10,18 @@ import {
   RefreshControl,
   TextInput,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/src/hooks/useAuth';
-import { useProducts, type SortBy, type Product } from '@/src/services/products.service';
+import { useProducts, type SortBy, type Product, type ProductVariant } from '@/src/services/products.service';
 import { ThemedText, ThemedView, ThemedActionSheet, ThemedButton } from '@/src';
 import { Colors, Spacing, BorderRadius } from '@/src/constants';
 import { useColorScheme } from '@/src/hooks';
+import { useCart } from '@/src/stores/cart.store';
 
 type Category = 'All' | 'Dressage' | 'Jumping' | 'Eventing';
 
@@ -30,14 +33,21 @@ type Category = 'All' | 'Dressage' | 'Jumping' | 'Eventing';
 export default function ProductsScreen() {
   const { isAuthenticated, user } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { addItem, summary } = useCart();
 
   // Estado de búsqueda y filtros
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category>('All');
   const [smartFitEnabled, setSmartFitEnabled] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+
+  // Estado para selección de variante
+  const [showVariantSelector, setShowVariantSelector] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
 
   // Estado de filtros y paginación
   const [sortBy, setSortBy] = useState<SortBy>('Id');
@@ -105,6 +115,37 @@ export default function ProductsScreen() {
     return null;
   };
 
+  // Manejar apertura del selector de variantes
+  const handleOpenVariantSelector = (product: Product) => {
+    if (!product.variants || product.variants.length === 0) {
+      Alert.alert('Sin variantes', 'Este producto no tiene variantes disponibles');
+      return;
+    }
+    
+    setSelectedProduct(product);
+    setSelectedVariant(product.variants[0]); // Pre-seleccionar la primera variante
+    setShowVariantSelector(true);
+  };
+
+  // Agregar al carrito
+  const handleAddToCart = () => {
+    if (!selectedProduct || !selectedVariant) return;
+    
+    addItem(selectedProduct, selectedVariant, 1);
+    setShowVariantSelector(false);
+    
+    // Mostrar confirmación
+    Alert.alert(
+      t('cart.addedToCart.title'),
+      `${selectedProduct.name} - ${selectedVariant.sizeLabel}`,
+      [{ text: 'OK' }]
+    );
+    
+    // Limpiar selección
+    setSelectedProduct(null);
+    setSelectedVariant(null);
+  };
+
   // Renderizar cada producto
   const renderProduct = ({ item, index }: { item: Product; index: number }) => {
     const primaryImage = item.media?.find((m) => m.isPrimary)?.url || item.media?.[0]?.url;
@@ -121,7 +162,7 @@ export default function ProductsScreen() {
             <Image source={{ uri: primaryImage }} style={styles.productImage} />
           ) : (
             <View style={[styles.productImage, styles.noImage, { backgroundColor: colors.border }]}>
-              <ThemedText style={styles.noImageText}>Sin imagen</ThemedText>
+              <ThemedText style={styles.noImageText}>{t('common.loading')}</ThemedText>
             </View>
           )}
           
@@ -171,7 +212,7 @@ export default function ProductsScreen() {
               style={[styles.addButton, { backgroundColor: colors.text }]}
               onPress={(e) => {
                 e.stopPropagation();
-                // TODO: Implementar agregar al carrito
+                handleOpenVariantSelector(item);
               }}
             >
               <Ionicons name="add" size={20} color={colors.background} />
@@ -199,14 +240,14 @@ export default function ProductsScreen() {
       return (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#007AFF" />
-          <Text style={styles.loadingText}>Cargando productos...</Text>
+          <Text style={styles.loadingText}>{t('common.loading')}</Text>
         </View>
       );
     }
 
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No hay productos disponibles</Text>
+        <Text style={styles.emptyText}>{t('products.empty')}</Text>
       </View>
     );
   };
@@ -224,18 +265,20 @@ export default function ProductsScreen() {
             <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
           
-          <ThemedText type='title' style={styles.headerTitle}>Catalog</ThemedText>
+          <ThemedText type='title' style={styles.headerTitle}>{t('products.title')}</ThemedText>
           
           <TouchableOpacity 
             style={styles.cartButton}
-            onPress={() => {
-              // TODO: Navegar al carrito
-            }}
+            onPress={() => router.push('/(tabs)/cart')}
           >
             <Ionicons name="cart-outline" size={24} color={colors.text} />
-            <View style={[styles.cartBadge, { backgroundColor: colors.primary }]}>
-              <Text style={styles.cartBadgeText}>0</Text>
-            </View>
+            {summary.itemsCount > 0 && (
+              <View style={[styles.cartBadge, { backgroundColor: colors.primary }]}>
+                <Text style={styles.cartBadgeText}>
+                  {summary.itemsCount > 99 ? '99+' : summary.itemsCount}
+                </Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -245,7 +288,7 @@ export default function ProductsScreen() {
             <Ionicons name="search" size={20} color={colors.textSecondary} />
             <TextInput
               style={[styles.searchInput, { color: colors.text }]}
-              placeholder="Search saddles, bridles, tech..."
+              placeholder={t('products.search')}
               placeholderTextColor={colors.textSecondary}
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -284,7 +327,7 @@ export default function ProductsScreen() {
                   { color: selectedCategory === category ? colors.background : colors.text }
                 ]}
               >
-                {category}
+                {t(`products.categories.${category.toLowerCase()}`)}
               </ThemedText>
             </TouchableOpacity>
           ))}
@@ -296,10 +339,10 @@ export default function ProductsScreen() {
             <Ionicons name="sparkles" size={20} color={colors.accent} />
             <View>
               <ThemedText type="defaultSemiBold" style={styles.smartFitTitle}>
-                Smart Fit™
+                {t('products.smartFit.title')}
               </ThemedText>
               <ThemedText style={styles.smartFitSubtitle}>
-                Only show compatible gear
+                {t('products.smartFit.subtitle')}
               </ThemedText>
             </View>
           </View>
@@ -322,16 +365,16 @@ export default function ProductsScreen() {
         {isLoading && pageNumber === 1 ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={colors.primary} />
-            <ThemedText style={styles.loadingText}>Cargando productos...</ThemedText>
+            <ThemedText style={styles.loadingText}>{t('products.loadMore')}</ThemedText>
           </View>
         ) : error ? (
           <View style={styles.errorContainer}>
-            <ThemedText style={styles.errorText}>❌ Error al cargar productos</ThemedText>
+            <ThemedText style={styles.errorText}>{t('products.error')}</ThemedText>
             <TouchableOpacity 
               style={[styles.retryButton, { backgroundColor: colors.primary }]} 
               onPress={() => refetch()}
             >
-              <ThemedText style={styles.retryButtonText}>Reintentar</ThemedText>
+              <ThemedText style={styles.retryButtonText}>{t('common.retry')}</ThemedText>
             </TouchableOpacity>
           </View>
         ) : (
@@ -360,14 +403,14 @@ export default function ProductsScreen() {
         <ThemedActionSheet
           visible={showFilters}
           onClose={() => setShowFilters(false)}
-          title="Filtros y Ordenamiento"
+          title={t('products.filters.title')}
           snapPoint="large"
         >
           <View style={styles.filtersContent}>
             {/* Ordenamiento */}
             <View style={styles.filterSection}>
               <ThemedText type="defaultSemiBold" style={styles.filterSectionTitle}>
-                Ordenar por
+                {t('products.filters.sortBy')}
               </ThemedText>
               <View style={styles.sortOptions}>
                 {(['Id', 'Name', 'Price'] as SortBy[]).map((sort) => (
@@ -388,7 +431,7 @@ export default function ProductsScreen() {
                         { color: sortBy === sort ? '#fff' : colors.text }
                       ]}
                     >
-                      {sort === 'Id' ? 'Más recientes' : sort === 'Name' ? 'Nombre' : 'Precio'}
+                      {t(`products.filters.${sort.toLowerCase()}`)}
                     </ThemedText>
                   </TouchableOpacity>
                 ))}
@@ -398,7 +441,7 @@ export default function ProductsScreen() {
             {/* Dirección de ordenamiento */}
             <View style={styles.filterSection}>
               <ThemedText type="defaultSemiBold" style={styles.filterSectionTitle}>
-                Dirección
+                {t('products.filters.direction')}
               </ThemedText>
               <View style={styles.sortOptions}>
                 <TouchableOpacity
@@ -422,7 +465,7 @@ export default function ProductsScreen() {
                       { color: !sortDescending ? '#fff' : colors.text }
                     ]}
                   >
-                    Ascendente
+                    {t('products.filters.ascending')}
                   </ThemedText>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -446,7 +489,7 @@ export default function ProductsScreen() {
                       { color: sortDescending ? '#fff' : colors.text }
                     ]}
                   >
-                    Descendente
+                    {t('products.filters.descending')}
                   </ThemedText>
                 </TouchableOpacity>
               </View>
@@ -455,11 +498,11 @@ export default function ProductsScreen() {
             {/* Rango de precios */}
             <View style={styles.filterSection}>
               <ThemedText type="defaultSemiBold" style={styles.filterSectionTitle}>
-                Rango de precio
+                {t('products.filters.priceRange')}
               </ThemedText>
               <View style={styles.priceInputs}>
                 <View style={styles.priceInputWrapper}>
-                  <ThemedText style={styles.priceLabel}>Mínimo</ThemedText>
+                  <ThemedText style={styles.priceLabel}>{t('products.filters.minPrice')}</ThemedText>
                   <TextInput
                     style={[
                       styles.priceInput,
@@ -478,7 +521,7 @@ export default function ProductsScreen() {
                 </View>
                 <ThemedText style={styles.priceSeparator}>-</ThemedText>
                 <View style={styles.priceInputWrapper}>
-                  <ThemedText style={styles.priceLabel}>Máximo</ThemedText>
+                  <ThemedText style={styles.priceLabel}>{t('products.filters.maxPrice')}</ThemedText>
                   <TextInput
                     style={[
                       styles.priceInput,
@@ -500,10 +543,110 @@ export default function ProductsScreen() {
 
             {/* Botón aplicar */}
             <ThemedButton
-              label="Aplicar Filtros"
+              label={t('products.filters.applyFilters')}
               onPress={handleApplyFilters}
               style={styles.applyButton}
             />
+          </View>
+        </ThemedActionSheet>
+
+        {/* ActionSheet para Seleccionar Variante */}
+        <ThemedActionSheet
+          visible={showVariantSelector}
+          onClose={() => {
+            setShowVariantSelector(false);
+            setSelectedProduct(null);
+            setSelectedVariant(null);
+          }}
+          title={t('productDetail.selectSize')}
+          snapPoint="medium"
+        >
+          <View style={styles.variantSelectorContent}>
+            {selectedProduct && (
+              <>
+                {/* Info del producto */}
+                <View style={styles.variantProductInfo}>
+                  <Image
+                    source={{ uri: selectedProduct.media?.[0]?.url }}
+                    style={styles.variantProductImage}
+                  />
+                  <View style={styles.variantProductDetails}>
+                    <ThemedText style={styles.variantProductName} numberOfLines={2}>
+                      {selectedProduct.name}
+                    </ThemedText>
+                    <ThemedText style={[styles.variantProductBrand, { color: colors.textSecondary }]}>
+                      {selectedProduct.brandName}
+                    </ThemedText>
+                  </View>
+                </View>
+
+                {/* Selector de variantes */}
+                <View style={styles.variantsContainer}>
+                  <ThemedText type="defaultSemiBold" style={styles.variantsTitle}>
+                    {t('productDetail.selectSize')}
+                  </ThemedText>
+                  <ScrollView 
+                    horizontal 
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.variantsList}
+                    contentContainerStyle={styles.variantsListContent}
+                  >
+                    {selectedProduct.variants?.map((variant) => (
+                      <TouchableOpacity
+                        key={variant.id}
+                        style={[
+                          styles.variantOption,
+                          {
+                            backgroundColor: selectedVariant?.id === variant.id ? colors.primary : colors.card,
+                            borderColor: selectedVariant?.id === variant.id ? colors.primary : colors.border,
+                          }
+                        ]}
+                        onPress={() => setSelectedVariant(variant)}
+                        disabled={!variant.isActive || variant.stock <= 0}
+                      >
+                        <ThemedText
+                          style={[
+                            styles.variantSizeText,
+                            { color: selectedVariant?.id === variant.id ? '#fff' : colors.text },
+                            (!variant.isActive || variant.stock <= 0) && styles.variantDisabled,
+                          ]}
+                        >
+                          {variant.sizeLabel}
+                        </ThemedText>
+                        {variant.stock > 0 && variant.stock <= 5 && (
+                          <ThemedText
+                            style={[
+                              styles.variantStock,
+                              { color: selectedVariant?.id === variant.id ? '#fff' : colors.textSecondary }
+                            ]}
+                          >
+                            {t('productDetail.lowStock', { count: variant.stock })}
+                          </ThemedText>
+                        )}
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+
+                {/* Precio de la variante seleccionada */}
+                {selectedVariant && (
+                  <View style={styles.variantPriceContainer}>
+                    <ThemedText style={styles.variantPriceLabel}>{t('productDetail.price')}:</ThemedText>
+                    <ThemedText style={[styles.variantPrice, { color: colors.primary }]}>
+                      ${selectedVariant.price.toFixed(2)}
+                    </ThemedText>
+                  </View>
+                )}
+
+                {/* Botón agregar */}
+                <ThemedButton
+                  label={t('productDetail.addToCart')}
+                  onPress={handleAddToCart}
+                  disabled={!selectedVariant || !selectedVariant.isActive || selectedVariant.stock <= 0}
+                  style={styles.addToCartButton}
+                />
+              </>
+            )}
           </View>
         </ThemedActionSheet>
       </ThemedView>
@@ -839,5 +982,82 @@ const styles = StyleSheet.create({
   },
   applyButton: {
     marginTop: Spacing.md,
+  },
+  // Variant Selector Styles
+  variantSelectorContent: {
+    gap: Spacing.lg,
+  },
+  variantProductInfo: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0,0,0,0.1)',
+  },
+  variantProductImage: {
+    width: 80,
+    height: 80,
+    borderRadius: BorderRadius.md,
+  },
+  variantProductDetails: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  variantProductName: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  variantProductBrand: {
+    fontSize: 14,
+  },
+  variantsContainer: {
+    gap: Spacing.md,
+  },
+  variantsTitle: {
+    fontSize: 16,
+  },
+  variantsList: {
+    maxHeight: 120,
+  },
+  variantsListContent: {
+    gap: Spacing.sm,
+  },
+  variantOption: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 2,
+    minWidth: 70,
+    alignItems: 'center',
+  },
+  variantSizeText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  variantStock: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+  variantDisabled: {
+    opacity: 0.3,
+  },
+  variantPriceContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.1)',
+  },
+  variantPriceLabel: {
+    fontSize: 16,
+  },
+  variantPrice: {
+    fontSize: 24,
+    fontWeight: '700',
+  },
+  addToCartButton: {
+    marginTop: Spacing.sm,
   },
 });

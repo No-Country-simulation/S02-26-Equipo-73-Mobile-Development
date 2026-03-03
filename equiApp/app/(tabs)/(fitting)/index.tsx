@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -16,22 +22,31 @@ type MenuItem = {
   icon: string;
   iconColor: string;
   iconBg: string;
-  badge?: number;
   onPress?: () => void;
 };
 
 /**
- * Pantalla de perfil (protegida)
- * Menú principal de configuración del perfil del usuario
+ * Pantalla de Fitting
+ * Muestra el establo de caballos y las medidas del jinete
  */
-export default function ProfileScreen() {
-  const { user, logout, isAuthenticated, isInitialized } = useAuth();
+export default function FittingScreen() {
+  const { isAuthenticated, user, isInitialized } = useAuth();
   const { t } = useTranslation();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
-  // Mostrar loading solo mientras se inicializa
+  // Helper para adaptar colores al tema
+  const getIconBg = (baseColor: string, opacity: number = 0.15) => {
+    const hex = baseColor.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    const finalOpacity = colorScheme === 'dark' ? opacity * 1.3 : opacity;
+    return `rgba(${r}, ${g}, ${b}, ${finalOpacity})`;
+  };
+
+  // Mostrar loading mientras se inicializa
   if (!isInitialized) {
     return (
       <SafeAreaView style={styles.safeArea} edges={['top']}>
@@ -51,28 +66,28 @@ export default function ProfileScreen() {
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ThemedView style={styles.container}>
           <View style={styles.header}>
-            <ThemedText variant='subheading1'>{t('profile.title')}</ThemedText>
+            <ThemedText variant='subheading1'>{t('fitting.title')}</ThemedText>
           </View>
           <View style={styles.emptyStateContainer}>
             <View style={[styles.emptyStateIcon, { backgroundColor: colors.primary + '20' }]}>
-              <AntDesignIcon name="user" size={64} color={colors.primary} />
+              <AntDesignIcon name="star" size={64} color={colors.primary} />
             </View>
-            <ThemedText style={styles.emptyStateTitle}>{t('profile.emptyState.title')}</ThemedText>
+            <ThemedText style={styles.emptyStateTitle}>{t('fitting.emptyState.title')}</ThemedText>
             <ThemedText style={[styles.emptyStateText, { color: colors.textSecondary }]}>
-              {t('profile.emptyState.message')}
+              {t('fitting.emptyState.message')}
             </ThemedText>
             <TouchableOpacity
               style={[styles.loginButton, { backgroundColor: colors.primary }]}
               onPress={() => router.push('/auth/login')}
             >
-              <ThemedText style={styles.loginButtonText}>{t('profile.emptyState.loginButton')}</ThemedText>
+              <ThemedText style={styles.loginButtonText}>{t('fitting.emptyState.loginButton')}</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.registerButton, { borderColor: colors.primary }]}
               onPress={() => router.push('/auth/register')}
             >
               <ThemedText style={[styles.registerButtonText, { color: colors.primary }]}>
-                {t('profile.emptyState.registerButton')}
+                {t('fitting.emptyState.registerButton')}
               </ThemedText>
             </TouchableOpacity>
           </View>
@@ -80,71 +95,30 @@ export default function ProfileScreen() {
       </SafeAreaView>
     );
   }
-  // Función helper para adaptar colores al tema
-  const getIconBg = (baseColor: string, opacity: number = 0.15) => {
-    // Convertir hex a rgb y agregar opacidad
-    const hex = baseColor.replace('#', '');
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    const finalOpacity = colorScheme === 'dark' ? opacity * 1.3 : opacity;
-    return `rgba(${r}, ${g}, ${b}, ${finalOpacity})`;
-  };
 
-  const handleLogout = async () => {
-    Alert.alert(
-      t('auth.logout'),
-      t('auth.logoutConfirm'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('auth.logout'),
-          style: 'destructive',
-          onPress: async () => {
-            await logout();
-          },
-        },
-      ]
-    );
-  };
-
-  // Sección MY ACCOUNT
-  const accountMenuItems: MenuItem[] = [
+  // Sección MY STABLE
+  const stableMenuItems: MenuItem[] = [
     {
-      id: 'personal-data',
-      title: t('profile.personalData'),
-      icon: 'user',
-      iconColor: colors.secondary,
-      iconBg: getIconBg(colors.secondary),
-      onPress: () => router.push('/settings/personal-data'),
-    },
-    {
-      id: 'account',
-      title: t('profile.changePassword'),
-      icon: 'lock',
-      iconColor: colors.secondary,
-      iconBg: getIconBg(colors.secondary),
-      onPress: () => router.push('/settings/change-password'),
-    },
-    {
-      id: 'payment',
-      title: t('profile.paymentMethods'),
-      icon: 'credit-card',
-      iconColor: colors.secondary,
-      iconBg: getIconBg(colors.secondary),
-      // onPress: () => router.push('/settings/payment-methods'),
+      id: 'horses',
+      title: t('fitting.horses.manageHorses'),
+      subtitle: t('fitting.horses.subtitle'),
+      icon: 'star',
+      iconColor: colors.primary,
+      iconBg: getIconBg(colors.primary),
+      onPress: () => router.push('/horses'),
     },
   ];
 
-  // Sección SETTINGS
-  const settingsMenuItems: MenuItem[] = [
+  // Sección RIDER MEASUREMENTS
+  const measurementsMenuItems: MenuItem[] = [
     {
-      id: 'settings',
-      title: t('profile.settings'),
-      icon: 'setting',
-      iconColor: '#8B7FD8',
-      iconBg: getIconBg('#8B7FD8'),
-      onPress: () => router.push('/settings'),
+      id: 'measurements',
+      title: t('fitting.measurements.title'),
+      subtitle: t('fitting.measurements.subtitle'),
+      icon: 'profile',
+      iconColor: colors.secondary,
+      iconBg: getIconBg(colors.secondary),
+      onPress: () => router.push('/measurements'),
     },
   ];
 
@@ -178,13 +152,7 @@ export default function ProfileScreen() {
                 )}
               </View>
             </View>
-            {item.badge !== undefined ? (
-              <View style={[styles.badge, { backgroundColor: colors.info }]}>
-                <Text style={styles.badgeText}>{item.badge}</Text>
-              </View>
-            ) : (
-              <AntDesignIcon name="right" size={16} color={colors.textSecondary} />
-            )}
+            <AntDesignIcon name="right" size={16} color={colors.textSecondary} />
           </TouchableOpacity>
         ))}
       </View>
@@ -196,7 +164,7 @@ export default function ProfileScreen() {
       <ThemedView style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <ThemedText variant='subheading1'>{t('profile.title')}</ThemedText>
+          <ThemedText variant='subheading1'>{t('fitting.title')}</ThemedText>
         </View>
 
         <ScrollView
@@ -204,38 +172,26 @@ export default function ProfileScreen() {
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}
         >
-          {/* User Info */}
-          <View style={styles.userSection}>
-            <View style={[styles.avatarContainer, { borderColor: colors.secondary }]}>
-              <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
-                <ThemedText style={styles.avatarText}>
-                  {user?.name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase()}
+          {/* Info Card */}
+          <View style={[styles.infoCard, { backgroundColor: `${colors.primary}15` }]}>
+            <View style={styles.infoCardContent}>
+              <AntDesignIcon name="star" size={32} color={colors.primary} />
+              <View style={styles.infoCardText}>
+                <ThemedText style={styles.infoCardTitle}>
+                  {t('fitting.infoCard.title')}
+                </ThemedText>
+                <ThemedText style={[styles.infoCardSubtitle, { color: colors.textSecondary }]}>
+                  {t('fitting.infoCard.subtitle')}
                 </ThemedText>
               </View>
-              {/* <TouchableOpacity style={[styles.editAvatarButton, { backgroundColor: colors.info }]}>
-                <AntDesignIcon name="edit" size={14} color="#fff" />
-              </TouchableOpacity> */}
             </View>
-            <ThemedText style={styles.userName}>{user?.name || 'Usuario'}</ThemedText>
-            <ThemedText style={[styles.userEmail, { color: colors.secondary }]}>
-              {user?.email || '-'}
-            </ThemedText>
           </View>
 
-          {/* MY ACCOUNT Section */}
-          {renderSection('My Account', accountMenuItems)}
+          {/* MY STABLE Section */}
+          {renderSection(t('fitting.myStable'), stableMenuItems)}
 
-          {/* SETTINGS Section */}
-          {renderSection('Settings', settingsMenuItems)}
-
-          {/* Sign Out Button */}
-          <TouchableOpacity
-            style={[styles.signOutButton, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 59, 48, 0.15)' : 'rgba(255, 59, 48, 0.1)' }]}
-            onPress={handleLogout}
-          >
-            <AntDesignIcon name="logout" size={18} color="#FF3B30" />
-            <Text style={styles.signOutText}>Sign Out</Text>
-          </TouchableOpacity>
+          {/* RIDER MEASUREMENTS Section */}
+          {renderSection(t('fitting.riderMeasurements'), measurementsMenuItems)}
         </ScrollView>
       </ThemedView>
     </SafeAreaView>
@@ -243,16 +199,16 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   safeArea: {
     flex: 1,
   },
   container: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     paddingHorizontal: Spacing.lg,
@@ -315,48 +271,27 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     paddingBottom: Spacing.xxl,
   },
-  userSection: {
+  infoCard: {
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    marginBottom: Spacing.xl,
+  },
+  infoCardContent: {
+    flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.xl,
-    marginBottom: Spacing.lg,
+    gap: Spacing.md,
   },
-  avatarContainer: {
-    position: 'relative',
-    marginBottom: Spacing.md,
-    borderWidth: 3,
-    borderRadius: 70,
-    padding: 4,
+  infoCardText: {
+    flex: 1,
   },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarText: {
-    fontSize: 48,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  editAvatarButton: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  userName: {
-    fontSize: 24,
+  infoCardTitle: {
+    fontSize: 18,
     fontWeight: '700',
     marginBottom: 4,
   },
-  userEmail: {
+  infoCardSubtitle: {
     fontSize: 14,
-    marginBottom: Spacing.sm,
+    lineHeight: 20,
   },
   section: {
     marginBottom: Spacing.xl,
@@ -382,7 +317,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: Spacing.lg,
-    minHeight: 64,
+    minHeight: 72,
   },
   menuItemContent: {
     flexDirection: 'row',
@@ -405,43 +340,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   menuSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
     marginTop: 2,
-  },
-  badge: {
-    minWidth: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    marginLeft: Spacing.sm,
-  },
-  badgeText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  signOutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.xl,
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.lg,
-    gap: Spacing.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 59, 48, 0.3)',
-  },
-  signOutText: {
-    color: '#FF3B30',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  versionText: {
-    fontSize: 12,
-    textAlign: 'center',
-    marginBottom: Spacing.xl,
   },
 });

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ThemedText } from '@/src/components/ui';
 import { Colors, Spacing, BorderRadius } from '@/src/constants';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,40 +21,38 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 type OnboardingPage = {
     id: string;
     icon: keyof typeof Ionicons.glyphMap;
-    title: string;
-    subtitle: string;
-    description: string;
+    titleKey: string;
+    subtitleKey: string;
+    descriptionKey: string;
 };
 
 const ONBOARDING_PAGES: OnboardingPage[] = [
     {
         id: '1',
         icon: 'shirt-outline',
-        title: 'Armario Virtual',
-        subtitle: 'Impulsado por IA',
-        description:
-            'Sube tu equipo a tu establo digital. Nuestra IA valida la compatibilidad con las medidas biométricas únicas de tu caballo.',
+        titleKey: 'onboarding.page1.title',
+        subtitleKey: 'onboarding.page1.subtitle',
+        descriptionKey: 'onboarding.page1.description',
     },
     {
         id: '2',
         icon: 'resize-outline',
-        title: 'Compatibilidad',
-        subtitle: 'Inteligente',
-        description:
-            'Nunca vuelvas a adivinar una talla. Sube el equipo a tu Armario Virtual y deja que los algoritmos de EquiData verifiquen el ajuste perfecto.',
+        titleKey: 'onboarding.page2.title',
+        subtitleKey: 'onboarding.page2.subtitle',
+        descriptionKey: 'onboarding.page2.description',
     },
     {
         id: '3',
         icon: 'checkmark-circle-outline',
-        title: 'Listo para',
-        subtitle: 'Comenzar',
-        description:
-            'Tecnología ecuestre de precisión al alcance de tu mano. Gestiona tu equipo, encuentra el ajuste perfecto y cuida mejor de tu caballo.',
+        titleKey: 'onboarding.page3.title',
+        subtitleKey: 'onboarding.page3.subtitle',
+        descriptionKey: 'onboarding.page3.description',
     },
 ];
 
 export default function OnboardingScreen() {
     const router = useRouter();
+    const { t } = useTranslation();
     const [currentIndex, setCurrentIndex] = useState(0);
     const flatListRef = useRef<FlatList>(null);
 
@@ -96,7 +95,7 @@ export default function OnboardingScreen() {
                         lightColor={Colors.light.accent}
                         style={styles.skipText}
                     >
-                        SALTAR →
+                        {t('onboarding.skip')}
                     </ThemedText>
                 </TouchableOpacity>
             )}
@@ -137,14 +136,14 @@ export default function OnboardingScreen() {
                         {/* Title */}
                         <View style={styles.textContainer}>
                             <ThemedText variant="heading3" style={styles.title}>
-                                {item.title}
+                                {t(item.titleKey)}
                             </ThemedText>
                             <ThemedText
                                 variant="heading3"
                                 style={styles.subtitle}
                                 lightColor={Colors.light.accent}
                             >
-                                {item.subtitle}
+                                {t(item.subtitleKey)}
                             </ThemedText>
 
                             {/* Description */}
@@ -153,7 +152,7 @@ export default function OnboardingScreen() {
                                 style={styles.description}
                                 lightColor={Colors.light.textSecondary}
                             >
-                                {item.description}
+                                {t(item.descriptionKey)}
                             </ThemedText>
                         </View>
                     </View>
@@ -187,8 +186,8 @@ export default function OnboardingScreen() {
                     lightColor={Colors.light.primary}
                 >
                     {currentIndex === ONBOARDING_PAGES.length - 1
-                        ? 'Comenzar'
-                        : 'Continuar'}{' '}
+                        ? t('onboarding.getStarted')
+                        : t('onboarding.continue')}{' '}
                     →
                 </ThemedText>
             </TouchableOpacity>

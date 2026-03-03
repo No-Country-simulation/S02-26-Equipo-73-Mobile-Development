@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemedText, ThemedView } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
@@ -30,6 +31,7 @@ import type { Measurement } from '@/src/types/measurement.types';
 
 export default function MeasurementsScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -46,19 +48,19 @@ export default function MeasurementsScreen() {
 
   const handleDelete = async (measurement: Measurement) => {
     Alert.alert(
-      'Eliminar medida',
-      `¿Estás seguro de eliminar ${measurement.measurementTypeName}?`,
+      t('fitting.measurements.deleteMeasurement'),
+      t('fitting.measurements.deleteConfirm', { name: measurement.measurementTypeName }),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Eliminar',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteMutation.mutateAsync(measurement.id);
-              Alert.alert('Éxito', 'Medida eliminada correctamente');
+              Alert.alert(t('common.success'), t('fitting.measurements.deleteSuccess'));
             } catch (error: any) {
-              Alert.alert('Error', error.message || 'No se pudo eliminar la medida');
+              Alert.alert(t('common.error'), error.message || t('common.error'));
             }
           },
         },
@@ -68,13 +70,13 @@ export default function MeasurementsScreen() {
 
   const handleEdit = (measurement: Measurement) => {
     router.push({
-      pathname: '/settings/measurement-form',
+      pathname: '/measurement-form',
       params: { measurementId: measurement.id },
     });
   };
 
   const handleAddNew = () => {
-    router.push('/settings/measurement-form');
+    router.push('/measurement-form');
   };
 
   const renderRightActions = (
@@ -100,7 +102,7 @@ export default function MeasurementsScreen() {
             onPress={() => handleEdit(measurement)}
           >
             <AntDesignIcon name="edit" size={20} color="#fff" />
-            <Text style={styles.swipeButtonText}>Editar</Text>
+            <Text style={styles.swipeButtonText}>{t('fitting.measurements.editMeasurement')}</Text>
           </TouchableOpacity>
         </Animated.View>
         <Animated.View style={{ transform: [{ translateX: translateDelete }] }}>
@@ -109,7 +111,7 @@ export default function MeasurementsScreen() {
             onPress={() => handleDelete(measurement)}
           >
             <AntDesignIcon name="delete" size={20} color="#fff" />
-            <Text style={styles.swipeButtonText}>Eliminar</Text>
+            <Text style={styles.swipeButtonText}>{t('fitting.measurements.deleteMeasurement')}</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>
@@ -160,7 +162,7 @@ export default function MeasurementsScreen() {
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <ThemedText style={styles.loadingText}>Cargando medidas...</ThemedText>
+          <ThemedText style={styles.loadingText}>{t('common.loading')}</ThemedText>
         </ThemedView>
       </SafeAreaView>
     );
@@ -175,7 +177,7 @@ export default function MeasurementsScreen() {
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
           </TouchableOpacity>
-          <ThemedText variant="subheading1">Mis Medidas</ThemedText>
+          <ThemedText variant="subheading1">{t('fitting.measurements.title')}</ThemedText>
           <TouchableOpacity onPress={() => refetch()} style={styles.refreshButton}>
             <AntDesignIcon name="reload" size={20} color={colors.text} />
           </TouchableOpacity>
@@ -199,16 +201,16 @@ export default function MeasurementsScreen() {
               <View style={[styles.emptyIcon, { backgroundColor: `${colors.primary}15` }]}>
                 <AntDesignIcon name="profile" size={48} color={colors.primary} />
               </View>
-              <ThemedText style={styles.emptyTitle}>No hay medidas</ThemedText>
+              <ThemedText style={styles.emptyTitle}>{t('fitting.measurements.emptyState.title')}</ThemedText>
               <ThemedText style={[styles.emptyDescription, { color: colors.textSecondary }]}>
-                Agrega tus medidas corporales para un mejor ajuste de los productos
+                {t('fitting.measurements.emptyState.message')}
               </ThemedText>
               <TouchableOpacity
                 style={[styles.emptyButton, { backgroundColor: colors.primary }]}
                 onPress={handleAddNew}
               >
                 <AntDesignIcon name="plus" size={20} color="#fff" />
-                <Text style={styles.emptyButtonText}>Agregar primera medida</Text>
+                <Text style={styles.emptyButtonText}>{t('fitting.measurements.emptyState.addButton')}</Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -217,7 +219,7 @@ export default function MeasurementsScreen() {
               <View style={[styles.hintCard, { backgroundColor: `${colors.info}15` }]}>
                 <AntDesignIcon name="info-circle" size={16} color={colors.info} />
                 <ThemedText style={[styles.hintText, { color: colors.info }]}>
-                  Desliza hacia la izquierda para editar o eliminar
+                  {t('common.swipeToEdit')}
                 </ThemedText>
               </View>
 

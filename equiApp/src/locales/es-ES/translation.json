@@ -1,0 +1,461 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "shop": "Tienda",
+    "cart": "Carrito",
+    "fitting": "Fitting",
+    "profile": "Perfil"
+  },
+  "home": {
+    "title": "Rider Fit",
+    "quickAccess": "Acceso Rápido",
+    "myHorses": "Mis Caballos",
+    "profilesActive": "{{count}} Perfiles Activos",
+    "profilesActive_plural": "{{count}} Perfiles Activos",
+    "loginRequired": "Inicio de sesión requerido",
+    "measurements": "Medidas",
+    "lastUpdated": "Última actualización {{time}}",
+    "myStable": "Mi Establo",
+    "viewAll": "Ver Todos",
+    "optimal": "ÓPTIMO",
+    "lastScan": "Último escaneo: {{time}}",
+    "profile": "Perfil",
+    "newScan": "Nuevo Escaneo",
+    "forYourEquipment": "Para Tu Equipo",
+    "loadingProducts": "Cargando productos...",
+    "noProducts": "No hay productos disponibles",
+    "fit": "{{percent}}% Compatible",
+    "startJourney": "Comienza Tu Aventura",
+    "joinDescription": "Únete a Rider Fit para rastrear tus caballos y encontrar el equipo perfecto",
+    "getStarted": "Comenzar",
+    "daysAgo": "hace {{count}} día",
+    "daysAgo_plural": "hace {{count}} días",
+    "months": "{{count}} mes",
+    "months_plural": "{{count}} meses",
+    "years": "{{count}} año",
+    "years_plural": "{{count}} años"
+  },  "onboarding": {
+    "skip": "SALTAR →",
+    "continue": "Continuar",
+    "getStarted": "Comenzar",
+    "page1": {
+      "title": "Armario Virtual",
+      "subtitle": "Impulsado por IA",
+      "description": "Sube tu equipo a tu establo digital. Nuestra IA valida la compatibilidad con las medidas biométricas únicas de tu caballo."
+    },
+    "page2": {
+      "title": "Compatibilidad",
+      "subtitle": "Inteligente",
+      "description": "Nunca vuelvas a adivinar una talla. Sube el equipo a tu Armario Virtual y deja que los algoritmos de EquiData verifiquen el ajuste perfecto."
+    },
+    "page3": {
+      "title": "Listo para",
+      "subtitle": "Comenzar",
+      "description": "Tecnología ecuestre de precisión al alcance de tu mano. Gestiona tu equipo, encuentra el ajuste perfecto y cuida mejor de tu caballo."
+    }
+  },  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "back": "Volver",
+    "continue": "Continuar",
+    "retry": "Reintentar",
+    "close": "Cerrar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "apply": "Aplicar",
+    "clear": "Limpiar",
+    "viewAll": "Ver Todo",
+    "seeMore": "Ver Más",
+    "required": "Requerido",
+    "optional": "Opcional",
+    "swipeToEdit": "Desliza a la izquierda para editar o eliminar",
+    "saving": "Guardando..."
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar Sesión",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "loginButton": "Iniciar Sesión",
+      "noAccount": "¿No tienes cuenta?",
+      "signUp": "Regístrate",
+      "loginSuccess": "Inicio de sesión exitoso",
+      "loginError": "Error al iniciar sesión"
+    },
+    "register": {
+      "title": "Crear Cuenta",
+      "name": "Nombre",
+      "lastName": "Apellido",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmar Contraseña",
+      "registerButton": "Crear Cuenta",
+      "hasAccount": "¿Ya tienes cuenta?",
+      "signIn": "Inicia sesión",
+      "registerSuccess": "Cuenta creada exitosamente",
+      "registerError": "Error al crear cuenta"
+    },
+    "logout": "Cerrar Sesión",
+    "logoutConfirm": "¿Estás seguro que deseas cerrar sesión?",
+    "requiresLogin": "Inicio de sesión requerido",
+    "pleaseLogin": "Por favor inicia sesión para acceder a esta función"
+  },
+  "profile": {
+    "title": "Cuenta",
+    "myAccount": "Mi Cuenta",
+    "settings": "Configuración",
+    "editProfile": "Editar Perfil",
+    "personalData": "Datos Personales",
+    "measurements": "Mis Medidas",
+    "changePassword": "Cambio de Contraseña",
+    "paymentMethods": "Métodos de Pago",
+    "help": "Ayuda y Soporte",
+    "about": "Acerca de",
+    "emptyState": {
+      "title": "Inicia sesión",
+      "message": "Para acceder a tu perfil y gestionar tu cuenta, inicia sesión o crea una cuenta nueva",
+      "loginButton": "Iniciar Sesión",
+      "registerButton": "Crear Cuenta"
+    }
+  },
+  "fitting": {
+    "title": "Fitting",
+    "myStable": "Mi Establo",
+    "riderMeasurements": "Jinete",
+    "infoCard": {
+      "title": "Establo & Medidas",
+      "subtitle": "Gestiona tu establo y tus medidas personales"
+    },
+    "emptyState": {
+      "title": "Inicia sesión",
+      "message": "Para acceder a tu establo y medidas, inicia sesión o crea una cuenta nueva",
+      "loginButton": "Iniciar Sesión",
+      "registerButton": "Crear Cuenta"
+    },
+    "horses": {
+      "title": "Mis Caballos",
+      "manageHorses": "Gestionar Caballos",
+      "subtitle": "Gestiona tu establo de caballos",
+      "addHorse": "Agregar Caballo",
+      "editHorse": "Editar Caballo",
+      "deleteHorse": "Eliminar Caballo",
+      "horseDetails": "Detalles del Caballo",
+      "deleteConfirm": "¿Estás seguro de eliminar {{name}}?",      "deleteConfirmPermanent": "¿Estás seguro de eliminar {{name}}? Esta acción no se puede deshacer.",      "deleteSuccess": "Caballo eliminado exitosamente",
+      "emptyState": {
+        "title": "No hay caballos aún",
+        "message": "Agrega tu primer caballo para comenzar",
+        "addButton": "Agregar Primer Caballo"
+      },
+      "basicInfo": "Información Básica",
+      "measurements": "Medidas",
+      "bodyType": "Tipo de Cuerpo",
+      "recordInfo": "Información del Registro",
+      "name": "Nombre",
+      "breed": "Raza",
+      "discipline": "Disciplina",
+      "sex": "Sexo",
+      "birthDate": "Fecha de Nacimiento",
+      "color": "Color",
+      "age": "Edad",      "status": "Estado",
+      "active": "Activo",
+      "inactive": "Inactivo",      "backType": "Tipo de Espalda",
+      "withersType": "Tipo de Cruz",
+      "shoulderType": "Tipo de Hombro",
+      "weight": "Peso",
+      "height": "Altura",
+      "createdAt": "Creado",
+      "updatedAt": "Última Actualización",
+      "form": {
+        "createSuccess": "Caballo creado correctamente",
+        "updateSuccess": "Caballo actualizado correctamente",
+        "errors": {
+          "name": "Por favor ingresa un nombre para el caballo",
+          "breed": "Por favor selecciona una raza",
+          "discipline": "Por favor selecciona una disciplina",
+          "level": "Por favor selecciona un nivel",
+          "save": "No se pudo guardar el caballo"
+        },
+        "title": {
+          "new": "Nuevo Caballo",
+          "edit": "Editar Caballo"
+        },
+        "fields": {
+          "name": "Nombre",
+          "birthDate": "Fecha de Nacimiento",
+          "sex": "Sexo",
+          "breed": "Raza",
+          "discipline": "Disciplina",
+          "level": "Nivel",
+          "withersHeight": "Altura a la Cruz",
+          "backLength": "Longitud de Espalda",
+          "chestCircumference": "Circunferencia de Pecho",
+          "withersWidth": "Ancho de Cruz",
+          "neckLength": "Longitud de Cuello",
+          "cannonCircumference": "Circunferencia de Caña",
+          "headLength": "Longitud de Cabeza",
+          "backType": "Tipo de Espalda",
+          "withersType": "Tipo de Cruz",
+          "shoulderType": "Tipo de Hombro"
+        },
+        "placeholders": {
+          "name": "Ingresa el nombre del caballo",
+          "selectBreed": "Selecciona raza",
+          "selectDiscipline": "Selecciona disciplina",
+          "selectLevel": "Selecciona nivel"
+        },
+        "sex": {
+          "male": "Macho",
+          "female": "Hembra"
+        },
+        "backType": {
+          "straight": "Recto",
+          "concave": "Cóncavo",
+          "convex": "Convexo",
+          "other": "Otro"
+        },
+        "withersType": {
+          "prominent": "Prominente",
+          "medium": "Medio",
+          "flat": "Plano",
+          "other": "Otro"
+        },
+        "shoulderType": {
+          "inclined": "Inclinado",
+          "straight": "Recto",
+          "other": "Otro"
+        },
+        "notSpecified": "No especificado",
+        "required": "*",
+        "optional": "(Opcional)",
+        "measurementsInfo": "Todas las medidas son opcionales. Agrega solo lo que sepas.",
+        "dimensions": "Dimensiones (cm)"
+      }
+    },
+    "measurements": {
+      "title": "Mis Medidas",
+      "subtitle": "Medidas del jinete",
+      "addMeasurement": "Agregar Medida",
+      "editMeasurement": "Editar",
+      "deleteMeasurement": "Eliminar",
+      "deleteConfirm": "¿Estás seguro de eliminar {{name}}?",
+      "deleteSuccess": "Medida eliminada exitosamente",
+      "emptyState": {
+        "title": "No hay medidas",
+        "message": "Agrega tu primera medida para comenzar",
+        "addButton": "Agregar Primera Medida"
+      },
+      "form": {
+        "selectType": "Selecciona tipo de medida",
+        "selectUnit": "Selecciona unidad",
+        "createSuccess": "Medida creada correctamente",
+        "updateSuccess": "Medida actualizada correctamente",
+        "errors": {
+          "type": "Debes seleccionar un tipo de medida",
+          "value": "Debes ingresar un valor válido mayor a 0",
+          "unit": "Debes seleccionar una unidad",
+          "save": "No se pudo guardar la medida"
+        }
+      }
+    }
+  },
+  "cart": {
+    "title": "Mi Carrito",
+    "empty": "Tu carrito está vacío",
+    "emptyMessage": "Agrega productos desde la tienda para verlos aquí",
+    "goToShop": "Ir a la Tienda",
+    "clearCart": "Vaciar",
+    "clearConfirm": "¿Estás seguro de que deseas eliminar todos los productos del carrito?",
+    "removeItem": "Eliminar producto",
+    "removeItemConfirm": "¿Deseas eliminar {{name}} del carrito?",
+    "size": "Talla",
+    "color": "Color",
+    "quantity": "Cantidad",
+    "subtotal": "Subtotal:",
+    "total": "Total:",
+    "itemsCount": "{{count}} producto",
+    "itemsCount_plural": "{{count}} productos",
+    "checkout": "Finalizar Compra",
+    "processing": "Procesando...",
+    "success": {
+      "title": "¡Compra exitosa!",
+      "message": "Tu pedido ha sido procesado correctamente"
+    },
+    "addedToCart": {
+      "title": "¡Agregado al carrito!",
+      "continueShopping": "Seguir comprando",
+      "viewCart": "Ver carrito"
+    }
+  },
+  "products": {
+    "title": "Catálogo",
+    "search": "Buscar monturas, riendas, equipos...",
+    "categories": {
+      "all": "Todos",
+      "dressage": "Doma",
+      "jumping": "Salto",
+      "eventing": "Concurso Completo"
+    },
+    "smartFit": {
+      "title": "Smart Fit™",
+      "subtitle": "Solo mostrar equipos compatibles"
+    },
+    "filters": {
+      "title": "Filtros y Ordenamiento",
+      "sortBy": "Ordenar por",
+      "direction": "Dirección",
+      "ascending": "Ascendente",
+      "descending": "Descendente",
+      "priceRange": "Rango de precio",
+      "minPrice": "Mínimo",
+      "maxPrice": "Máximo",
+      "applyFilters": "Aplicar Filtros",
+      "mostrecent": "Más recientes",
+      "id": "Más recientes",
+      "name": "Nombre",
+      "price": "Precio"
+    },
+    "empty": "No hay productos disponibles",
+    "loadMore": "Cargando más productos...",
+    "error": "Error al cargar productos"
+  },
+  "productDetail": {
+    "price": "Precio",
+    "selectSize": "Seleccionar Talla",
+    "selectColor": "Color",
+    "sizeGuide": "Guía de Tallas",
+    "description": "Descripción",
+    "specifications": "Especificaciones",
+    "weight": "PESO",
+    "material": "MATERIAL",
+    "discipline": "DISCIPLINA",
+    "category": "CATEGORÍA",
+    "stock": "STOCK",
+    "units": "unidades",
+    "addToCart": "Agregar al Carrito",
+    "outOfStock": "Sin Stock",
+    "lowStock": "{{count}} disponible",
+    "lowStock_plural": "{{count}} disponibles",
+    "equiDataInsight": {
+      "title": "Análisis EquiData",
+      "message": "Basado en tus últimas 3 sesiones de equitación, el asiento profundo de esta montura se alinea perfectamente con tus métricas mejoradas de trote sentado. La torsión estrecha apoya tu geometría de cadera."
+    },
+    "sizeGuideModal": {
+      "title": "Guía de Tallas",
+      "loading": "Cargando guía de tallas...",
+      "note": "Mide la longitud de tu pie para un ajuste más preciso. Si estás entre tallas, recomendamos elegir una talla más grande."
+    },
+    "errors": {
+      "selectSize": "Selecciona una talla",
+      "selectSizeMessage": "Por favor selecciona una talla antes de agregar al carrito",
+      "noStock": "Sin stock",
+      "noStockMessage": "Este producto no está disponible en este momento"
+    }
+  },
+  "settings": {
+    "title": "Ajustes",
+    "preferences": "Preferencias",
+    "appControls": "Controles de la App",
+    "darkMode": "Modo Oscuro",
+    "restartTutorial": "Reiniciar Tutorial",
+    "restartTutorialConfirm": "¿Deseas ver el tutorial de bienvenida nuevamente? La app se reiniciará.",
+    "personalData": {
+      "title": "Datos Personales",
+      "email": "Email",
+      "name": "Nombre",
+      "lastName": "Apellido",
+      "phone": "Teléfono",
+      "birthDate": "Fecha de Nacimiento",
+      "placeholders": {
+        "email": "Ingresa tu correo electrónico",
+        "name": "Ingresa tu nombre",
+        "lastName": "Ingresa tu apellido",
+        "phone": "+54 9 11 1234-5678"
+      },
+      "emailReadonly": "El email no se puede modificar",
+      "privacyInfo": "Tus datos personales están protegidos y solo se usan para mejorar tu experiencia.",
+      "updateSuccess": "Datos actualizados correctamente",
+      "saveSuccess": "Datos guardados exitosamente",
+      "saveError": "Error al guardar los datos",
+      "errors": {
+        "load": "No se pudieron cargar los datos",
+        "update": "No se pudieron actualizar los datos"
+      }
+    },
+    "changePassword": {
+      "title": "Cambio de Contraseña",
+      "subtitle": "Asegúrate de usar una contraseña segura",
+      "currentPassword": "Contraseña Actual",
+      "newPassword": "Nueva Contraseña",
+      "confirmPassword": "Confirmar Nueva Contraseña",
+      "placeholders": {
+        "currentPassword": "Ingresa tu contraseña actual",
+        "newPassword": "Mínimo 6 caracteres",
+        "confirmPassword": "Repite la nueva contraseña"
+      },
+      "submitButton": "Cambiar Contraseña",
+      "changeButton": "Cambiar Contraseña",
+      "successMessage": "Tu contraseña ha sido cambiada exitosamente",
+      "success": "Contraseña cambiada correctamente",
+      "error": "Error al cambiar la contraseña",
+      "errors": {
+        "change": "No se pudo cambiar la contraseña"
+      },
+      "securityTipsTitle": "Consejos de Seguridad",
+      "securityTips": "• Usa al menos 8 caracteres\n• Combina mayúsculas, minúsculas y números\n• Evita información personal obvia\n• No reutilices contraseñas de otras cuentas"
+    },
+    "language": {
+      "title": "Idioma",
+      "selectLanguage": "Seleccionar idioma",
+      "useDeviceLanguage": "Usar idioma del dispositivo",
+      "english": "Inglés",
+      "spanish": "Español"
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "push": "Notificaciones push",
+      "email": "Notificaciones por correo",
+      "sms": "Notificaciones por SMS"
+    },
+    "privacy": {
+      "title": "Privacidad",
+      "termsAndConditions": "Términos y Condiciones",
+      "privacyPolicy": "Política de Privacidad"
+    }
+  },
+  "errors": {
+    "generic": "Ocurrió un error",
+    "network": "Error de red",
+    "timeout": "Tiempo de espera agotado",
+    "unauthorized": "Acceso no autorizado",
+    "notFound": "No encontrado",
+    "serverError": "Error del servidor",
+    "tryAgain": "Intentar de nuevo"
+  },
+  "validation": {
+    "required": "Este campo es requerido",
+    "email": "Correo electrónico inválido",
+    "password": "La contraseña debe tener al menos 6 caracteres",
+    "passwordMatch": "Las contraseñas no coinciden",
+    "phone": "Número de teléfono inválido",
+    "minLength": "Debe tener al menos {{count}} caracteres",
+    "maxLength": "Debe tener como máximo {{count}} caracteres"
+  },
+  "dates": {
+    "locale": "es-ES",
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "tomorrow": "Mañana",
+    "month": "mes",
+    "month_plural": "meses",
+    "year": "año",
+    "year_plural": "años"
+  }
+}

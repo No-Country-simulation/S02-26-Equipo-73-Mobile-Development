@@ -1,3 +1,4 @@
+import '@/src/locales/i18nConfig';
 import { useEffect } from 'react';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
@@ -15,6 +16,7 @@ import { Colors } from '@/src/constants';
 // Prevenir que el splash screen se oculte automáticamente
 SplashScreen.setOptions({duration: 2000, fade: true});
 SplashScreen.preventAutoHideAsync();
+
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
