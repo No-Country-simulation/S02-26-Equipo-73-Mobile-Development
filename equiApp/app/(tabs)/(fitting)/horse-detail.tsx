@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ThemedText, ThemedView, ThemedButton } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
 import { useColorScheme } from '@/src/hooks';
@@ -30,6 +31,7 @@ import {
 
 export default function HorseDetailScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const params = useLocalSearchParams();
   const horseId = params.horseId ? Number(params.horseId) : null;
   const colorScheme = useColorScheme();
@@ -58,21 +60,21 @@ export default function HorseDetailScreen() {
     if (!horse) return;
 
     Alert.alert(
-      'Delete Horse',
-      `Are you sure you want to delete ${horse.name}? This action cannot be undone.`,
+      t('fitting.horses.deleteHorse'),
+      t('fitting.horses.deleteConfirmPermanent', { name: horse.name }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteMutation.mutateAsync(horse.id);
-              Alert.alert('Success', 'Horse deleted successfully', [
-                { text: 'OK', onPress: () => router.back() },
+              Alert.alert(t('common.success'), t('fitting.horses.deleteSuccess'), [
+                { text: t('common.confirm'), onPress: () => router.back() },
               ]);
             } catch (error: any) {
-              Alert.alert('Error', error.message || 'Could not delete horse');
+              Alert.alert(t('common.error'), error.message || t('common.error'));
             }
           },
         },
@@ -141,7 +143,7 @@ export default function HorseDetailScreen() {
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <ThemedText style={styles.loadingText}>Loading horse details...</ThemedText>
+          <ThemedText style={styles.loadingText}>{t('common.loading')}</ThemedText>
         </ThemedView>
       </SafeAreaView>
     );
@@ -175,7 +177,7 @@ export default function HorseDetailScreen() {
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
           </TouchableOpacity>
-          <ThemedText style={styles.headerTitle}>Horse Details</ThemedText>
+          <ThemedText style={styles.headerTitle}>{t('fitting.horses.horseDetails')}</ThemedText>
           <TouchableOpacity onPress={handleEdit} style={styles.editButton}>
             <AntDesignIcon name="edit" size={22} color={colors.primary} />
           </TouchableOpacity>
@@ -213,35 +215,35 @@ export default function HorseDetailScreen() {
 
           {/* Basic Information */}
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Basic Information</ThemedText>
+            <ThemedText style={styles.sectionTitle}>{t('fitting.horses.basicInfo')}</ThemedText>
             <View style={[styles.infoCard, { backgroundColor: colors.card }]}>
-              {renderInfoRow('Breed', horse.breedName)}
-              {renderInfoRow('Discipline', horse.disciplineName)}
-              {renderInfoRow('Level', horse.levelName)}
+              {renderInfoRow(t('fitting.horses.breed'), horse.breedName)}
+              {renderInfoRow(t('fitting.horses.discipline'), horse.disciplineName)}
+              {renderInfoRow(t('fitting.horses.form.fields.level'), horse.levelName)}
               {renderInfoRow(
-                'Birth Date',
-                new Date(horse.birthDate).toLocaleDateString('en-US', {
+                t('fitting.horses.birthDate'),
+                new Date(horse.birthDate).toLocaleDateString(t('dates.locale'), {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric',
                 })
               )}
-              {renderInfoRow('Status', horse.isActive ? 'Active' : 'Inactive')}
+              {renderInfoRow(t('fitting.horses.status'), horse.isActive ? t('fitting.horses.active') : t('fitting.horses.inactive'))}
             </View>
           </View>
 
           {/* Measurements */}
           {hasMeasurements && (
             <View style={styles.section}>
-              <ThemedText style={styles.sectionTitle}>Measurements</ThemedText>
+              <ThemedText style={styles.sectionTitle}>{t('fitting.horses.measurements')}</ThemedText>
               <View style={styles.measurementsGrid}>
-                {renderMeasurementCard('Withers Height', horse.measurement.withersHeight)}
-                {renderMeasurementCard('Back Length', horse.measurement.backLength)}
-                {renderMeasurementCard('Chest Circumference', horse.measurement.chestCircumference)}
-                {renderMeasurementCard('Withers Width', horse.measurement.withersWidth)}
-                {renderMeasurementCard('Neck Length', horse.measurement.neckLength)}
-                {renderMeasurementCard('Cannon Circumference', horse.measurement.cannonCircumference)}
-                {renderMeasurementCard('Head Length', horse.measurement.headLength)}
+                {renderMeasurementCard(t('fitting.horses.form.fields.withersHeight'), horse.measurement.withersHeight)}
+                {renderMeasurementCard(t('fitting.horses.form.fields.backLength'), horse.measurement.backLength)}
+                {renderMeasurementCard(t('fitting.horses.form.fields.chestCircumference'), horse.measurement.chestCircumference)}
+                {renderMeasurementCard(t('fitting.horses.form.fields.withersWidth'), horse.measurement.withersWidth)}
+                {renderMeasurementCard(t('fitting.horses.form.fields.neckLength'), horse.measurement.neckLength)}
+                {renderMeasurementCard(t('fitting.horses.form.fields.cannonCircumference'), horse.measurement.cannonCircumference)}
+                {renderMeasurementCard(t('fitting.horses.form.fields.headLength'), horse.measurement.headLength)}
               </View>
             </View>
           )}
@@ -249,36 +251,36 @@ export default function HorseDetailScreen() {
           {/* Body Types */}
           {hasBodyTypes && (
             <View style={styles.section}>
-              <ThemedText style={styles.sectionTitle}>Body Type</ThemedText>
+              <ThemedText style={styles.sectionTitle}>{t('fitting.horses.bodyType')}</ThemedText>
               <View style={styles.typesContainer}>
                 {horse.measurement.backType !== null &&
                   horse.measurement.backType !== undefined &&
-                  renderTypeCard('Back Type', getBackTypeLabel(horse.measurement.backType))}
+                  renderTypeCard(t('fitting.horses.backType'), getBackTypeLabel(horse.measurement.backType))}
                 {horse.measurement.withersType !== null &&
                   horse.measurement.withersType !== undefined &&
-                  renderTypeCard('Withers Type', getWithersTypeLabel(horse.measurement.withersType))}
+                  renderTypeCard(t('fitting.horses.withersType'), getWithersTypeLabel(horse.measurement.withersType))}
                 {horse.measurement.shoulderType !== null &&
                   horse.measurement.shoulderType !== undefined &&
-                  renderTypeCard('Shoulder Type', getShoulderTypeLabel(horse.measurement.shoulderType))}
+                  renderTypeCard(t('fitting.horses.shoulderType'), getShoulderTypeLabel(horse.measurement.shoulderType))}
               </View>
             </View>
           )}
 
           {/* Metadata */}
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Record Information</ThemedText>
+            <ThemedText style={styles.sectionTitle}>{t('fitting.horses.recordInfo')}</ThemedText>
             <View style={[styles.infoCard, { backgroundColor: colors.card }]}>
               {renderInfoRow(
-                'Created',
-                new Date(horse.createdAt).toLocaleDateString('en-US', {
+                t('fitting.horses.createdAt'),
+                new Date(horse.createdAt).toLocaleDateString(t('dates.locale'), {
                   year: 'numeric',
                   month: 'short',
                   day: 'numeric',
                 })
               )}
               {renderInfoRow(
-                'Last Updated',
-                new Date(horse.updatedAt).toLocaleDateString('en-US', {
+                t('fitting.horses.updatedAt'),
+                new Date(horse.updatedAt).toLocaleDateString(t('dates.locale'), {
                   year: 'numeric',
                   month: 'short',
                   day: 'numeric',
@@ -293,7 +295,7 @@ export default function HorseDetailScreen() {
               onPress={handleDelete}
               style={[styles.deleteButton, { borderColor: '#FF3B30', backgroundColor: 'transparent' }]}
             >
-              <ThemedText style={styles.deleteButtonText}>Delete Horse</ThemedText>
+              <ThemedText style={styles.deleteButtonText}>{t('fitting.horses.deleteHorse')}</ThemedText>
             </TouchableOpacity>
           </View>
         </ScrollView>

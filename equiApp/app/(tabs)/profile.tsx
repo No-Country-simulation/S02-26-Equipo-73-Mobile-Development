@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/src/hooks/useAuth';
 import { ThemedText, ThemedView } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
@@ -25,6 +26,7 @@ type MenuItem = {
  */
 export default function ProfileScreen() {
   const { user, logout, isAuthenticated, isInitialized } = useAuth();
+  const { t } = useTranslation();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -36,7 +38,7 @@ export default function ProfileScreen() {
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <ThemedText style={{ marginTop: Spacing.md, color: colors.textSecondary }}>
-            Cargando...
+            {t('common.loading')}
           </ThemedText>
         </ThemedView>
       </SafeAreaView>
@@ -49,28 +51,28 @@ export default function ProfileScreen() {
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ThemedView style={styles.container}>
           <View style={styles.header}>
-            <ThemedText variant='subheading1'>Cuenta</ThemedText>
+            <ThemedText variant='subheading1'>{t('profile.title')}</ThemedText>
           </View>
           <View style={styles.emptyStateContainer}>
             <View style={[styles.emptyStateIcon, { backgroundColor: colors.primary + '20' }]}>
               <AntDesignIcon name="user" size={64} color={colors.primary} />
             </View>
-            <ThemedText style={styles.emptyStateTitle}>Inicia sesión</ThemedText>
+            <ThemedText style={styles.emptyStateTitle}>{t('profile.emptyState.title')}</ThemedText>
             <ThemedText style={[styles.emptyStateText, { color: colors.textSecondary }]}>
-              Para acceder a tu perfil y gestionar tu cuenta, inicia sesión o crea una cuenta nueva
+              {t('profile.emptyState.message')}
             </ThemedText>
             <TouchableOpacity
               style={[styles.loginButton, { backgroundColor: colors.primary }]}
               onPress={() => router.push('/auth/login')}
             >
-              <ThemedText style={styles.loginButtonText}>Iniciar Sesión</ThemedText>
+              <ThemedText style={styles.loginButtonText}>{t('profile.emptyState.loginButton')}</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.registerButton, { borderColor: colors.primary }]}
               onPress={() => router.push('/auth/register')}
             >
               <ThemedText style={[styles.registerButtonText, { color: colors.primary }]}>
-                Crear Cuenta
+                {t('profile.emptyState.registerButton')}
               </ThemedText>
             </TouchableOpacity>
           </View>
@@ -91,12 +93,12 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     Alert.alert(
-      'Sign Out',
-      '¿Estás seguro que deseas cerrar sesión?',
+      t('auth.logout'),
+      t('auth.logoutConfirm'),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Sign Out',
+          text: t('auth.logout'),
           style: 'destructive',
           onPress: async () => {
             await logout();
@@ -110,7 +112,7 @@ export default function ProfileScreen() {
   const accountMenuItems: MenuItem[] = [
     {
       id: 'personal-data',
-      title: 'Datos Personales',
+      title: t('profile.personalData'),
       icon: 'user',
       iconColor: colors.secondary,
       iconBg: getIconBg(colors.secondary),
@@ -118,7 +120,7 @@ export default function ProfileScreen() {
     },
     {
       id: 'account',
-      title: 'Cambio de Contraseña',
+      title: t('profile.changePassword'),
       icon: 'lock',
       iconColor: colors.secondary,
       iconBg: getIconBg(colors.secondary),
@@ -126,7 +128,7 @@ export default function ProfileScreen() {
     },
     {
       id: 'payment',
-      title: 'Payment Methods',
+      title: t('profile.paymentMethods'),
       icon: 'credit-card',
       iconColor: colors.secondary,
       iconBg: getIconBg(colors.secondary),
@@ -138,7 +140,7 @@ export default function ProfileScreen() {
   const settingsMenuItems: MenuItem[] = [
     {
       id: 'settings',
-      title: 'Ajustes',
+      title: t('profile.settings'),
       icon: 'setting',
       iconColor: '#8B7FD8',
       iconBg: getIconBg('#8B7FD8'),
@@ -194,7 +196,7 @@ export default function ProfileScreen() {
       <ThemedView style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <ThemedText variant='subheading1'>Cuenta</ThemedText>
+          <ThemedText variant='subheading1'>{t('profile.title')}</ThemedText>
         </View>
 
         <ScrollView

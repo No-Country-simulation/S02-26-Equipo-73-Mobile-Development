@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ThemedView, ThemedText, ThemedInput, ThemedButton } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,6 +22,7 @@ import { useColorScheme } from '@/src/hooks';
 
 function RegisterScreenContent() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { register: registerUser, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const colorScheme = useColorScheme();
@@ -43,13 +45,13 @@ function RegisterScreenContent() {
     try {
       await registerUser(data);
       Alert.alert(
-        'Registro Exitoso', 
+        t('auth.register.registerSuccess'), 
         'Revisa tu email para confirmar tu cuenta',
         [{ text: 'OK', onPress: () => router.replace('/auth/login') }]
       );
     } catch (error: any) {
-      const errorMessage = error.message || 'Error al registrarse';
-      Alert.alert('Error', errorMessage);
+      const errorMessage = error.message || t('auth.register.registerError');
+      Alert.alert(t('common.error'), errorMessage);
     }
   };
 
@@ -64,7 +66,7 @@ function RegisterScreenContent() {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/settings/help')}>
               <ThemedText variant="bodyRegular" lightColor={Colors.light.accent} darkColor={Colors.dark.accent}>
-                Ayuda
+                {t('profile.help')}
               </ThemedText>
             </TouchableOpacity>
           </View>
@@ -84,7 +86,7 @@ function RegisterScreenContent() {
 
           {/* Title */}
           <ThemedText variant="heading3" style={styles.title}>
-            Rider Fit
+            {t('auth.register.title')}
           </ThemedText>
           <ThemedText variant="bodyRegular" style={styles.subtitle} lightColor={Colors.light.textSecondary} darkColor={Colors.dark.textSecondary}>
             Medición precisa y compras con IA para el ecuestre moderno
@@ -98,7 +100,7 @@ function RegisterScreenContent() {
               render={({ field: { onChange, onBlur, value } }) => (
                 <ThemedInput
                   leftIcon="person-outline"
-                  placeholder="Nombre (opcional)"
+                  placeholder={t('auth.register.name')}
                   value={value}
                   onBlur={onBlur}
                   onChangeText={onChange}
@@ -117,7 +119,7 @@ function RegisterScreenContent() {
               render={({ field: { onChange, onBlur, value } }) => (
                 <ThemedInput
                   leftIcon="mail-outline"
-                  placeholder="Email Address"
+                  placeholder={t('auth.register.email')}
                   autoCapitalize="none"
                   keyboardType="email-address"
                   value={value}
@@ -140,7 +142,7 @@ function RegisterScreenContent() {
                   leftIcon="lock-closed-outline"
                   rightIcon={showPassword ? "eye-off-outline" : "eye-outline"}
                   onRightIconPress={() => setShowPassword(!showPassword)}
-                  placeholder="Contraseña"
+                  placeholder={t('auth.register.password')}
                   secureTextEntry={!showPassword}
                   value={value}
                   onBlur={onBlur}
@@ -160,7 +162,7 @@ function RegisterScreenContent() {
               render={({ field: { onChange, onBlur, value } }) => (
                 <ThemedInput
                   leftIcon="lock-closed-outline"
-                  placeholder="Confirmar Contraseña"
+                  placeholder={t('auth.register.confirmPassword')}
                   secureTextEntry={!showPassword}
                   value={value}
                   onBlur={onBlur}
@@ -177,7 +179,7 @@ function RegisterScreenContent() {
           <ThemedButton 
             onPress={handleSubmit(onSubmit)}
             isLoading={isLoading}
-            label='Registrarse'
+            label={t('auth.register.registerButton')}
           
           />
 

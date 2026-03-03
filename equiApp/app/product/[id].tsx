@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView, ThemedText, ThemedActionSheet } from '@/src';
 import { useProduct, useSizeGuide, type ProductVariant } from '@/src/services/products.service';
@@ -29,6 +30,7 @@ const { width } = Dimensions.get('window');
  */
 export default function ProductDetailScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const productId = parseInt(id || '0');
   const colorScheme = useColorScheme();
@@ -124,7 +126,7 @@ export default function ProductDetailScreen() {
       <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <ThemedText style={styles.loadingText}>Cargando producto...</ThemedText>
+          <ThemedText style={styles.loadingText}>{t('common.loading')}</ThemedText>
         </ThemedView>
       </SafeAreaView>
     );
@@ -134,12 +136,12 @@ export default function ProductDetailScreen() {
     return (
       <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
         <ThemedView style={styles.errorContainer}>
-          <ThemedText style={styles.errorText}>❌ Error al cargar el producto</ThemedText>
+          <ThemedText style={styles.errorText}>{t('products.error')}</ThemedText>
           <TouchableOpacity 
             style={[styles.retryButton, { backgroundColor: colors.primary }]} 
             onPress={() => router.back()}
           >
-            <Text style={styles.retryButtonText}>Volver</Text>
+            <Text style={styles.retryButtonText}>{t('common.back')}</Text>
           </TouchableOpacity>
         </ThemedView>
       </SafeAreaView>
@@ -158,24 +160,24 @@ export default function ProductDetailScreen() {
 
   const handleAddToCart = () => {
     if (!product || !selectedVariant) {
-      Alert.alert('Selecciona una talla', 'Por favor selecciona una talla antes de agregar al carrito');
+      Alert.alert(t('productDetail.errors.selectSize'), t('productDetail.errors.selectSizeMessage'));
       return;
     }
 
     if (selectedVariant.stock === 0) {
-      Alert.alert('Sin stock', 'Este producto no está disponible en este momento');
+      Alert.alert(t('productDetail.errors.noStock'), t('productDetail.errors.noStockMessage'));
       return;
     }
 
     addItem(product, selectedVariant, 1);
     
     Alert.alert(
-      '¡Agregado al carrito!',
-      `${product.name}\nTalla: ${selectedVariant.sizeLabel}${selectedVariant.color ? `\nColor: ${selectedVariant.color}` : ''}`,
+      t('cart.addedToCart.title'),
+      `${product.name}\n${t('cart.size')}: ${selectedVariant.sizeLabel}${selectedVariant.color ? `\n${t('cart.color')}: ${selectedVariant.color}` : ''}`,
       [
-        { text: 'Seguir comprando', style: 'cancel' },
+        { text: t('cart.addedToCart.continueShopping'), style: 'cancel' },
         { 
-          text: 'Ver carrito', 
+          text: t('cart.addedToCart.viewCart'), 
           onPress: () => router.push('/(tabs)/cart')
         }
       ]
@@ -278,7 +280,7 @@ export default function ProductDetailScreen() {
               </View>
               
               <View style={styles.priceSection}>
-                <ThemedText style={styles.priceLabel}>Price</ThemedText>
+                <ThemedText style={styles.priceLabel}>{t('productDetail.price')}</ThemedText>
                 <ThemedText style={[styles.price, { color: colors.accent }]}>
                   ${selectedVariant?.price?.toFixed(2) || product.price.toFixed(2)}
                 </ThemedText>
@@ -311,10 +313,10 @@ export default function ProductDetailScreen() {
             {availableSizes.length > 0 && (
               <View style={styles.selectorSection}>
                 <View style={styles.selectorHeader}>
-                  <ThemedText type="defaultSemiBold">Select Size</ThemedText>
+                  <ThemedText type="defaultSemiBold">{t('productDetail.selectSize')}</ThemedText>
                   <TouchableOpacity onPress={() => setShowSizeGuide(true)}>
                     <ThemedText style={[styles.guideLink, { color: colors.accent }]}>
-                      Size Guide
+                      {t('productDetail.sizeGuide')}
                     </ThemedText>
                   </TouchableOpacity>
                 </View>
@@ -357,11 +359,11 @@ export default function ProductDetailScreen() {
                         )}
                         {variant.stock < 5 && variant.stock > 0 && (
                           <ThemedText style={styles.lowStockBadge}>
-                            {variant.stock} left
+                            {t('productDetail.lowStock', { count: variant.stock })}
                           </ThemedText>
                         )}
                         {isOutOfStock && (
-                          <ThemedText style={styles.outOfStockText}>Out</ThemedText>
+                          <ThemedText style={styles.outOfStockText}>{t('productDetail.outOfStock')}</ThemedText>
                         )}
                       </TouchableOpacity>
                     );
@@ -374,7 +376,7 @@ export default function ProductDetailScreen() {
             {availableColors.length > 0 && selectedSize && (
               <View style={styles.selectorSection}>
                 <ThemedText type="defaultSemiBold">
-                  Color {availableColors.length > 1 ? `(${availableColors.length} disponibles para talla ${selectedSize})` : ''}
+                  {t('productDetail.selectColor')} {availableColors.length > 1 ? `(${availableColors.length} disponibles para talla ${selectedSize})` : ''}
                 </ThemedText>
                 <View style={styles.colorOptions}>
                   {availableColors.map((variant) => {
@@ -414,7 +416,7 @@ export default function ProductDetailScreen() {
             {/* Descripción */}
             <View style={styles.section}>
               <ThemedText type="defaultSemiBold" style={styles.sectionTitle}>
-                Description
+                {t('productDetail.description')}
               </ThemedText>
               <ThemedText style={styles.description}>
                 {product.description || "Engineered with a lightweight carbon fiber tree and premium French calfskin, the Aero-Form reduces weight by 20% while maximizing close contact. The ergonomic panels are designed to free the horse's shoulder for extended movement."}
@@ -428,7 +430,7 @@ export default function ProductDetailScreen() {
                   <View style={[styles.specIcon, { backgroundColor: colors.accent + '20' }]}>
                     <Ionicons name="barbell-outline" size={24} color={colors.accent} />
                   </View>
-                  <ThemedText style={styles.specLabel}>WEIGHT</ThemedText>
+                  <ThemedText style={styles.specLabel}>{t('productDetail.specifications').toUpperCase()}.WEIGHT</ThemedText>
                   <ThemedText type="defaultSemiBold" style={styles.specValue}>
                     {selectedVariant.weight}kg
                   </ThemedText>
@@ -440,7 +442,7 @@ export default function ProductDetailScreen() {
                   <View style={[styles.specIcon, { backgroundColor: colors.accent + '20' }]}>
                     <Ionicons name="shirt-outline" size={24} color={colors.accent} />
                   </View>
-                  <ThemedText style={styles.specLabel}>MATERIAL</ThemedText>
+                  <ThemedText style={styles.specLabel}>{t('productDetail.material')}</ThemedText>
                   <ThemedText type="defaultSemiBold" style={styles.specValue}>
                     {selectedVariant.material}
                   </ThemedText>
@@ -452,7 +454,7 @@ export default function ProductDetailScreen() {
                   <View style={[styles.specIcon, { backgroundColor: colors.accent + '20' }]}>
                     <Ionicons name="ribbon-outline" size={24} color={colors.accent} />
                   </View>
-                  <ThemedText style={styles.specLabel}>DISCIPLINE</ThemedText>
+                  <ThemedText style={styles.specLabel}>{t('productDetail.discipline')}</ThemedText>
                   <ThemedText type="defaultSemiBold" style={styles.specValue}>
                     {discipline}
                   </ThemedText>
@@ -462,7 +464,7 @@ export default function ProductDetailScreen() {
                   <View style={[styles.specIcon, { backgroundColor: colors.accent + '20' }]}>
                     <Ionicons name="pricetag-outline" size={24} color={colors.accent} />
                   </View>
-                  <ThemedText style={styles.specLabel}>CATEGORY</ThemedText>
+                  <ThemedText style={styles.specLabel}>{t('productDetail.category')}</ThemedText>
                   <ThemedText type="defaultSemiBold" style={styles.specValue}>
                     {product.categoryName}
                   </ThemedText>
@@ -474,9 +476,9 @@ export default function ProductDetailScreen() {
                   <View style={[styles.specIcon, { backgroundColor: colors.accent + '20' }]}>
                     <Ionicons name="cube-outline" size={24} color={colors.accent} />
                   </View>
-                  <ThemedText style={styles.specLabel}>STOCK</ThemedText>
+                  <ThemedText style={styles.specLabel}>{t('productDetail.stock')}</ThemedText>
                   <ThemedText type="defaultSemiBold" style={styles.specValue}>
-                    {selectedVariant.stock} units
+                    {selectedVariant.stock} {t('productDetail.units')}
                   </ThemedText>
                 </View>
               )}
@@ -487,11 +489,11 @@ export default function ProductDetailScreen() {
               <View style={styles.insightHeader}>
                 <Ionicons name="sparkles" size={20} color={colors.accent} />
                 <ThemedText type="defaultSemiBold" style={styles.insightTitle}>
-                  EquiData Insight
+                  {t('productDetail.equiDataInsight.title')}
                 </ThemedText>
               </View>
               <ThemedText style={styles.insightText}>
-                Based on your last 3 riding sessions, this saddle's deep seat aligns perfectly with your improving sitting trot metrics. The narrow twist supports your hip geometry.
+                {t('productDetail.equiDataInsight.message')}
               </ThemedText>
             </View>
 
@@ -525,7 +527,7 @@ export default function ProductDetailScreen() {
             disabled={!selectedVariant || selectedVariant.stock === 0}
           >
             <Text style={[styles.addToCartText, (!selectedVariant || selectedVariant.stock === 0) && { opacity: 0.6 }]}>
-              {!selectedVariant ? 'Select Size' : selectedVariant.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+              {!selectedVariant ? t('productDetail.selectSize') : selectedVariant.stock === 0 ? t('productDetail.outOfStock') : t('productDetail.addToCart')}
             </Text>
             <View style={styles.priceTag}>
               <Ionicons name="pricetag" size={16} color={colors.accent} />
@@ -540,7 +542,7 @@ export default function ProductDetailScreen() {
         <ThemedActionSheet
           visible={showSizeGuide}
           onClose={() => setShowSizeGuide(false)}
-          title="Size Guide"
+          title={t('productDetail.sizeGuideModal.title')}
           snapPoint="large"
           scrollable
         >
@@ -585,14 +587,14 @@ export default function ProductDetailScreen() {
               <View style={[styles.sizeGuideNote, { backgroundColor: colors.card }]}>
                 <Ionicons name="information-circle" size={20} color={colors.accent} />
                 <ThemedText style={styles.sizeGuideNoteText}>
-                  Measure your foot length for the most accurate fit. If between sizes, we recommend sizing up.
+                  {t('productDetail.sizeGuideModal.note')}
                 </ThemedText>
               </View>
             </View>
           ) : (
             <View style={styles.sizeGuideLoading}>
               <ActivityIndicator size="small" color={colors.primary} />
-              <ThemedText style={styles.sizeGuideLoadingText}>Loading size guide...</ThemedText>
+              <ThemedText style={styles.sizeGuideLoadingText}>{t('productDetail.sizeGuideModal.loading')}</ThemedText>
             </View>
           )}
         </ThemedActionSheet>

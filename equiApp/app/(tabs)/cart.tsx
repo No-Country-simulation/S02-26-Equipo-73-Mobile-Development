@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ThemedText, ThemedView } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
 import { useColorScheme } from '@/src/hooks';
@@ -26,6 +27,7 @@ import type { CartItem } from '@/src/types/cart.types';
  */
 export default function CartScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const { items, isLoading, removeItem, updateQuantity, clearCart, summary, loadCart } = useCart();
@@ -40,12 +42,12 @@ export default function CartScreen() {
 
   const handleRemoveItem = (item: CartItem) => {
     Alert.alert(
-      'Eliminar producto',
-      `¿Deseas eliminar ${item.product.name} del carrito?`,
+      t('cart.removeItem'),
+      t('cart.removeItemConfirm', { name: item.product.name }),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Eliminar',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: () => removeItem(item.id),
         },
@@ -62,12 +64,12 @@ export default function CartScreen() {
 
   const handleClearCart = () => {
     Alert.alert(
-      'Vaciar carrito',
-      '¿Estás seguro de que deseas eliminar todos los productos del carrito?',
+      t('cart.clearCart'),
+      t('cart.clearConfirm'),
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Vaciar',
+          text: t('cart.clearCart'),
           style: 'destructive',
           onPress: () => clearCart(),
         },
@@ -142,11 +144,11 @@ export default function CartScreen() {
           </ThemedText>
           <View style={styles.itemVariant}>
             <Text style={[styles.variantText, { color: colors.textSecondary }]}>
-              Talla: {item.variant.sizeLabel}
+              {t('cart.size')}: {item.variant.sizeLabel}
             </Text>
             {item.variant.color && (
               <Text style={[styles.variantText, { color: colors.textSecondary }]}>
-                {' • '}Color: {item.variant.color}
+                {' • '}{t('cart.color')}: {item.variant.color}
               </Text>
             )}
           </View>
@@ -203,7 +205,7 @@ export default function CartScreen() {
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <ThemedText style={[styles.loadingText, { color: colors.textSecondary }]}>
-            Cargando carrito...
+            {t('common.loading')}
           </ThemedText>
         </ThemedView>
       </SafeAreaView>
@@ -218,11 +220,11 @@ export default function CartScreen() {
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
           </TouchableOpacity>
-          <ThemedText variant="subheading1">Mi Carrito</ThemedText>
+          <ThemedText variant="subheading1">{t('cart.title')}</ThemedText>
           {items.length > 0 && (
             <TouchableOpacity onPress={handleClearCart} style={styles.clearButton}>
               <ThemedText style={[styles.clearButtonText, { color: '#FF3B30' }]}>
-                Vaciar
+                {t('cart.clearCart')}
               </ThemedText>
             </TouchableOpacity>
           )}
@@ -235,15 +237,15 @@ export default function CartScreen() {
             <View style={[styles.emptyIcon, { backgroundColor: `${colors.primary}20` }]}>
               <AntDesignIcon name="shopping-cart" size={64} color={colors.primary} />
             </View>
-            <ThemedText style={styles.emptyTitle}>Tu carrito está vacío</ThemedText>
+            <ThemedText style={styles.emptyTitle}>{t('cart.empty')}</ThemedText>
             <ThemedText style={[styles.emptyText, { color: colors.textSecondary }]}>
-              Agrega productos desde la tienda para verlos aquí
+              {t('cart.emptyMessage')}
             </ThemedText>
             <TouchableOpacity
               style={[styles.shopButton, { backgroundColor: colors.primary }]}
               onPress={() => router.push('/(tabs)/products')}
             >
-              <ThemedText style={styles.shopButtonText}>Ir a la Tienda</ThemedText>
+              <ThemedText style={styles.shopButtonText}>{t('cart.goToShop')}</ThemedText>
             </TouchableOpacity>
           </View>
         ) : (
@@ -262,19 +264,19 @@ export default function CartScreen() {
             {/* Resumen y Checkout */}
             <View style={[styles.summaryContainer, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
               <View style={styles.summaryRow}>
-                <ThemedText style={styles.summaryLabel}>Subtotal:</ThemedText>
+                <ThemedText style={styles.summaryLabel}>{t('cart.subtotal')}</ThemedText>
                 <ThemedText style={styles.summaryValue}>
                   {formatPrice(summary.subtotal)}
                 </ThemedText>
               </View>
               <View style={[styles.summaryRow, styles.totalRow]}>
-                <ThemedText style={styles.totalLabel}>Total:</ThemedText>
+                <ThemedText style={styles.totalLabel}>{t('cart.total')}</ThemedText>
                 <ThemedText style={[styles.totalValue, { color: colors.primary }]}>
                   {formatPrice(summary.total)}
                 </ThemedText>
               </View>
               <ThemedText style={[styles.itemsCount, { color: colors.textSecondary }]}>
-                {summary.itemsCount} {summary.itemsCount === 1 ? 'producto' : 'productos'}
+                {t('cart.itemsCount', { count: summary.itemsCount })}
               </ThemedText>
               
               <TouchableOpacity
@@ -291,7 +293,7 @@ export default function CartScreen() {
                 ) : (
                   <>
                     <AntDesignIcon name="check-circle" size={20} color="#fff" />
-                    <Text style={styles.checkoutButtonText}>Finalizar Compra</Text>
+                    <Text style={styles.checkoutButtonText}>{t('cart.checkout')}</Text>
                   </>
                 )}
               </TouchableOpacity>
@@ -318,15 +320,15 @@ export default function CartScreen() {
                   <AntDesignIcon name="check" size={48} color="#fff" />
                 </View>
               </Animated.View>
-              <ThemedText style={styles.successTitle}>¡Compra exitosa!</ThemedText>
+              <ThemedText style={styles.successTitle}>{t('cart.success.title')}</ThemedText>
               <ThemedText style={[styles.successText, { color: colors.textSecondary }]}>
-                Tu pedido ha sido procesado correctamente
+                {t('cart.success.message')}
               </ThemedText>
               <TouchableOpacity
                 style={[styles.successButton, { backgroundColor: colors.primary }]}
                 onPress={handleCloseSuccessModal}
               >
-                <Text style={styles.successButtonText}>Continuar</Text>
+                <Text style={styles.successButtonText}>{t('common.continue')}</Text>
               </TouchableOpacity>
             </View>
           </View>

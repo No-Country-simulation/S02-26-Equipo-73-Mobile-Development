@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useColorScheme } from '@/src/hooks';
 import { ThemedView, ThemedText } from '@/src';
@@ -27,6 +28,7 @@ const CARD_WIDTH = width - Spacing.lg * 2;
  * Home Screen - EquiData Dashboard
  */
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const { isAuthenticated, user } = useAuth();
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -58,18 +60,18 @@ export default function HomeScreen() {
     const months = today.getMonth() - birth.getMonth();
     
     if (years === 0) {
-      return `${months} months`;
+      return t('home.months', { count: months });
     } else if (months < 0) {
-      return `${years - 1} years`;
+      return t('home.years', { count: years - 1 });
     } else {
-      return `${years} years`;
+      return t('home.years', { count: years });
     }
   };
 
   // Calculate days since last scan (mock for now)
   const getDaysSinceLastScan = (horse: Horse) => {
     // Mock: return 2 days for now
-    return '2 days ago';
+    return t('home.daysAgo', { count: 2 });
   };
 
   return (
@@ -82,7 +84,7 @@ export default function HomeScreen() {
         >
           {/* Header */}
           <View style={styles.header}>
-            <ThemedText style={styles.logoText}>Rider Fit</ThemedText>
+            <ThemedText style={styles.logoText}>{t('home.title')}</ThemedText>
             <TouchableOpacity style={styles.notificationButton}>
               <AntDesignIcon name="bell" size={24} color={colors.text} />
               {/* <View style={[styles.notificationBadge, { backgroundColor: colors.error }]}>
@@ -94,7 +96,7 @@ export default function HomeScreen() {
           {/* Quick Access */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <ThemedText style={styles.sectionTitle}>Quick Access</ThemedText>
+              <ThemedText style={styles.sectionTitle}>{t('home.quickAccess')}</ThemedText>
               {/* <TouchableOpacity>
                 <ThemedText style={[styles.editButton, { color: colors.info }]}>Edit</ThemedText>
               </TouchableOpacity> */}
@@ -126,9 +128,9 @@ export default function HomeScreen() {
                     <View style={[styles.quickAccessIcon, { backgroundColor: colors.info, opacity: isAuthenticated ? 1 : 0.6 }]}>
                       <AntDesignIcon name="star" size={20} color="#fff" />
                     </View>
-                    <ThemedText style={[styles.quickAccessTitle, !isAuthenticated && { opacity: 0.7 }]}>My Horses</ThemedText>
+                    <ThemedText style={[styles.quickAccessTitle, !isAuthenticated && { opacity: 0.7 }]}>{t('home.myHorses')}</ThemedText>
                     <ThemedText style={[styles.quickAccessSubtitle, !isAuthenticated && { opacity: 0.7 }]}>
-                      {isAuthenticated ? `${horses.length} Profiles Active` : 'Login required'}
+                      {isAuthenticated ? t('home.profilesActive', { count: horses.length }) : t('home.loginRequired')}
                     </ThemedText>
                   </LinearGradient>
                 </ImageBackground>
@@ -159,9 +161,9 @@ export default function HomeScreen() {
                     <View style={[styles.quickAccessIcon, { backgroundColor: colors.secondary, opacity: isAuthenticated ? 1 : 0.6 }]}>
                       <AntDesignIcon name="profile" size={20} color="#fff" />
                     </View>
-                    <ThemedText style={[styles.quickAccessTitle, !isAuthenticated && { opacity: 0.7 }]}>Measurements</ThemedText>
+                    <ThemedText style={[styles.quickAccessTitle, !isAuthenticated && { opacity: 0.7 }]}>{t('home.measurements')}</ThemedText>
                     <ThemedText style={[styles.quickAccessSubtitle, !isAuthenticated && { opacity: 0.7 }]}>
-                      {isAuthenticated ? 'Last updated 2d ago' : 'Login required'}
+                      {isAuthenticated ? t('home.lastUpdated', { time: '2d ago' }) : t('home.loginRequired')}
                     </ThemedText>
                   </LinearGradient>
                 </ImageBackground>
@@ -173,10 +175,10 @@ export default function HomeScreen() {
           {isAuthenticated && horses.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <ThemedText style={styles.sectionTitle}>My Stable</ThemedText>
+                <ThemedText style={styles.sectionTitle}>{t('home.myStable')}</ThemedText>
                 <TouchableOpacity onPress={() => router.push('/settings/horses')}>
                   <ThemedText style={[styles.viewAllButton, { color: colors.info }]}>
-                    View All
+                    {t('home.viewAll')}
                   </ThemedText>
                 </TouchableOpacity>
               </View>
@@ -207,12 +209,12 @@ export default function HomeScreen() {
                         style={styles.horseCardGradient}
                       >
                         <View style={[styles.optimalBadge, { backgroundColor: colors.success }]}>
-                          <ThemedText style={styles.optimalBadgeText}>OPTIMAL</ThemedText>
+                          <ThemedText style={styles.optimalBadgeText}>{t('home.optimal')}</ThemedText>
                         </View>
                         <View style={styles.horseCardInfo}>
                           <ThemedText style={styles.horseCardName}>{horse.name}</ThemedText>
                           <ThemedText style={styles.horseCardMeta}>
-                            Last scan: {getDaysSinceLastScan(horse)}
+                            {t('home.lastScan', { time: getDaysSinceLastScan(horse) })}
                           </ThemedText>
                         </View>
                       </LinearGradient>
@@ -253,21 +255,21 @@ export default function HomeScreen() {
           {/* For Your Equipment - Siempre visible */}
           <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <ThemedText style={styles.sectionTitle}>For Your Equipment</ThemedText>
+                <ThemedText style={styles.sectionTitle}>{t('home.forYourEquipment')}</ThemedText>
                 <TouchableOpacity onPress={() => router.push('/(tabs)/products')}>
                   <ThemedText style={[styles.viewAllButton, { color: colors.info }]}>
-                    View All
+                    {t('home.viewAll')}
                   </ThemedText>
                 </TouchableOpacity>
               </View>
 
               {productsLoading ? (
                 <View style={styles.loadingContainer}>
-                  <ThemedText style={{ color: colors.textSecondary }}>Loading products...</ThemedText>
+                  <ThemedText style={{ color: colors.textSecondary }}>{t('home.loadingProducts')}</ThemedText>
                 </View>
               ) : products.length === 0 ? (
                 <View style={styles.emptyContainer}>
-                  <ThemedText style={{ color: colors.textSecondary }}>No products available</ThemedText>
+                  <ThemedText style={{ color: colors.textSecondary }}>{t('home.noProducts')}</ThemedText>
                 </View>
               ) : (
                 <ScrollView
@@ -303,7 +305,7 @@ export default function HomeScreen() {
                         <View style={[styles.fitBadge, { backgroundColor: colors.success }]}>
                           <AntDesignIcon name="check" size={12} color="#fff" />
                           <ThemedText style={styles.fitBadgeText}>
-                            {Math.round(Math.random() * 20 + 80)}% Fit
+                            {t('home.fit', { percent: Math.round(Math.random() * 20 + 80) })}
                           </ThemedText>
                         </View>
                        {/* )} */}
@@ -328,16 +330,16 @@ export default function HomeScreen() {
           {/* CTA for non-authenticated users */}
           {!isAuthenticated && (
             <View style={[styles.ctaCard, { backgroundColor: colors.primary }]}>
-              <ThemedText style={styles.ctaTitle}>Start Your Journey</ThemedText>
+              <ThemedText style={styles.ctaTitle}>{t('home.startJourney')}</ThemedText>
               <ThemedText style={styles.ctaDescription}>
-                Join Rider Fit to track your horses and find the perfect equipment
+                {t('home.joinDescription')}
               </ThemedText>
               <TouchableOpacity
                 style={[styles.ctaButton, { backgroundColor: '#fff' }]}
                 onPress={() => router.push('/auth/login')}
               >
                 <ThemedText style={[styles.ctaButtonText, { color: colors.primary }]}>
-                  Get Started
+                  {t('home.getStarted')}
                 </ThemedText>
               </TouchableOpacity>
             </View>

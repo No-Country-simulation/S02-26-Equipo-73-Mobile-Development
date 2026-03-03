@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ThemedText, ThemedView, ThemedInput, ThemedButton } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
 import { useColorScheme } from '@/src/hooks';
@@ -34,6 +35,7 @@ import type {
 
 export default function MeasurementFormScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const params = useLocalSearchParams();
   const measurementId = params.measurementId ? Number(params.measurementId) : null;
   const colorScheme = useColorScheme();
@@ -86,17 +88,17 @@ export default function MeasurementFormScreen() {
   const handleSave = async () => {
     // Validaciones
     if (!selectedMeasurementType) {
-      Alert.alert('Error', 'Debes seleccionar un tipo de medida');
+      Alert.alert(t('common.error'), t('fitting.measurements.form.errors.type'));
       return;
     }
 
     if (!value || isNaN(Number(value)) || Number(value) <= 0) {
-      Alert.alert('Error', 'Debes ingresar un valor válido mayor a 0');
+      Alert.alert(t('common.error'), t('fitting.measurements.form.errors.value'));
       return;
     }
 
     if (!selectedUnit) {
-      Alert.alert('Error', 'Debes seleccionar una unidad');
+      Alert.alert(t('common.error'), t('fitting.measurements.form.errors.unit'));
       return;
     }
 
@@ -110,16 +112,16 @@ export default function MeasurementFormScreen() {
       if (measurementId) {
         // Actualizar medida existente
         await updateMutation.mutateAsync({ id: measurementId, data });
-        Alert.alert('Éxito', 'Medida actualizada correctamente');
+        Alert.alert(t('common.success'), t('fitting.measurements.form.updateSuccess'));
       } else {
         // Crear nueva medida
         await createMutation.mutateAsync(data);
-        Alert.alert('Éxito', 'Medida creada correctamente');
+        Alert.alert(t('common.success'), t('fitting.measurements.form.createSuccess'));
       }
 
       router.back();
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudo guardar la medida');
+      Alert.alert(t('common.error'), error.message || t('fitting.measurements.form.errors.save'));
     }
   };
 
@@ -145,7 +147,7 @@ export default function MeasurementFormScreen() {
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
             <View style={styles.modalHeader}>
-              <ThemedText variant="subheading1">Selecciona tipo de medida</ThemedText>
+              <ThemedText variant="subheading1">{t('fitting.measurements.form.selectType')}</ThemedText>
               <TouchableOpacity onPress={() => setShowMeasurementTypePicker(false)}>
                 <AntDesignIcon name="close" size={24} color={colors.text} />
               </TouchableOpacity>
@@ -193,7 +195,7 @@ export default function MeasurementFormScreen() {
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.background }]}>
             <View style={styles.modalHeader}>
-              <ThemedText variant="subheading1">Selecciona unidad</ThemedText>
+              <ThemedText variant="subheading1">{t('fitting.measurements.form.selectUnit')}</ThemedText>
               <TouchableOpacity onPress={() => setShowUnitPicker(false)}>
                 <AntDesignIcon name="close" size={24} color={colors.text} />
               </TouchableOpacity>

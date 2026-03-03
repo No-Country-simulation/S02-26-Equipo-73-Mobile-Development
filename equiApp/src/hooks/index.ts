@@ -9,3 +9,6 @@ export { useThemeColor } from './useThemeColor';
 
 // Onboarding hook
 export { useOnboarding } from './useOnboarding';
+
+// Language hook
+export { useLanguage } from './useLanguage';

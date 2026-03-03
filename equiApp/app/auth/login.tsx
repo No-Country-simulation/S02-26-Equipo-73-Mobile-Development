@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ThemedView, ThemedText, ThemedInput, ThemedButton } from '@/src';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,6 +22,7 @@ import { useColorScheme } from '@/src/hooks';
 
 function LoginScreenContent() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { login, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const colorScheme = useColorScheme();
@@ -42,8 +44,8 @@ function LoginScreenContent() {
       await login(data);
       router.replace('/(tabs)');
     } catch (error: any) {
-      const errorMessage = error.message || 'Error al iniciar sesión';
-      Alert.alert('Error', errorMessage);
+      const errorMessage = error.message || t('auth.login.loginError');
+      Alert.alert(t('common.error'), errorMessage);
     }
   };
 
@@ -58,7 +60,7 @@ function LoginScreenContent() {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/settings/help')}>
               <ThemedText variant="bodyRegular" lightColor={Colors.light.accent} darkColor={Colors.dark.accent}>
-                Ayuda
+                {t('profile.help')}
               </ThemedText>
             </TouchableOpacity>
           </View>
@@ -78,7 +80,7 @@ function LoginScreenContent() {
 
           {/* Title */}
           <ThemedText variant="heading3" style={styles.title}>
-            Bienvenido de Vuelta
+            {t('auth.login.title')}
           </ThemedText>
           <ThemedText variant="bodyRegular" style={styles.subtitle} lightColor={Colors.light.textSecondary} darkColor={Colors.dark.textSecondary}>
             Inicia sesión para acceder a tus datos y análisis de IA
@@ -92,7 +94,7 @@ function LoginScreenContent() {
               render={({ field: { onChange, onBlur, value } }) => (
                 <ThemedInput
                   leftIcon="mail-outline"
-                  placeholder="Email Address"
+                  placeholder={t('auth.login.email')}
                   autoCapitalize="none"
                   keyboardType="email-address"
                   value={value}
@@ -115,7 +117,7 @@ function LoginScreenContent() {
                   leftIcon="lock-closed-outline"
                   rightIcon={showPassword ? "eye-off-outline" : "eye-outline"}
                   onRightIconPress={() => setShowPassword(!showPassword)}
-                  placeholder="Contraseña"
+                  placeholder={t('auth.login.password')}
                   secureTextEntry={!showPassword}
                   value={value}
                   onBlur={onBlur}
@@ -182,11 +184,11 @@ function LoginScreenContent() {
           {/* Sign Up Link */}
           <View style={styles.footer}>
             <ThemedText variant="bodyRegular" lightColor={Colors.light.textSecondary} darkColor={Colors.dark.textSecondary}>
-              ¿No tienes cuenta?{' '}
+              {t('auth.login.noAccount')}{' '}
             </ThemedText>
             <TouchableOpacity onPress={() => router.push('/auth/register')} disabled={isLoading}>
               <ThemedText variant="bodyRegular" lightColor={Colors.light.accent} darkColor={Colors.dark.accent} style={styles.link}>
-                Regístrate
+                {t('auth.login.signUp')}
               </ThemedText>
             </TouchableOpacity>
           </View>

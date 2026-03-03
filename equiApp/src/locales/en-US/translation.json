@@ -1,0 +1,464 @@
+{
+  "navigation": {
+    "home": "Home",
+    "shop": "Shop",
+    "cart": "Cart",
+    "fitting": "Fitting",
+    "profile": "Profile"
+  },
+  "home": {
+    "title": "Rider Fit",
+    "quickAccess": "Quick Access",
+    "myHorses": "My Horses",
+    "profilesActive": "{{count}} Profiles Active",
+    "profilesActive_plural": "{{count}} Profiles Active",
+    "loginRequired": "Login required",
+    "measurements": "Measurements",
+    "lastUpdated": "Last updated {{time}}",
+    "myStable": "My Stable",
+    "viewAll": "View All",
+    "optimal": "OPTIMAL",
+    "lastScan": "Last scan: {{time}}",
+    "profile": "Profile",
+    "newScan": "New Scan",
+    "forYourEquipment": "For Your Equipment",
+    "loadingProducts": "Loading products...",
+    "noProducts": "No products available",
+    "fit": "{{percent}}% Fit",
+    "startJourney": "Start Your Journey",
+    "joinDescription": "Join Rider Fit to track your horses and find the perfect equipment",
+    "getStarted": "Get Started",
+    "daysAgo": "{{count}} days ago",
+    "daysAgo_plural": "{{count}} days ago",
+    "months": "{{count}} months",
+    "months_plural": "{{count}} months",
+    "years": "{{count}} years",
+    "years_plural": "{{count}} years"
+  },  "onboarding": {
+    "skip": "SKIP →",
+    "continue": "Continue",
+    "getStarted": "Get Started",
+    "page1": {
+      "title": "Virtual Closet",
+      "subtitle": "AI Powered",
+      "description": "Upload your gear to your digital stable. Our AI validates compatibility with your horse's unique biometric measurements."
+    },
+    "page2": {
+      "title": "Smart",
+      "subtitle": "Compatibility",
+      "description": "Never guess a size again. Upload gear to your Virtual Closet and let EquiData's algorithms verify the perfect fit."
+    },
+    "page3": {
+      "title": "Ready to",
+      "subtitle": "Get Started",
+      "description": "Precision equestrian technology at your fingertips. Manage your gear, find the perfect fit, and care better for your horse."
+    }
+  },  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "back": "Back",
+    "continue": "Continue",
+    "retry": "Retry",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "apply": "Apply",
+    "clear": "Clear",
+    "viewAll": "View All",
+    "seeMore": "See More",
+    "required": "Required",
+    "optional": "Optional",
+    "swipeToEdit": "Swipe left to edit or delete",
+    "saving": "Saving..."
+  },
+  "auth": {
+    "login": {
+      "title": "Login",
+      "email": "Email",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "loginButton": "Login",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up",
+      "loginSuccess": "Login successful",
+      "loginError": "Login failed"
+    },
+    "register": {
+      "title": "Create Account",
+      "name": "Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "registerButton": "Create Account",
+      "hasAccount": "Already have an account?",
+      "signIn": "Sign in",
+      "registerSuccess": "Account created successfully",
+      "registerError": "Registration failed"
+    },
+    "logout": "Sign Out",
+    "logoutConfirm": "Are you sure you want to sign out?",
+    "requiresLogin": "Login required",
+    "pleaseLogin": "Please log in to access this feature"
+  },
+  "profile": {
+    "title": "Account",
+    "myAccount": "My Account",
+    "settings": "Settings",
+    "editProfile": "Edit Profile",
+    "personalData": "Personal Data",
+    "measurements": "My Measurements",
+    "changePassword": "Change Password",
+    "paymentMethods": "Payment Methods",
+    "help": "Help & Support",
+    "about": "About",
+    "emptyState": {
+      "title": "Login",
+      "message": "To access your profile and manage your account, please log in or create a new account",
+      "loginButton": "Login",
+      "registerButton": "Create Account"
+    }
+  },
+  "fitting": {
+    "title": "Fitting",
+    "myStable": "My Stable",
+    "riderMeasurements": "Rider",
+    "infoCard": {
+      "title": "Stable & Measurements",
+      "subtitle": "Manage your stable and personal measurements"
+    },
+    "emptyState": {
+      "title": "Login",
+      "message": "To access your stable and measurements, please log in or create a new account",
+      "loginButton": "Login",
+      "registerButton": "Create Account"
+    },
+    "horses": {
+      "title": "My Horses",
+      "manageHorses": "Manage Horses",
+      "subtitle": "Manage your stable of horses",
+      "addHorse": "Add Horse",
+      "editHorse": "Edit Horse",
+      "deleteHorse": "Delete Horse",
+      "horseDetails": "Horse Details",
+      "deleteConfirm": "Are you sure you want to delete {{name}}?",
+      "deleteConfirmPermanent": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+      "deleteSuccess": "Horse deleted successfully",
+      "emptyState": {
+        "title": "No horses yet",
+        "message": "Add your first horse to get started",
+        "addButton": "Add First Horse"
+      },
+      "basicInfo": "Basic Information",
+      "measurements": "Measurements",
+      "bodyType": "Body Type",
+      "recordInfo": "Record Information",
+      "name": "Name",
+      "breed": "Breed",
+      "discipline": "Discipline",
+      "sex": "Sex",
+      "birthDate": "Birth Date",
+      "color": "Color",
+      "age": "Age",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "backType": "Back Type",
+      "withersType": "Withers Type",
+      "shoulderType": "Shoulder Type",
+      "weight": "Weight",
+      "height": "Height",
+      "createdAt": "Created",
+      "updatedAt": "Last Updated",
+      "form": {
+        "createSuccess": "Horse created successfully",
+        "updateSuccess": "Horse updated successfully",
+        "errors": {
+          "name": "Please enter a name for the horse",
+          "breed": "Please select a breed",
+          "discipline": "Please select a discipline",
+          "level": "Please select a level",
+          "save": "Could not save horse"
+        },
+        "title": {
+          "new": "New Horse",
+          "edit": "Edit Horse"
+        },
+        "fields": {
+          "name": "Name",
+          "birthDate": "Birth Date",
+          "sex": "Sex",
+          "breed": "Breed",
+          "discipline": "Discipline",
+          "level": "Level",
+          "withersHeight": "Withers Height",
+          "backLength": "Back Length",
+          "chestCircumference": "Chest Circumference",
+          "withersWidth": "Withers Width",
+          "neckLength": "Neck Length",
+          "cannonCircumference": "Cannon Circumference",
+          "headLength": "Head Length",
+          "backType": "Back Type",
+          "withersType": "Withers Type",
+          "shoulderType": "Shoulder Type"
+        },
+        "placeholders": {
+          "name": "Enter horse name",
+          "selectBreed": "Select breed",
+          "selectDiscipline": "Select discipline",
+          "selectLevel": "Select level"
+        },
+        "sex": {
+          "male": "Male",
+          "female": "Female"
+        },
+        "backType": {
+          "straight": "Straight",
+          "concave": "Concave",
+          "convex": "Convex",
+          "other": "Other"
+        },
+        "withersType": {
+          "prominent": "Prominent",
+          "medium": "Medium",
+          "flat": "Flat",
+          "other": "Other"
+        },
+        "shoulderType": {
+          "inclined": "Inclined",
+          "straight": "Straight",
+          "other": "Other"
+        },
+        "notSpecified": "Not specified",
+        "required": "*",
+        "optional": "(Optional)",
+        "measurementsInfo": "All measurements are optional. Add only what you know.",
+        "dimensions": "Dimensions (cm)"
+      }
+    },
+    "measurements": {
+      "title": "My Measurements",
+      "subtitle": "Rider measurements",
+      "addMeasurement": "Add Measurement",
+      "editMeasurement": "Edit",
+      "deleteMeasurement": "Delete",
+      "deleteConfirm": "Are you sure you want to delete {{name}}?",
+      "deleteSuccess": "Measurement deleted successfully",
+      "emptyState": {
+        "title": "No measurements",
+        "message": "Add your first measurement to start tracking",
+        "addButton": "Add First Measurement"
+      },
+      "form": {
+        "selectType": "Select measurement type",
+        "selectUnit": "Select unit",
+        "createSuccess": "Measurement created successfully",
+        "updateSuccess": "Measurement updated successfully",
+        "errors": {
+          "type": "You must select a measurement type",
+          "value": "You must enter a valid value greater than 0",
+          "unit": "You must select a unit",
+          "save": "Could not save measurement"
+        }
+      }
+    }
+  },
+  "cart": {
+    "title": "My Cart",
+    "empty": "Your cart is empty",
+    "emptyMessage": "Add products from the store to see them here",
+    "goToShop": "Go to Store",
+    "clearCart": "Clear",
+    "clearConfirm": "Are you sure you want to remove all products from the cart?",
+    "removeItem": "Remove product",
+    "removeItemConfirm": "Do you want to remove {{name}} from the cart?",
+    "size": "Size",
+    "color": "Color",
+    "quantity": "Quantity",
+    "subtotal": "Subtotal:",
+    "total": "Total:",
+    "itemsCount": "{{count}} product",
+    "itemsCount_plural": "{{count}} products",
+    "checkout": "Checkout",
+    "processing": "Processing...",
+    "success": {
+      "title": "Purchase successful!",
+      "message": "Your order has been processed successfully"
+    },
+    "addedToCart": {
+      "title": "Added to cart!",
+      "continueShopping": "Continue shopping",
+      "viewCart": "View cart"
+    }
+  },
+  "products": {
+    "title": "Catalog",
+    "search": "Search saddles, bridles, tech...",
+    "categories": {
+      "all": "All",
+      "dressage": "Dressage",
+      "jumping": "Jumping",
+      "eventing": "Eventing"
+    },
+    "smartFit": {
+      "title": "Smart Fit™",
+      "subtitle": "Only show compatible gear"
+    },
+    "filters": {
+      "title": "Filters and Sorting",
+      "sortBy": "Sort by",
+      "direction": "Direction",
+      "ascending": "Ascending",
+      "descending": "Descending",
+      "priceRange": "Price range",
+      "minPrice": "Minimum",
+      "maxPrice": "Maximum",
+      "applyFilters": "Apply Filters",
+      "mostrecent": "Most recent",
+      "id": "Most recent",
+      "name": "Name",
+      "price": "Price"
+    },
+    "empty": "No products available",
+    "loadMore": "Loading more products...",
+    "error": "Error loading products"
+  },
+  "productDetail": {
+    "price": "Price",
+    "selectSize": "Select Size",
+    "selectColor": "Color",
+    "sizeGuide": "Size Guide",
+    "description": "Description",
+    "specifications": "Specifications",
+    "weight": "WEIGHT",
+    "material": "MATERIAL",
+    "discipline": "DISCIPLINE",
+    "category": "CATEGORY",
+    "stock": "STOCK",
+    "units": "units",
+    "addToCart": "Add to Cart",
+    "outOfStock": "Out of Stock",
+    "lowStock": "{{count}} left",
+    "equiDataInsight": {
+      "title": "EquiData Insight",
+      "message": "Based on your last 3 riding sessions, this saddle's deep seat aligns perfectly with your improving sitting trot metrics. The narrow twist supports your hip geometry."
+    },
+    "sizeGuideModal": {
+      "title": "Size Guide",
+      "loading": "Loading size guide...",
+      "note": "Measure your foot length for the most accurate fit. If between sizes, we recommend sizing up."
+    },
+    "errors": {
+      "selectSize": "Select a size",
+      "selectSizeMessage": "Please select a size before adding to cart",
+      "noStock": "Out of stock",
+      "noStockMessage": "This product is not available at this time"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "preferences": "Preferences",
+    "appControls": "App Controls",
+    "darkMode": "Dark Mode",
+    "restartTutorial": "Restart Tutorial",
+    "restartTutorialConfirm": "Do you want to see the welcome tutorial again? The app will restart.",
+    "personalData": {
+      "title": "Personal Data",
+      "email": "Email",
+      "name": "Name",
+      "lastName": "Last Name",
+      "phone": "Phone",
+      "birthDate": "Birth Date",
+      "placeholders": {
+        "email": "Enter your email",
+        "name": "Enter your name",
+        "lastName": "Enter your last name",
+        "phone": "+1 (555) 123-4567"
+      },
+      "emailReadonly": "Email cannot be modified",
+      "privacyInfo": "Your personal data is protected and only used to improve your experience.",
+      "updateSuccess": "Data updated successfully",
+      "saveSuccess": "Data saved successfully",
+      "saveError": "Error saving data",
+      "errors": {
+        "load": "Could not load data",
+        "update": "Could not update data"
+      }
+    },
+    "changePassword": {
+      "title": "Change Password",
+      "subtitle": "Make sure to use a strong password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "placeholders": {
+        "currentPassword": "Enter your current password",
+        "newPassword": "Minimum 6 characters",
+        "confirmPassword": "Repeat the new password"
+      },
+      "submitButton": "Change Password",
+      "changeButton": "Change Password",
+      "successMessage": "Your password has been changed successfully",
+      "success": "Password changed successfully",
+      "error": "Error changing password",
+      "errors": {
+        "change": "Could not change password"
+      },
+      "securityTipsTitle": "Security Tips",
+      "securityTips": "• Use at least 8 characters\n• Combine uppercase, lowercase, and numbers\n• Avoid obvious personal information\n• Don't reuse passwords from other accounts"
+    },
+    "language": {
+      "title": "Language",
+      "selectLanguage": "Select language",
+      "useDeviceLanguage": "Use device language",
+      "english": "English",
+      "spanish": "Spanish"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "push": "Push notifications",
+      "email": "Email notifications",
+      "sms": "SMS notifications"
+    },
+    "privacy": {
+      "title": "Privacy",
+      "termsAndConditions": "Terms and Conditions",
+      "privacyPolicy": "Privacy Policy"
+    }
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "network": "Network error",
+    "timeout": "Request timeout",
+    "unauthorized": "Unauthorized access",
+    "notFound": "Not found",
+    "serverError": "Server error",
+    "tryAgain": "Try again"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email",
+    "password": "Password must be at least 6 characters",
+    "passwordMatch": "Passwords do not match",
+    "phone": "Invalid phone number",
+    "minLength": "Must be at least {{count}} characters",
+    "maxLength": "Must be at most {{count}} characters"
+  },
+  "dates": {
+    "locale": "en-US",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "month": "month",
+    "month_plural": "months",
+    "year": "year",
+    "year_plural": "years"
+  }
+}

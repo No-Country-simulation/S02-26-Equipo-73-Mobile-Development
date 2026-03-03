@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '@/src/hooks/useAuth';
 import { ThemedText, ThemedView } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
@@ -30,6 +31,7 @@ type MenuItem = {
  */
 export default function FittingScreen() {
   const { isAuthenticated, user, isInitialized } = useAuth();
+  const { t } = useTranslation();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -51,7 +53,7 @@ export default function FittingScreen() {
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <ThemedText style={{ marginTop: Spacing.md, color: colors.textSecondary }}>
-            Cargando...
+            {t('common.loading')}
           </ThemedText>
         </ThemedView>
       </SafeAreaView>
@@ -64,28 +66,28 @@ export default function FittingScreen() {
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ThemedView style={styles.container}>
           <View style={styles.header}>
-            <ThemedText variant='subheading1'>Fitting</ThemedText>
+            <ThemedText variant='subheading1'>{t('fitting.title')}</ThemedText>
           </View>
           <View style={styles.emptyStateContainer}>
             <View style={[styles.emptyStateIcon, { backgroundColor: colors.primary + '20' }]}>
               <AntDesignIcon name="star" size={64} color={colors.primary} />
             </View>
-            <ThemedText style={styles.emptyStateTitle}>Inicia sesión</ThemedText>
+            <ThemedText style={styles.emptyStateTitle}>{t('fitting.emptyState.title')}</ThemedText>
             <ThemedText style={[styles.emptyStateText, { color: colors.textSecondary }]}>
-              Para acceder a tu establo y medidas, inicia sesión o crea una cuenta nueva
+              {t('fitting.emptyState.message')}
             </ThemedText>
             <TouchableOpacity
               style={[styles.loginButton, { backgroundColor: colors.primary }]}
               onPress={() => router.push('/auth/login')}
             >
-              <ThemedText style={styles.loginButtonText}>Iniciar Sesión</ThemedText>
+              <ThemedText style={styles.loginButtonText}>{t('fitting.emptyState.loginButton')}</ThemedText>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.registerButton, { borderColor: colors.primary }]}
               onPress={() => router.push('/auth/register')}
             >
               <ThemedText style={[styles.registerButtonText, { color: colors.primary }]}>
-                Crear Cuenta
+                {t('fitting.emptyState.registerButton')}
               </ThemedText>
             </TouchableOpacity>
           </View>
@@ -98,8 +100,8 @@ export default function FittingScreen() {
   const stableMenuItems: MenuItem[] = [
     {
       id: 'horses',
-      title: 'Manage Horses',
-      subtitle: 'Gestiona tu establo de caballos',
+      title: t('fitting.horses.manageHorses'),
+      subtitle: t('fitting.horses.subtitle'),
       icon: 'star',
       iconColor: colors.primary,
       iconBg: getIconBg(colors.primary),
@@ -111,8 +113,8 @@ export default function FittingScreen() {
   const measurementsMenuItems: MenuItem[] = [
     {
       id: 'measurements',
-      title: 'Mis Medidas',
-      subtitle: 'Medidas del jinete',
+      title: t('fitting.measurements.title'),
+      subtitle: t('fitting.measurements.subtitle'),
       icon: 'profile',
       iconColor: colors.secondary,
       iconBg: getIconBg(colors.secondary),
@@ -162,7 +164,7 @@ export default function FittingScreen() {
       <ThemedView style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <ThemedText variant='subheading1'>Fitting</ThemedText>
+          <ThemedText variant='subheading1'>{t('fitting.title')}</ThemedText>
         </View>
 
         <ScrollView
@@ -176,20 +178,20 @@ export default function FittingScreen() {
               <AntDesignIcon name="star" size={32} color={colors.primary} />
               <View style={styles.infoCardText}>
                 <ThemedText style={styles.infoCardTitle}>
-                  Establo & Medidas
+                  {t('fitting.infoCard.title')}
                 </ThemedText>
                 <ThemedText style={[styles.infoCardSubtitle, { color: colors.textSecondary }]}>
-                  Gestiona tu establo y tus medidas personales
+                  {t('fitting.infoCard.subtitle')}
                 </ThemedText>
               </View>
             </View>
           </View>
 
           {/* MY STABLE Section */}
-          {renderSection('My Stable', stableMenuItems)}
+          {renderSection(t('fitting.myStable'), stableMenuItems)}
 
           {/* RIDER MEASUREMENTS Section */}
-          {renderSection('Rider', measurementsMenuItems)}
+          {renderSection(t('fitting.riderMeasurements'), measurementsMenuItems)}
         </ScrollView>
       </ThemedView>
     </SafeAreaView>
