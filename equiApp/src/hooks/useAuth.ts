@@ -1,6 +1,8 @@
 import { useAuthStore } from '@/src/stores/auth.store';
 import { useUserStore } from '@/src/stores/user.store';
+import { getToken } from '@/src/utils/secure-storage';
 import type { LoginCredentials, RegisterData } from '@/src/types/auth.types';
+import { useEffect, useState } from 'react';
 
 /**
  * Hook personalizado para manejar autenticación con Supabase
@@ -24,6 +26,21 @@ export const useAuth = () => {
   } = useAuthStore();
 
   const { clearProfile } = useUserStore();
+  const [hasApiToken, setHasApiToken] = useState(false);
+
+  // Verificar si existe token de API
+  useEffect(() => {
+    const checkApiToken = async () => {
+      const apiToken = await getToken();
+      setHasApiToken(!!apiToken);
+    };
+    checkApiToken();
+  }, [session]);
+
+  /**
+   * Usuario está completamente autenticado si tiene sesión de Supabase Y token de API
+   */
+  const isFullyAuthenticated = isAuthenticated && !!session && hasApiToken;
 
   /**
    * Iniciar sesión
@@ -66,10 +83,11 @@ export const useAuth = () => {
     user,
     session,
     profile,
-    isAuthenticated,
+    isAuthenticated: isFullyAuthenticated,
     isLoading,
     isInitialized,
     error,
+    hasApiToken,
 
     // Acciones
     login,

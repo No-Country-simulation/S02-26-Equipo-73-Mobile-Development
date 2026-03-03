@@ -10,5 +10,6 @@ namespace Application.Services.Products
         Task<ProductDto> CreateProductAsync(CreateProductDto createDto);
         Task<ProductDto?> UpdateProductAsync(int id, UpdateProductDto updateDto);
         Task<bool> DeleteProductAsync(int id);
+        Task<SizeGuideDto?> GetSizeGuideAsync(int brandId, int? categoryId);
     }
 }

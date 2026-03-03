@@ -30,6 +30,7 @@ namespace Infrastructure.Persistence.Seed
             await SeedProducts();
             await SeedProductVariants();
             await HorseReferenceSeeder.SeedAsync(_context);
+            await BrandSizeGuideSeeder.SeedAsync(_context);
         }
 
         private async Task SeedMeasurementEntities()

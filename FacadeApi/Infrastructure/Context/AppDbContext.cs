@@ -15,6 +15,8 @@ namespace Infrastructure.Context
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<MediaProduct> MediaProducts { get; set; }  
         public virtual DbSet<ProductVariant> ProductVariants { get; set; }
+        public virtual DbSet<ProductSpecification> ProductSpecifications { get; set; }
+        public virtual DbSet<BrandSizeGuide> BrandSizeGuides { get; set; }
         public virtual DbSet<MeasurementUnit> MeasurementUnits { get; set; }
         public virtual DbSet<MeasurementType> MeasurementTypes { get; set; }
         public virtual DbSet<MeasurementEntity> MeasurementEntities { get; set; }
@@ -114,13 +116,72 @@ namespace Infrastructure.Context
                     .HasForeignKey(e => e.BrandSizeId)
                     .OnDelete(DeleteBehavior.Restrict);
 
+                entity.Property(e => e.Color).HasMaxLength(50);
+                entity.Property(e => e.Material).HasMaxLength(100);
+                entity.Property(e => e.Weight).HasPrecision(10, 2);
+
                 entity.HasIndex(e => e.ProductId);
                 entity.HasIndex(e => e.BrandSizeId);
                 entity.HasIndex(e => e.IsActive);
-                
+
                 // Evita duplicados: mismo producto con misma talla
                 entity.HasIndex(e => new { e.ProductId, e.BrandSizeId })
                     .IsUnique();
+            });
+
+            // =============================
+            // ProductSpecification
+            // =============================
+            builder.Entity<ProductSpecification>(entity =>
+            {
+                entity.ToTable("ProductSpecifications");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.Key)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Value)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.HasOne(e => e.Product)
+                    .WithMany(p => p.Specifications)
+                    .HasForeignKey(e => e.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(e => e.ProductId);
+                entity.HasIndex(e => new { e.ProductId, e.Key });
+            });
+
+            // =============================
+            // BrandSizeGuide
+            // =============================
+            builder.Entity<BrandSizeGuide>(entity =>
+            {
+                entity.ToTable("BrandSizeGuides");
+
+                entity.HasKey(e => e.Id);
+
+                entity.Property(e => e.EuLabel).IsRequired().HasMaxLength(10);
+                entity.Property(e => e.UsLabel).HasMaxLength(10);
+                entity.Property(e => e.UkLabel).HasMaxLength(10);
+                entity.Property(e => e.FootLengthMinCm).HasPrecision(5, 2);
+                entity.Property(e => e.FootLengthMaxCm).HasPrecision(5, 2);
+
+                entity.HasOne(e => e.Brand)
+                    .WithMany()
+                    .HasForeignKey(e => e.BrandId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Category)
+                    .WithMany()
+                    .HasForeignKey(e => e.CategoryId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(e => e.BrandId);
+                entity.HasIndex(e => new { e.BrandId, e.CategoryId });
             });
 
             builder.Entity<MeasurementUnit>(entity =>

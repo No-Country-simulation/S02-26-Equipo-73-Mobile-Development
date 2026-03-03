@@ -12,5 +12,6 @@ namespace Application.Interfaces.Repositories
         Task<bool> DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
         Task UpdateMediaAsync(int productId, List<MediaProductInputDto> media);
+        Task<SizeGuideDto?> GetSizeGuideAsync(int brandId, int? categoryId);
     }
 }

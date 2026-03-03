@@ -19,6 +19,26 @@ namespace FacadeApi.Controllers
         }
 
         /// <summary>
+        /// Devuelve la guía de tallas de una marca con conversiones EU/US/UK y medidas reales en cm y pulgadas
+        /// </summary>
+        /// <param name="brandId">ID de la marca (requerido)</param>
+        /// <param name="categoryId">ID de categoría para filtrar (opcional)</param>
+        /// <response code="200">Guía de tallas obtenida exitosamente</response>
+        /// <response code="404">Marca no encontrada o sin guía de tallas</response>
+        [HttpGet("size-guide")]
+        [ProducesResponseType(typeof(ApiResponse<SizeGuideDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetSizeGuide([FromQuery] int brandId, [FromQuery] int? categoryId)
+        {
+            var guide = await _productService.GetSizeGuideAsync(brandId, categoryId);
+
+            if (guide is null)
+                return NotFound(ApiResponse<object>.NotFound($"No size guide found for brand {brandId}"));
+
+            return Ok(ApiResponse<SizeGuideDto>.Ok(guide, "Size guide retrieved successfully"));
+        }
+
+        /// <summary>
         /// Obtiene todos los productos con filtros y paginación
         /// </summary>
         /// <param name="filter">Filtros para productos: marca, categoría, precio, talla, ordenamiento</param>
