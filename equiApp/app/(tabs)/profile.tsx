@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ProtectedRoute } from '@/src/components/auth';
 import { useAuth } from '@/src/hooks/useAuth';
 import { ThemedText, ThemedView } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
@@ -24,12 +23,61 @@ type MenuItem = {
  * Pantalla de perfil (protegida)
  * Menú principal de configuración del perfil del usuario
  */
-function ProfileContent() {
-  const { user, logout } = useAuth();
+export default function ProfileScreen() {
+  const { user, logout, isAuthenticated, isInitialized } = useAuth();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
+  // Mostrar loading solo mientras se inicializa
+  if (!isInitialized) {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <ThemedView style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <ThemedText style={{ marginTop: Spacing.md, color: colors.textSecondary }}>
+            Cargando...
+          </ThemedText>
+        </ThemedView>
+      </SafeAreaView>
+    );
+  }
+
+  // Si no está autenticado, mostrar pantalla de login requerido
+  if (!user || !isAuthenticated) {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={['top']}>
+        <ThemedView style={styles.container}>
+          <View style={styles.header}>
+            <ThemedText variant='subheading1'>Cuenta</ThemedText>
+          </View>
+          <View style={styles.emptyStateContainer}>
+            <View style={[styles.emptyStateIcon, { backgroundColor: colors.primary + '20' }]}>
+              <AntDesignIcon name="user" size={64} color={colors.primary} />
+            </View>
+            <ThemedText style={styles.emptyStateTitle}>Inicia sesión</ThemedText>
+            <ThemedText style={[styles.emptyStateText, { color: colors.textSecondary }]}>
+              Para acceder a tu perfil y gestionar tu cuenta, inicia sesión o crea una cuenta nueva
+            </ThemedText>
+            <TouchableOpacity
+              style={[styles.loginButton, { backgroundColor: colors.primary }]}
+              onPress={() => router.push('/auth/login')}
+            >
+              <ThemedText style={styles.loginButtonText}>Iniciar Sesión</ThemedText>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.registerButton, { borderColor: colors.primary }]}
+              onPress={() => router.push('/auth/register')}
+            >
+              <ThemedText style={[styles.registerButtonText, { color: colors.primary }]}>
+                Crear Cuenta
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+        </ThemedView>
+      </SafeAreaView>
+    );
+  }
   // Función helper para adaptar colores al tema
   const getIconBg = (baseColor: string, opacity: number = 0.15) => {
     // Convertir hex a rgb y agregar opacidad
@@ -114,6 +162,18 @@ function ProfileContent() {
     },
   ];
 
+  // Sección SETTINGS
+  const settingsMenuItems: MenuItem[] = [
+    {
+      id: 'settings',
+      title: 'Ajustes',
+      icon: 'setting',
+      iconColor: '#8B7FD8',
+      iconBg: getIconBg('#8B7FD8'),
+      onPress: () => router.push('/settings'),
+    },
+  ];
+
   const renderSection = (title: string, items: MenuItem[]) => (
     <View style={styles.section}>
       <ThemedText style={[styles.sectionTitle, { color: colors.textSecondary }]}>
@@ -162,11 +222,7 @@ function ProfileContent() {
       <ThemedView style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
-          </TouchableOpacity>
           <ThemedText variant='subheading1'>Cuenta</ThemedText>
-          <View style={styles.placeholder} />
         </View>
 
         <ScrollView
@@ -198,6 +254,9 @@ function ProfileContent() {
           {/* MY ACCOUNT Section */}
           {renderSection('My Account', accountMenuItems)}
 
+          {/* SETTINGS Section */}
+          {renderSection('Settings', settingsMenuItems)}
+
           {/* Sign Out Button */}
           <TouchableOpacity
             style={[styles.signOutButton, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 59, 48, 0.15)' : 'rgba(255, 59, 48, 0.1)' }]}
@@ -212,15 +271,12 @@ function ProfileContent() {
   );
 }
 
-export default function ProfileScreen() {
-  return (
-    <ProtectedRoute>
-      <ProfileContent />
-    </ProtectedRoute>
-  );
-}
-
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   safeArea: {
     flex: 1,
   },
@@ -228,17 +284,58 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
+    alignItems: 'center',
   },
-  backButton: {
-    padding: Spacing.sm,
+  emptyStateContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.xl,
   },
-  placeholder: {
-    width: 40,
+  emptyStateIcon: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
+  },
+  emptyStateTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    marginBottom: Spacing.md,
+    textAlign: 'center',
+  },
+  emptyStateText: {
+    fontSize: 16,
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: Spacing.xxl,
+  },
+  loginButton: {
+    width: '100%',
+    paddingVertical: Spacing.lg,
+    borderRadius: BorderRadius.xl,
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  loginButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  registerButton: {
+    width: '100%',
+    paddingVertical: Spacing.lg,
+    borderRadius: BorderRadius.xl,
+    alignItems: 'center',
+    borderWidth: 2,
+  },
+  registerButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
   },
   scrollView: {
     flex: 1,

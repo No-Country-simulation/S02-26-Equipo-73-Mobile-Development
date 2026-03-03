@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Switch, Alert } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View, Switch, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { ThemedView, ThemedText, ThemedButton } from '@/src';
-import { useAuth } from '@/src/hooks/useAuth';
+import { ThemedView, ThemedText } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
 import { useColorScheme, useOnboarding } from '@/src/hooks';
 import { useUserStore } from '@/src/stores/user.store';
@@ -28,11 +27,10 @@ type MenuItem = {
  */
 export default function SettingsScreen() {
     const router = useRouter();
-    const { isAuthenticated, user, logout } = useAuth();
     const colorScheme = useColorScheme();
     const colors = Colors[colorScheme ?? 'light'];
     const { resetOnboarding } = useOnboarding();
-    const { preferences, updatePreferences } = useUserStore();
+    const { updatePreferences } = useUserStore();
     
     // Estados locales para switches
     const [notifications, setNotifications] = useState(true);
@@ -124,10 +122,6 @@ export default function SettingsScreen() {
         // },
     ];
 
-    const handleLogout = () => {
-        logout();
-    };
-
     const renderSection = (title: string, items: MenuItem[]) => (
         <View style={styles.section}>
             <ThemedText style={[styles.sectionTitle, { color: colorScheme === 'dark' ? '#8C8C8C' : '#8C8C8C' }]}>{title.toUpperCase()}</ThemedText>
@@ -175,62 +169,22 @@ export default function SettingsScreen() {
             <ThemedView style={styles.container}>
                 {/* Header */}
                 <View style={styles.header}>
+                    <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+                        <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
+                    </TouchableOpacity>
                     <ThemedText variant='subheading1'>Ajustes</ThemedText>
+                    <View style={styles.placeholder} />
                 </View>
 
                 <ScrollView
                     contentContainerStyle={styles.content}
                     showsVerticalScrollIndicator={false}
                 >
-                    {/* Usuario info si está autenticado */}
-                    {isAuthenticated && user ? (
-                        <View style={[styles.userCard, { backgroundColor: colors.card }]}>
-                            <View style={[styles.avatar, { backgroundColor: colors.primary }]}>
-                                <ThemedText style={styles.avatarText}>
-                                    {user.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
-                                </ThemedText>
-                            </View>
-                            <View style={styles.userInfo}>
-                                <ThemedText style={styles.userName}>{user.name || 'Usuario'}</ThemedText>
-                                <ThemedText style={[styles.userRole, { color: colors.textSecondary }]}>Premium Member</ThemedText>
-                            </View>
-                            <TouchableOpacity
-                                style={styles.editButton}
-                                onPress={() => router.push('/(tabs)/profile')}
-                            >
-                                <AntDesignIcon name="edit" size={20} color="#00D4DD" />
-                            </TouchableOpacity>
-                        </View>
-                    ) : (
-                        /* Mensaje si no está autenticado */
-                        <View style={[styles.loginPrompt, { backgroundColor: colors.backgroundSecondary }]}>
-                            <ThemedText style={[styles.loginPromptText, { color: colors.textSecondary }]}>
-                                Inicia sesión para acceder a más funciones
-                            </ThemedText>
-                            <ThemedButton
-                                label='Iniciar Sesión'
-                                onPress={() => router.push('/auth/login')}
-                                style={styles.loginButton}
-                            />
-                        </View>
-                    )}
-
                     {/* Preferences Section */}
                     {renderSection('Preferences', preferencesItems)}
 
                     {/* App Controls Section */}
                     {renderSection('App Controls', appControlsItems)}
-
-                    {/* Sign Out Button - Solo si está autenticado */}
-                    {isAuthenticated && (
-                        <TouchableOpacity
-                            style={[styles.signOutButton, { backgroundColor: colorScheme === 'dark' ? 'rgba(255, 59, 48, 0.15)' : '#FFF0F0' }]}
-                            onPress={handleLogout}
-                        >
-                            <AntDesignIcon name="logout" size={18} color="#FF3B30" />
-                            <Text style={styles.signOutText}>Sign Out</Text>
-                        </TouchableOpacity>
-                    )}
                 </ScrollView>
             </ThemedView>
         </SafeAreaView>
@@ -245,9 +199,17 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        paddingHorizontal: Spacing.lg,
-        paddingVertical: Spacing.lg,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
+        paddingHorizontal: Spacing.lg,
+        paddingVertical: Spacing.md,
+    },
+    backButton: {
+        padding: Spacing.sm,
+    },
+    placeholder: {
+        width: 40,
     },
     content: {
         padding: Spacing.lg,
@@ -289,9 +251,6 @@ const styles = StyleSheet.create({
     },
     userRole: {
         fontSize: 14,
-    },
-    editButton: {
-        padding: Spacing.sm,
     },
     loginPrompt: {
         padding: Spacing.xl,
