@@ -48,7 +48,7 @@ export default function HorseDetailScreen() {
   const handleEdit = () => {
     if (horse) {
       router.push({
-        pathname: '/settings/horse-form',
+        pathname: '/horse-form',
         params: { horseId: horse.id },
       });
     }

@@ -68,13 +68,13 @@ export default function MeasurementsScreen() {
 
   const handleEdit = (measurement: Measurement) => {
     router.push({
-      pathname: '/settings/measurement-form',
+      pathname: '/measurement-form',
       params: { measurementId: measurement.id },
     });
   };
 
   const handleAddNew = () => {
-    router.push('/settings/measurement-form');
+    router.push('/measurement-form');
   };
 
   const renderRightActions = (

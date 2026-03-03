@@ -37,9 +37,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="closet"
+        name="(fitting)"
         options={{
-          title: 'Closet',
+          title: 'Fitting',
           tabBarIcon: ({ color }) => <AntDesignIcon name="appstore" size={24} color={color} />,
         }}
       />
@@ -52,12 +52,4 @@ export default function TabLayout() {
       />
     </Tabs>
   );
-}
-
-// Componente simple de icono (puedes usar @expo/vector-icons)
-function TabBarIcon({ name: any, color }: { name: string; color: string }) {
-  // Aquí puedes usar Ionicons u otro set de iconos
-  // import { Ionicons } from '@expo/vector-icons';
-  // return <Ionicons name={name} size={24} color={color} />;
-  return null;
 }

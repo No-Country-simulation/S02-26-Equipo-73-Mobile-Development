@@ -59,20 +59,20 @@ export default function HorsesScreen() {
 
   const handleEdit = (horse: Horse) => {
     router.push({
-      pathname: '/settings/horse-form',
+      pathname: '/horse-form',
       params: { horseId: horse.id },
     });
   };
 
   const handleViewDetails = (horse: Horse) => {
     router.push({
-      pathname: '/settings/horse-detail',
+      pathname: '/horse-detail',
       params: { horseId: horse.id },
     });
   };
 
   const handleAddNew = () => {
-    router.push('/settings/horse-form');
+    router.push('/horse-form');
   };
 
   const calculateAge = (birthDate: string): string => {
