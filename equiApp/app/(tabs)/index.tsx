@@ -176,7 +176,7 @@ export default function HomeScreen() {
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
                 <ThemedText style={styles.sectionTitle}>{t('home.myStable')}</ThemedText>
-                <TouchableOpacity onPress={() => router.push('/settings/horses')}>
+                <TouchableOpacity onPress={() => router.push('/horses')}>
                   <ThemedText style={[styles.viewAllButton, { color: colors.info }]}>
                     {t('home.viewAll')}
                   </ThemedText>
@@ -194,7 +194,7 @@ export default function HomeScreen() {
                     style={[styles.horseCard, { backgroundColor: colors.card }]}
                     onPress={() =>
                       router.push({
-                        pathname: '/settings/horse-detail',
+                        pathname: '/horse-detail',
                         params: { horseId: horse.id },
                       })
                     }
