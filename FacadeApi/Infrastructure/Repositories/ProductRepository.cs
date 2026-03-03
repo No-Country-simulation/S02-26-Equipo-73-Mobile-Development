@@ -26,8 +26,10 @@ namespace Infrastructure.Repositories
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
                 .Include(p => p.MediaProducts)
+                .Include(p => p.Specifications)
                 .Include(p => p.Variants)
                     .ThenInclude(v => v.BrandSize)
+                        .ThenInclude(bs => bs.SizeSystem)
                 .AsQueryable();
 
             // Aplicar filtros
@@ -96,14 +98,56 @@ namespace Infrastructure.Repositories
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
                 .Include(p => p.MediaProducts.OrderBy(m => m.Order))
+                .Include(p => p.Specifications)
                 .Include(p => p.Variants)
                     .ThenInclude(v => v.BrandSize)
+                        .ThenInclude(bs => bs.SizeSystem)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
                 return null;
 
             return _mapper.Map<ProductDto>(product);
+        }
+
+        public async Task<SizeGuideDto?> GetSizeGuideAsync(int brandId, int? categoryId)
+        {
+            var brand = await _context.Brands.FindAsync(brandId);
+            if (brand is null) return null;
+
+            var query = _context.BrandSizeGuides
+                .Where(g => g.BrandId == brandId);
+
+            if (categoryId.HasValue)
+                query = query.Where(g => g.CategoryId == categoryId || g.CategoryId == null);
+
+            var sizes = await query
+                .OrderBy(g => g.FootLengthMinCm)
+                .Select(g => new SizeGuideEntryDto
+                {
+                    EuLabel = g.EuLabel,
+                    UsLabel = g.UsLabel,
+                    UkLabel = g.UkLabel,
+                    FootLengthMinCm = g.FootLengthMinCm,
+                    FootLengthMaxCm = g.FootLengthMaxCm
+                })
+                .ToListAsync();
+
+            string? categoryName = null;
+            if (categoryId.HasValue)
+                categoryName = await _context.ProductCategories
+                    .Where(c => c.Id == categoryId)
+                    .Select(c => c.Name)
+                    .FirstOrDefaultAsync();
+
+            return new SizeGuideDto
+            {
+                BrandId = brandId,
+                BrandName = brand.Name,
+                CategoryId = categoryId,
+                CategoryName = categoryName,
+                Sizes = sizes
+            };
         }
 
         public async Task<ProductDto> CreateAsync(CreateProductDto createDto)

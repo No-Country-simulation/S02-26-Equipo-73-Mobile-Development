@@ -21,5 +21,10 @@ namespace Application.DTOs.Products
         public List<MediaProductDto> Media { get; set; } = new();
 
         public List<ProductVariantDto> Variants { get; set; } = new();
+
+        /// <summary>
+        /// Especificaciones libres del producto (Discipline, Closure, Waterproof, etc.)
+        /// </summary>
+        public List<ProductSpecificationDto> Specifications { get; set; } = new();
     }
 }

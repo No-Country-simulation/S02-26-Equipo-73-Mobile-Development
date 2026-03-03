@@ -15,10 +15,12 @@ namespace Infrastructure.Mapper
                 .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.Name))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
                 .ForMember(dest => dest.Media, opt => opt.MapFrom(src => src.MediaProducts))
-                .ForMember(dest => dest.Variants, opt => opt.MapFrom(src => src.Variants));
+                .ForMember(dest => dest.Variants, opt => opt.MapFrom(src => src.Variants))
+                .ForMember(dest => dest.Specifications, opt => opt.MapFrom(src => src.Specifications));
 
             CreateMap<ProductVariant, ProductVariantDto>()
-                .ForMember(dest => dest.SizeLabel, opt => opt.MapFrom(src => src.BrandSize.Label));
+                .ForMember(dest => dest.SizeLabel, opt => opt.MapFrom(src => src.BrandSize.Label))
+                .ForMember(dest => dest.SizeSystem, opt => opt.MapFrom(src => src.BrandSize.SizeSystem.Name));
 
             CreateMap<CreateProductDto, Product>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -46,7 +48,7 @@ namespace Infrastructure.Mapper
 
             // ApplicationUser mappings
             CreateMap<ApplicationUser, UserDto>()
-                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => 
+                .ForMember(dest => dest.Roles, opt => opt.MapFrom(src =>
                     src.UserRoles.Select(ur => ur.Role).ToList()));
 
             CreateMap<CreateUserDto, ApplicationUser>()
@@ -60,6 +62,9 @@ namespace Infrastructure.Mapper
 
             // Role mappings
             CreateMap<Role, RoleDto>();
+
+            // ProductSpecification mappings
+            CreateMap<ProductSpecification, ProductSpecificationDto>();
         }
     }
 }
