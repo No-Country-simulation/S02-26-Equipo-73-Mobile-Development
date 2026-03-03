@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemedText, ThemedView } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
@@ -28,6 +29,7 @@ import { getSexLabel } from '@/src/types/horse.types';
 
 export default function HorsesScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
 
@@ -37,19 +39,19 @@ export default function HorsesScreen() {
 
   const handleDelete = async (horse: Horse) => {
     Alert.alert(
-      'Delete Horse',
-      `Are you sure you want to delete ${horse.name}?`,
+      t('fitting.horses.deleteHorse'),
+      t('fitting.horses.deleteConfirm', { name: horse.name }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteMutation.mutateAsync(horse.id);
-              Alert.alert('Success', 'Horse deleted successfully');
+              Alert.alert(t('common.success'), t('fitting.horses.deleteSuccess'));
             } catch (error: any) {
-              Alert.alert('Error', error.message || 'Could not delete horse');
+              Alert.alert(t('common.error'), error.message || t('common.error'));
             }
           },
         },
@@ -59,20 +61,20 @@ export default function HorsesScreen() {
 
   const handleEdit = (horse: Horse) => {
     router.push({
-      pathname: '/settings/horse-form',
+      pathname: '/horse-form',
       params: { horseId: horse.id },
     });
   };
 
   const handleViewDetails = (horse: Horse) => {
     router.push({
-      pathname: '/settings/horse-detail',
+      pathname: '/horse-detail',
       params: { horseId: horse.id },
     });
   };
 
   const handleAddNew = () => {
-    router.push('/settings/horse-form');
+    router.push('/horse-form');
   };
 
   const calculateAge = (birthDate: string): string => {
@@ -111,7 +113,7 @@ export default function HorsesScreen() {
             onPress={() => handleEdit(horse)}
           >
             <AntDesignIcon name="edit" size={20} color="#fff" />
-            <Text style={styles.swipeButtonText}>Edit</Text>
+            <Text style={styles.swipeButtonText}>{t('fitting.measurements.editMeasurement')}</Text>
           </TouchableOpacity>
         </Animated.View>
         <Animated.View style={{ transform: [{ translateX: translateDelete }] }}>
@@ -120,7 +122,7 @@ export default function HorsesScreen() {
             onPress={() => handleDelete(horse)}
           >
             <AntDesignIcon name="delete" size={20} color="#fff" />
-            <Text style={styles.swipeButtonText}>Delete</Text>
+            <Text style={styles.swipeButtonText}>{t('fitting.measurements.deleteMeasurement')}</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>
@@ -176,7 +178,7 @@ export default function HorsesScreen() {
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <ThemedText style={styles.loadingText}>Loading horses...</ThemedText>
+          <ThemedText style={styles.loadingText}>{t('common.loading')}</ThemedText>
         </ThemedView>
       </SafeAreaView>
     );
@@ -191,7 +193,7 @@ export default function HorsesScreen() {
             <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
             </TouchableOpacity>
-            <ThemedText style={styles.headerTitle}>My Horses</ThemedText>
+            <ThemedText style={styles.headerTitle}>{t('fitting.horses.title')}</ThemedText>
             <View style={{ width: 24 }} />
           </View>
 
@@ -212,10 +214,10 @@ export default function HorsesScreen() {
               <View style={styles.emptyContainer}>
                 <AntDesignIcon name="star" size={64} color={colors.textSecondary} />
                 <ThemedText style={[styles.emptyTitle, { color: colors.text }]}>
-                  No horses yet
+                  {t('fitting.horses.emptyState.title')}
                 </ThemedText>
                 <ThemedText style={[styles.emptyText, { color: colors.textSecondary }]}>
-                  Add your first horse to start tracking measurements and details
+                  {t('fitting.horses.emptyState.message')}
                 </ThemedText>
               </View>
             ) : (

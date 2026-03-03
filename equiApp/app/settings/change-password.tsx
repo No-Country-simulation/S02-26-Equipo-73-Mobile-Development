@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ThemedView, ThemedText, ThemedInput, ThemedButton } from '@/src';
@@ -24,6 +25,7 @@ import AntDesignIcon from '@expo/vector-icons/AntDesign';
 
 export default function ChangePasswordScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   const [isLoading, setIsLoading] = useState(false);
@@ -53,11 +55,11 @@ export default function ChangePasswordScreen() {
       await changePassword(data);
 
       Alert.alert(
-        'Success',
-        'Your password has been changed successfully',
+        t('common.success'),
+        t('settings.changePassword.successMessage'),
         [
           {
-            text: 'OK',
+            text: t('common.confirm'),
             onPress: () => {
               reset();
               router.back();
@@ -66,7 +68,7 @@ export default function ChangePasswordScreen() {
         ]
       );
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Could not change password');
+      Alert.alert(t('common.error'), error.message || t('settings.changePassword.errors.change'));
     } finally {
       setIsLoading(false);
     }
@@ -80,7 +82,7 @@ export default function ChangePasswordScreen() {
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
           </TouchableOpacity>
-          <ThemedText style={styles.headerTitle}>Change Password</ThemedText>
+          <ThemedText style={styles.headerTitle}>{t('settings.changePassword.title')}</ThemedText>
           <View style={{ width: 24 }} />
         </View>
 
@@ -90,12 +92,12 @@ export default function ChangePasswordScreen() {
           showsVerticalScrollIndicator={false}
         >
           <ThemedText style={[styles.subtitle, { color: colors.textSecondary }]}>
-            Make sure to use a strong password
+            {t('settings.changePassword.subtitle')}
           </ThemedText>
 
           {/* Contraseña Actual */}
           <View style={styles.inputContainer}>
-            <ThemedText style={styles.label}>Current Password</ThemedText>
+            <ThemedText style={styles.label}>{t('settings.changePassword.currentPassword')}</ThemedText>
             <Controller
               control={control}
               name="currentPassword"
@@ -105,7 +107,7 @@ export default function ChangePasswordScreen() {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    placeholder="Enter your current password"
+                    placeholder={t('settings.changePassword.placeholders.currentPassword')}
                     secureTextEntry={!showPasswords.current}
                     autoCapitalize="none"
                     editable={!isLoading}
@@ -131,7 +133,7 @@ export default function ChangePasswordScreen() {
 
           {/* Nueva Contraseña */}
           <View style={styles.inputContainer}>
-            <ThemedText style={styles.label}>New Password</ThemedText>
+            <ThemedText style={styles.label}>{t('settings.changePassword.newPassword')}</ThemedText>
             <Controller
               control={control}
               name="newPassword"
@@ -141,7 +143,7 @@ export default function ChangePasswordScreen() {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    placeholder="Minimum 6 characters"
+                    placeholder={t('settings.changePassword.placeholders.newPassword')}
                     secureTextEntry={!showPasswords.new}
                     autoCapitalize="none"
                     editable={!isLoading}
@@ -167,7 +169,7 @@ export default function ChangePasswordScreen() {
 
           {/* Confirmar Nueva Contraseña */}
           <View style={styles.inputContainer}>
-            <ThemedText style={styles.label}>Confirm New Password</ThemedText>
+            <ThemedText style={styles.label}>{t('settings.changePassword.confirmPassword')}</ThemedText>
             <Controller
               control={control}
               name="confirmPassword"
@@ -177,7 +179,7 @@ export default function ChangePasswordScreen() {
                     value={value}
                     onChangeText={onChange}
                     onBlur={onBlur}
-                    placeholder="Repeat the new password"
+                    placeholder={t('settings.changePassword.placeholders.confirmPassword')}
                     secureTextEntry={!showPasswords.confirm}
                     autoCapitalize="none"
                     editable={!isLoading}
@@ -203,7 +205,7 @@ export default function ChangePasswordScreen() {
 
           {/* Botón de Guardar */}
           <ThemedButton
-            label={isLoading ? 'Saving...' : 'Change Password'}
+            label={isLoading ? t('common.saving') : t('settings.changePassword.submitButton')}
             onPress={handleSubmit(onSubmit)}
             disabled={isLoading}
             isLoading={isLoading}
@@ -215,14 +217,11 @@ export default function ChangePasswordScreen() {
             <View style={styles.infoHeader}>
               <AntDesignIcon name="info-circle" size={20} color={colors.info} />
               <ThemedText style={[styles.infoTitle, { color: colors.info }]}>
-                Security Tips
+                {t('settings.changePassword.securityTipsTitle')}
               </ThemedText>
             </View>
             <ThemedText style={[styles.infoText, { color: colors.textSecondary }]}>
-              • Use at least 8 characters{'\n'}
-              • Combine uppercase, lowercase, and numbers{'\n'}
-              • Avoid obvious personal information{'\n'}
-              • Don't reuse passwords from other accounts
+              {t('settings.changePassword.securityTips')}
             </ThemedText>
           </View>
         </ScrollView>

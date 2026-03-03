@@ -1,10 +1,30 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, useColorScheme } from 'react-native';
+import { Platform, useColorScheme, View, Text, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import AntDesignIcon from '@expo/vector-icons/AntDesign';
 import { Colors } from '@/src/constants';
-export default function TabLayout() {
+import { useCart } from '@/src/stores/cart.store';
 
+function CartIconWithBadge({ color }: { color: string }) {
+  const { summary } = useCart();
+  
+  return (
+    <View style={{ width: 24, height: 24 }}>
+      <AntDesignIcon name="shopping-cart" size={24} color={color} />
+      {summary.itemsCount > 0 && (
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>
+            {summary.itemsCount > 99 ? '99+' : summary.itemsCount}
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
+export default function TabLayout() {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
   
@@ -25,28 +45,35 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: t('navigation.home'),
           tabBarIcon: ({ color }) => <AntDesignIcon name="home" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="products"
         options={{
-          title: 'Shop',
+          title: t('navigation.shop'),
           tabBarIcon: ({ color }) => <AntDesignIcon name="shopping-cart" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="closet"
+        name="cart"
         options={{
-          title: 'Closet',
+          title: t('navigation.cart'),
+          tabBarIcon: ({ color }) => <CartIconWithBadge color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="(fitting)"
+        options={{
+          title: t('navigation.fitting'),
           tabBarIcon: ({ color }) => <AntDesignIcon name="appstore" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: t('navigation.profile'),
           tabBarIcon: ({ color }) => <AntDesignIcon name="user" size={24} color={color} />,
         }}
       />
@@ -54,10 +81,22 @@ export default function TabLayout() {
   );
 }
 
-// Componente simple de icono (puedes usar @expo/vector-icons)
-function TabBarIcon({ name: any, color }: { name: string; color: string }) {
-  // Aquí puedes usar Ionicons u otro set de iconos
-  // import { Ionicons } from '@expo/vector-icons';
-  // return <Ionicons name={name} size={24} color={color} />;
-  return null;
-}
+const styles = StyleSheet.create({
+  badge: {
+    position: 'absolute',
+    right: -8,
+    top: -4,
+    backgroundColor: '#FF3B30',
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+});

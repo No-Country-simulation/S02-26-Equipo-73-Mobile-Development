@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ThemedView, ThemedText, ThemedInput, ThemedButton, DatePickerWithActionSheet } from '@/src';
 import { useAuth } from '@/src/hooks/useAuth';
 import { getUserData, updateUserData } from '@/src/services/user.service';
@@ -17,6 +18,7 @@ import type { User, UpdateProfileData } from '@/src/types/user.types';
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const { user } = useAuth();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
@@ -50,7 +52,7 @@ export default function ProfileScreen() {
         setDateOfBirth(new Date(data.dateOfBirth));
       }
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudieron cargar los datos');
+      Alert.alert(t('common.error'), error.message || t('settings.personalData.errors.load'));
     } finally {
       setIsLoading(false);
     }
@@ -70,9 +72,9 @@ export default function ProfileScreen() {
       const response = await updateUserData(updateData);
       setUserData(response);
 
-      Alert.alert('Éxito', 'Datos actualizados correctamente');
+      Alert.alert(t('common.success'), t('settings.personalData.updateSuccess'));
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'No se pudieron actualizar los datos');
+      Alert.alert(t('common.error'), error.message || t('settings.personalData.errors.update'));
     } finally {
       setIsSaving(false);
     }
@@ -87,7 +89,7 @@ export default function ProfileScreen() {
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <ThemedText style={styles.loadingText}>Cargando datos...</ThemedText>
+          <ThemedText style={styles.loadingText}>{t('common.loading')}</ThemedText>
         </ThemedView>
       </SafeAreaView>
     );
@@ -101,7 +103,7 @@ export default function ProfileScreen() {
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
           </TouchableOpacity>
-          <ThemedText variant='subheading1'>Datos Personales</ThemedText>
+          <ThemedText variant='subheading1'>{t('settings.personalData.title')}</ThemedText>
           <View style={styles.placeholder} />
         </View>
 
@@ -112,25 +114,25 @@ export default function ProfileScreen() {
           {/* Email (solo lectura) */}
           <View style={styles.section}>
             <ThemedText type="defaultSemiBold" style={styles.label}>
-              Email
+              {t('settings.personalData.email')}
             </ThemedText>
             <View style={[styles.readOnlyField, { backgroundColor: colors.card, borderColor: colors.border }]}>
               <ThemedText style={styles.readOnlyText}>{userData?.email || user?.email}</ThemedText>
             </View>
             <ThemedText style={[styles.helperText, { color: colors.textSecondary }]}>
-              El email no se puede modificar
+              {t('settings.personalData.emailReadonly')}
             </ThemedText>
           </View>
 
           {/* First Name */}
           <View style={styles.section}>
             <ThemedText type="defaultSemiBold" style={styles.label}>
-              Nombre
+              {t('settings.personalData.name')}
             </ThemedText>
             <ThemedInput
               value={firstName}
               onChangeText={setFirstName}
-              placeholder="Ingresa tu nombre"
+              placeholder={t('settings.personalData.placeholders.name')}
               autoCapitalize="words"
               returnKeyType="next"
             />
@@ -139,12 +141,12 @@ export default function ProfileScreen() {
           {/* Last Name */}
           <View style={styles.section}>
             <ThemedText type="defaultSemiBold" style={styles.label}>
-              Apellido
+              {t('settings.personalData.lastName')}
             </ThemedText>
             <ThemedInput
               value={lastName}
               onChangeText={setLastName}
-              placeholder="Ingresa tu apellido"
+              placeholder={t('settings.personalData.placeholders.lastName')}
               autoCapitalize="words"
               returnKeyType="next"
             />
@@ -161,12 +163,12 @@ export default function ProfileScreen() {
           {/* Phone Number */}
           <View style={styles.section}>
             <ThemedText type="defaultSemiBold" style={styles.label}>
-              Teléfono
+              {t('settings.personalData.phone')}
             </ThemedText>
             <ThemedInput
               value={phone}
               onChangeText={setPhone}
-              placeholder="+54 9 11 1234-5678"
+              placeholder={t('settings.personalData.placeholders.phone')}
               keyboardType="phone-pad"
               returnKeyType="done"
             />
@@ -174,7 +176,7 @@ export default function ProfileScreen() {
 
           {/* Botón de guardar */}
           <ThemedButton
-            label={isSaving ? 'Guardando...' : 'Guardar Cambios'}
+            label={isSaving ? t('common.saving') : t('common.save')}
             onPress={handleSave}
             isLoading={isSaving}
             style={styles.saveButton}
@@ -184,7 +186,7 @@ export default function ProfileScreen() {
           <View style={[styles.infoBox, { backgroundColor: colors.primary + '15', borderColor: colors.primary + '30' }]}>
             <AntDesignIcon name="info" size={16} color={colors.primary} style={styles.infoIcon} />
             <ThemedText style={[styles.infoText, { color: colors.text }]}>
-              Tus datos personales están protegidos y solo se usan para mejorar tu experiencia.
+              {t('settings.personalData.privacyInfo')}
             </ThemedText>
           </View>
         </ScrollView>

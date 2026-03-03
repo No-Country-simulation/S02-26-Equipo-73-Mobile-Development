@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { ThemedText, ThemedView, ThemedInput, ThemedButton } from '@/src';
 import { Spacing, BorderRadius, Colors } from '@/src/constants';
 import { useColorScheme } from '@/src/hooks';
@@ -44,6 +45,7 @@ import {
 
 export default function HorseFormScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
   const params = useLocalSearchParams();
   const horseId = params.horseId ? Number(params.horseId) : null;
   const colorScheme = useColorScheme();
@@ -125,22 +127,22 @@ export default function HorseFormScreen() {
   const handleSave = async () => {
     // Validations
     if (!name.trim()) {
-      Alert.alert('Error', 'Please enter a name for the horse');
+      Alert.alert(t('common.error'), t('fitting.horses.form.errors.name'));
       return;
     }
 
     if (!selectedBreed) {
-      Alert.alert('Error', 'Please select a breed');
+      Alert.alert(t('common.error'), t('fitting.horses.form.errors.breed'));
       return;
     }
 
     if (!selectedDiscipline) {
-      Alert.alert('Error', 'Please select a discipline');
+      Alert.alert(t('common.error'), t('fitting.horses.form.errors.discipline'));
       return;
     }
 
     if (!selectedLevel) {
-      Alert.alert('Error', 'Please select a level');
+      Alert.alert(t('common.error'), t('fitting.horses.form.errors.level'));
       return;
     }
 
@@ -171,7 +173,7 @@ export default function HorseFormScreen() {
         };
 
         await updateMutation.mutateAsync({ id: horseId, data: updateData });
-        Alert.alert('Success', 'Horse updated successfully');
+        Alert.alert(t('common.success'), t('fitting.horses.form.updateSuccess'));
       } else {
         // Create new horse
         const createData: CreateHorseDto = {
@@ -185,12 +187,12 @@ export default function HorseFormScreen() {
         };
 
         await createMutation.mutateAsync(createData);
-        Alert.alert('Success', 'Horse created successfully');
+        Alert.alert(t('common.success'), t('fitting.horses.form.createSuccess'));
       }
 
       router.back();
     } catch (error: any) {
-      Alert.alert('Error', error.message || 'Could not save horse');
+      Alert.alert(t('common.error'), error.message || t('fitting.horses.form.errors.save'));
     }
   };
 
@@ -266,7 +268,7 @@ export default function HorseFormScreen() {
             }}
           >
             <ThemedText style={[styles.pickerItemText, { color: colors.textSecondary }]}>
-              Not specified
+              {t('fitting.horses.form.notSpecified')}
             </ThemedText>
             {selectedValue === null && (
               <AntDesignIcon name="check" size={20} color={colors.primary} />
@@ -346,7 +348,7 @@ export default function HorseFormScreen() {
       <SafeAreaView style={styles.safeArea} edges={['top']}>
         <ThemedView style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <ThemedText style={styles.loadingText}>Loading...</ThemedText>
+          <ThemedText style={styles.loadingText}>{t('common.loading')}</ThemedText>
         </ThemedView>
       </SafeAreaView>
     );
@@ -361,7 +363,7 @@ export default function HorseFormScreen() {
             <AntDesignIcon name="arrow-left" size={24} color={colors.text} />
           </TouchableOpacity>
           <ThemedText style={styles.headerTitle}>
-            {horseId ? 'Edit Horse' : 'New Horse'}
+            {horseId ? t('fitting.horses.form.title.edit') : t('fitting.horses.form.title.new')}
           </ThemedText>
           <View style={{ width: 24 }} />
         </View>
@@ -373,11 +375,11 @@ export default function HorseFormScreen() {
         >
           {/* Basic Information Section */}
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Basic Information</ThemedText>
+            <ThemedText style={styles.sectionTitle}>{t('fitting.horses.basicInfo')}</ThemedText>
 
             {/* Name */}
             <View style={styles.field}>
-              <ThemedText style={styles.label}>Name *</ThemedText>
+              <ThemedText style={styles.label}>{t('fitting.horses.form.fields.name')} {t('fitting.horses.form.required')}</ThemedText>
               <TextInput
                 style={[
                   styles.input,
@@ -389,14 +391,14 @@ export default function HorseFormScreen() {
                 ]}
                 value={name}
                 onChangeText={setName}
-                placeholder="Enter horse name"
+                placeholder={t('fitting.horses.form.placeholders.name')}
                 placeholderTextColor={colors.textSecondary}
               />
             </View>
 
             {/* Birth Date */}
             <View style={styles.field}>
-              <ThemedText style={styles.label}>Birth Date *</ThemedText>
+              <ThemedText style={styles.label}>{t('fitting.horses.form.fields.birthDate')} {t('fitting.horses.form.required')}</ThemedText>
               <TouchableOpacity
                 style={[
                   styles.selectButton,
@@ -405,7 +407,7 @@ export default function HorseFormScreen() {
                 onPress={() => setShowDatePicker(true)}
               >
                 <ThemedText style={styles.selectValue}>
-                  {birthDate.toLocaleDateString('en-US', {
+                  {birthDate.toLocaleDateString(t('dates.locale'), {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
@@ -417,7 +419,7 @@ export default function HorseFormScreen() {
 
             {/* Sex */}
             <View style={styles.field}>
-              <ThemedText style={styles.label}>Sex *</ThemedText>
+              <ThemedText style={styles.label}>{t('fitting.horses.form.fields.sex')} {t('fitting.horses.form.required')}</ThemedText>
               <TouchableOpacity
                 style={[
                   styles.selectButton,
@@ -426,7 +428,7 @@ export default function HorseFormScreen() {
                 onPress={() => setShowSexPicker(true)}
               >
                 <ThemedText style={styles.selectValue}>
-                  {sex === SexType.Male ? 'Male' : 'Female'}
+                  {sex === SexType.Male ? t('fitting.horses.form.sex.male') : t('fitting.horses.form.sex.female')}
                 </ThemedText>
                 <AntDesignIcon name="down" size={16} color={colors.textSecondary} />
               </TouchableOpacity>
@@ -434,7 +436,7 @@ export default function HorseFormScreen() {
 
             {/* Breed */}
             <View style={styles.field}>
-              <ThemedText style={styles.label}>Breed *</ThemedText>
+              <ThemedText style={styles.label}>{t('fitting.horses.form.fields.breed')} {t('fitting.horses.form.required')}</ThemedText>
               <TouchableOpacity
                 style={[
                   styles.selectButton,
@@ -448,7 +450,7 @@ export default function HorseFormScreen() {
                     !selectedBreed && { color: colors.textSecondary },
                   ]}
                 >
-                  {selectedBreed?.name || 'Select breed'}
+                  {selectedBreed?.name || t('fitting.horses.form.placeholders.selectBreed')}
                 </ThemedText>
                 <AntDesignIcon name="down" size={16} color={colors.textSecondary} />
               </TouchableOpacity>
@@ -456,7 +458,7 @@ export default function HorseFormScreen() {
 
             {/* Discipline */}
             <View style={styles.field}>
-              <ThemedText style={styles.label}>Discipline *</ThemedText>
+              <ThemedText style={styles.label}>{t('fitting.horses.form.fields.discipline')} {t('fitting.horses.form.required')}</ThemedText>
               <TouchableOpacity
                 style={[
                   styles.selectButton,
@@ -470,7 +472,7 @@ export default function HorseFormScreen() {
                     !selectedDiscipline && { color: colors.textSecondary },
                   ]}
                 >
-                  {selectedDiscipline?.name || 'Select discipline'}
+                  {selectedDiscipline?.name || t('fitting.horses.form.placeholders.selectDiscipline')}
                 </ThemedText>
                 <AntDesignIcon name="down" size={16} color={colors.textSecondary} />
               </TouchableOpacity>
@@ -478,7 +480,7 @@ export default function HorseFormScreen() {
 
             {/* Level */}
             <View style={styles.field}>
-              <ThemedText style={styles.label}>Level *</ThemedText>
+              <ThemedText style={styles.label}>{t('fitting.horses.form.fields.level')} {t('fitting.horses.form.required')}</ThemedText>
               <TouchableOpacity
                 style={[
                   styles.selectButton,
@@ -492,7 +494,7 @@ export default function HorseFormScreen() {
                     !selectedLevel && { color: colors.textSecondary },
                   ]}
                 >
-                  {selectedLevel?.name || 'Select level'}
+                  {selectedLevel?.name || t('fitting.horses.form.placeholders.selectLevel')}
                 </ThemedText>
                 <AntDesignIcon name="down" size={16} color={colors.textSecondary} />
               </TouchableOpacity>
@@ -501,18 +503,18 @@ export default function HorseFormScreen() {
 
           {/* Measurements Section (Optional) */}
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Measurements (Optional)</ThemedText>
+            <ThemedText style={styles.sectionTitle}>{t('fitting.horses.measurements')} {t('fitting.horses.form.optional')}</ThemedText>
             <ThemedText style={[styles.sectionSubtitle, { color: colors.textSecondary }]}>
-              All measurements are optional. Add only what you know.
+              {t('fitting.horses.form.measurementsInfo')}
             </ThemedText>
 
             {/* Linear Measurements (cm) */}
             <View style={styles.subsection}>
-              <ThemedText style={styles.subsectionTitle}>Dimensions (cm)</ThemedText>
+              <ThemedText style={styles.subsectionTitle}>{t('fitting.horses.form.dimensions')}</ThemedText>
 
               <View style={styles.row}>
                 <View style={styles.halfField}>
-                  <ThemedText style={styles.label}>Withers Height</ThemedText>
+                  <ThemedText style={styles.label}>{t('fitting.horses.form.fields.withersHeight')}</ThemedText>
                   <TextInput
                     style={[
                       styles.input,
@@ -531,7 +533,7 @@ export default function HorseFormScreen() {
                 </View>
 
                 <View style={styles.halfField}>
-                  <ThemedText style={styles.label}>Back Length</ThemedText>
+                  <ThemedText style={styles.label}>{t('fitting.horses.form.fields.backLength')}</ThemedText>
                   <TextInput
                     style={[
                       styles.input,
@@ -552,7 +554,7 @@ export default function HorseFormScreen() {
 
               <View style={styles.row}>
                 <View style={styles.halfField}>
-                  <ThemedText style={styles.label}>Chest Circumference</ThemedText>
+                  <ThemedText style={styles.label}>{t('fitting.horses.form.fields.chestCircumference')}</ThemedText>
                   <TextInput
                     style={[
                       styles.input,
@@ -571,7 +573,7 @@ export default function HorseFormScreen() {
                 </View>
 
                 <View style={styles.halfField}>
-                  <ThemedText style={styles.label}>Withers Width</ThemedText>
+                  <ThemedText style={styles.label}>{t('fitting.horses.form.fields.withersWidth')}</ThemedText>
                   <TextInput
                     style={[
                       styles.input,
@@ -592,7 +594,7 @@ export default function HorseFormScreen() {
 
               <View style={styles.row}>
                 <View style={styles.halfField}>
-                  <ThemedText style={styles.label}>Neck Length</ThemedText>
+                  <ThemedText style={styles.label}>{t('fitting.horses.form.fields.neckLength')}</ThemedText>
                   <TextInput
                     style={[
                       styles.input,
@@ -611,7 +613,7 @@ export default function HorseFormScreen() {
                 </View>
 
                 <View style={styles.halfField}>
-                  <ThemedText style={styles.label}>Cannon Circumference</ThemedText>
+                  <ThemedText style={styles.label}>{t('fitting.horses.form.fields.cannonCircumference')}</ThemedText>
                   <TextInput
                     style={[
                       styles.input,
@@ -631,7 +633,7 @@ export default function HorseFormScreen() {
               </View>
 
               <View style={styles.field}>
-                <ThemedText style={styles.label}>Head Length</ThemedText>
+                <ThemedText style={styles.label}>{t('fitting.horses.form.fields.headLength')}</ThemedText>
                 <TextInput
                   style={[
                     styles.input,
@@ -652,10 +654,10 @@ export default function HorseFormScreen() {
 
             {/* Body Type Characteristics */}
             <View style={styles.subsection}>
-              <ThemedText style={styles.subsectionTitle}>Body Type</ThemedText>
+              <ThemedText style={styles.subsectionTitle}>{t('fitting.horses.bodyType')}</ThemedText>
 
               <View style={styles.field}>
-                <ThemedText style={styles.label}>Back Type</ThemedText>
+                <ThemedText style={styles.label}>{t('fitting.horses.form.fields.backType')}</ThemedText>
                 <TouchableOpacity
                   style={[
                     styles.selectButton,
@@ -669,14 +671,14 @@ export default function HorseFormScreen() {
                       backType === null && { color: colors.textSecondary },
                     ]}
                   >
-                    {backType || 'Not specified'}
+                    {backType || t('fitting.horses.form.notSpecified')}
                   </ThemedText>
                   <AntDesignIcon name="down" size={16} color={colors.textSecondary} />
                 </TouchableOpacity>
               </View>
 
               <View style={styles.field}>
-                <ThemedText style={styles.label}>Withers Type</ThemedText>
+                <ThemedText style={styles.label}>{t('fitting.horses.form.fields.withersType')}</ThemedText>
                 <TouchableOpacity
                   style={[
                     styles.selectButton,
@@ -690,14 +692,14 @@ export default function HorseFormScreen() {
                       withersType === null && { color: colors.textSecondary },
                     ]}
                   >
-                    {withersType || 'Not specified'}
+                    {withersType || t('fitting.horses.form.notSpecified')}
                   </ThemedText>
                   <AntDesignIcon name="down" size={16} color={colors.textSecondary} />
                 </TouchableOpacity>
               </View>
 
               <View style={styles.field}>
-                <ThemedText style={styles.label}>Shoulder Type</ThemedText>
+                <ThemedText style={styles.label}>{t('fitting.horses.form.fields.shoulderType')}</ThemedText>
                 <TouchableOpacity
                   style={[
                     styles.selectButton,
@@ -711,7 +713,7 @@ export default function HorseFormScreen() {
                       shoulderType === null && { color: colors.textSecondary },
                     ]}
                   >
-                    {shoulderType || 'Not specified'}
+                    {shoulderType || t('fitting.horses.form.notSpecified')}
                   </ThemedText>
                   <AntDesignIcon name="down" size={16} color={colors.textSecondary} />
                 </TouchableOpacity>
@@ -722,7 +724,7 @@ export default function HorseFormScreen() {
           {/* Save Button */}
           <View style={styles.buttonContainer}>
             <ThemedButton
-              label={isSaving ? 'Saving...' : horseId ? 'Update Horse' : 'Create Horse'}
+              label={isSaving ? t('common.saving') : horseId ? t('fitting.horses.form.title.edit') : t('fitting.horses.form.title.new')}
               onPress={handleSave}
               disabled={isSaving}
               isLoading={isSaving}
@@ -758,7 +760,7 @@ export default function HorseFormScreen() {
             selectedBreed,
             setSelectedBreed,
             () => setShowBreedPicker(false),
-            'Select Breed'
+            t('fitting.horses.form.placeholders.selectBreed')
           )}
         </Modal>
 
@@ -773,7 +775,7 @@ export default function HorseFormScreen() {
             selectedDiscipline,
             setSelectedDiscipline,
             () => setShowDisciplinePicker(false),
-            'Select Discipline'
+            t('fitting.horses.form.placeholders.selectDiscipline')
           )}
         </Modal>
 
@@ -788,7 +790,7 @@ export default function HorseFormScreen() {
             selectedLevel,
             setSelectedLevel,
             () => setShowLevelPicker(false),
-            'Select Level'
+            t('fitting.horses.form.placeholders.selectLevel')
           )}
         </Modal>
 
@@ -800,13 +802,13 @@ export default function HorseFormScreen() {
         >
           {renderNumberPicker(
             [
-              { value: SexType.Male, label: 'Male' },
-              { value: SexType.Female, label: 'Female' },
+              { value: SexType.Male, label: t('fitting.horses.form.sex.male') },
+              { value: SexType.Female, label: t('fitting.horses.form.sex.female') },
             ],
             sex,
             setSex,
             () => setShowSexPicker(false),
-            'Select Sex'
+            t('fitting.horses.form.fields.sex')
           )}
         </Modal>
 
@@ -818,15 +820,15 @@ export default function HorseFormScreen() {
         >
           {renderEnumPicker(
             [
-              { value: 'Straight', label: 'Straight' },
-              { value: 'Concave', label: 'Concave' },
-              { value: 'Convex', label: 'Convex' },
-              { value: 'Other', label: 'Other' },
+              { value: 'Straight', label: t('fitting.horses.form.backType.straight') },
+              { value: 'Concave', label: t('fitting.horses.form.backType.concave') },
+              { value: 'Convex', label: t('fitting.horses.form.backType.convex') },
+              { value: 'Other', label: t('fitting.horses.form.backType.other') },
             ],
             backType,
             setBackType,
             () => setShowBackTypePicker(false),
-            'Select Back Type'
+            t('fitting.horses.form.fields.backType')
           )}
         </Modal>
 
@@ -838,15 +840,15 @@ export default function HorseFormScreen() {
         >
           {renderEnumPicker(
             [
-              { value: 'Prominent', label: 'Prominent' },
-              { value: 'Medium', label: 'Medium' },
-              { value: 'Flat', label: 'Flat' },
-              { value: 'Other', label: 'Other' },
+              { value: 'Prominent', label: t('fitting.horses.form.withersType.prominent') },
+              { value: 'Medium', label: t('fitting.horses.form.withersType.medium') },
+              { value: 'Flat', label: t('fitting.horses.form.withersType.flat') },
+              { value: 'Other', label: t('fitting.horses.form.withersType.other') },
             ],
             withersType,
             setWithersType,
             () => setShowWithersTypePicker(false),
-            'Select Withers Type'
+            t('fitting.horses.form.fields.withersType')
           )}
         </Modal>
 
@@ -858,14 +860,14 @@ export default function HorseFormScreen() {
         >
           {renderEnumPicker(
             [
-              { value: 'Inclined', label: 'Inclined' },
-              { value: 'Straight', label: 'Straight' },
-              { value: 'Other', label: 'Other' },
+              { value: 'Inclined', label: t('fitting.horses.form.shoulderType.inclined') },
+              { value: 'Straight', label: t('fitting.horses.form.shoulderType.straight') },
+              { value: 'Other', label: t('fitting.horses.form.shoulderType.other') },
             ],
             shoulderType,
             setShoulderType,
             () => setShowShoulderTypePicker(false),
-            'Select Shoulder Type'
+            t('fitting.horses.form.fields.shoulderType')
           )}
         </Modal>
       </ThemedView>
