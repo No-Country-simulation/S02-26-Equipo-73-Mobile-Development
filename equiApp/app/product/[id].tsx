@@ -10,14 +10,16 @@ import {
   Dimensions,
   FlatList,
   Animated,
+  Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedView, ThemedText, ThemedActionSheet } from '@/src';
 import { useProduct, useSizeGuide, type ProductVariant } from '@/src/services/products.service';
 import { Colors, Spacing, BorderRadius } from '@/src/constants';
 import { useColorScheme } from '@/src/hooks';
+import { useCart } from '@/src/stores/cart.store';
 
 const { width } = Dimensions.get('window');
 
@@ -31,6 +33,8 @@ export default function ProductDetailScreen() {
   const productId = parseInt(id || '0');
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
+  const { addItem } = useCart();
+  const insets = useSafeAreaInsets();
 
   const { data: product, isLoading, error } = useProduct(productId);
   
@@ -150,6 +154,32 @@ export default function ProductDetailScreen() {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX / width);
     setCurrentImageIndex(index);
+  };
+
+  const handleAddToCart = () => {
+    if (!product || !selectedVariant) {
+      Alert.alert('Selecciona una talla', 'Por favor selecciona una talla antes de agregar al carrito');
+      return;
+    }
+
+    if (selectedVariant.stock === 0) {
+      Alert.alert('Sin stock', 'Este producto no está disponible en este momento');
+      return;
+    }
+
+    addItem(product, selectedVariant, 1);
+    
+    Alert.alert(
+      '¡Agregado al carrito!',
+      `${product.name}\nTalla: ${selectedVariant.sizeLabel}${selectedVariant.color ? `\nColor: ${selectedVariant.color}` : ''}`,
+      [
+        { text: 'Seguir comprando', style: 'cancel' },
+        { 
+          text: 'Ver carrito', 
+          onPress: () => router.push('/(tabs)/cart')
+        }
+      ]
+    );
   };
 
   return (
@@ -466,12 +496,19 @@ export default function ProductDetailScreen() {
             </View>
 
             {/* Espaciado para el bottom bar */}
-            <View style={{ height: 100 }} />
+            <View style={{ height: 120 }} />
           </View>
         </ScrollView>
 
         {/* Bottom Bar */}
-        <View style={[styles.bottomBar, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
+        <View style={[
+          styles.bottomBar, 
+          { 
+            backgroundColor: colors.card, 
+            borderTopColor: colors.border,
+            paddingBottom: insets.bottom > 0 ? insets.bottom : Spacing.md,
+          }
+        ]}>
           <TouchableOpacity 
             style={[styles.chatButton, { backgroundColor: colors.background, borderColor: colors.border }]}
             onPress={() => {/* TODO: Abrir chat */}}
@@ -480,12 +517,15 @@ export default function ProductDetailScreen() {
           </TouchableOpacity>
           
           <TouchableOpacity 
-            style={[styles.addToCartButton, { backgroundColor: colors.accent }]}
-            onPress={() => {/* TODO: Agregar al carrito */}}
+            style={[
+              styles.addToCartButton, 
+              { backgroundColor: (!selectedVariant || selectedVariant.stock === 0) ? colors.border : colors.accent }
+            ]}
+            onPress={handleAddToCart}
             disabled={!selectedVariant || selectedVariant.stock === 0}
           >
-            <Text style={styles.addToCartText}>
-              {selectedVariant?.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+            <Text style={[styles.addToCartText, (!selectedVariant || selectedVariant.stock === 0) && { opacity: 0.6 }]}>
+              {!selectedVariant ? 'Select Size' : selectedVariant.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
             </Text>
             <View style={styles.priceTag}>
               <Ionicons name="pricetag" size={16} color={colors.accent} />
@@ -601,7 +641,7 @@ const styles = StyleSheet.create({
   },
   headerOverlay: {
     position: 'absolute',
-    top: 60,
+    top: Spacing.sm,
     left: 0,
     right: 0,
     flexDirection: 'row',

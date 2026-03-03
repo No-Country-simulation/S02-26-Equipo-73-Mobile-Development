@@ -1,8 +1,27 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, useColorScheme } from 'react-native';
+import { Platform, useColorScheme, View, Text, StyleSheet } from 'react-native';
 import AntDesignIcon from '@expo/vector-icons/AntDesign';
 import { Colors } from '@/src/constants';
+import { useCart } from '@/src/stores/cart.store';
+
+function CartIconWithBadge({ color }: { color: string }) {
+  const { summary } = useCart();
+  
+  return (
+    <View style={{ width: 24, height: 24 }}>
+      <AntDesignIcon name="shopping-cart" size={24} color={color} />
+      {summary.itemsCount > 0 && (
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>
+            {summary.itemsCount > 99 ? '99+' : summary.itemsCount}
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+}
+
 export default function TabLayout() {
 
   const colorScheme = useColorScheme();
@@ -37,6 +56,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="cart"
+        options={{
+          title: 'Cart',
+          tabBarIcon: ({ color }) => <CartIconWithBadge color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="(fitting)"
         options={{
           title: 'Fitting',
@@ -53,3 +79,23 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  badge: {
+    position: 'absolute',
+    right: -8,
+    top: -4,
+    backgroundColor: '#FF3B30',
+    borderRadius: 10,
+    minWidth: 18,
+    height: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+});
